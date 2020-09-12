@@ -2,7 +2,7 @@ package spider
 
 import (
 	"fmt"
-	"github.com/johnpoint/rssreader-server/src/model"
+	"github.com/johnpoint/RssReader/backend/src/model"
 	"time"
 )
 

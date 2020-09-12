@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/johnpoint/rssreader-server/src/router"
+	"github.com/johnpoint/RssReader/backend/src/router"
 	"os"
 )
 

@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/johnpoint/rssreader-server/src/apis"
-	"github.com/johnpoint/rssreader-server/src/model"
-	"github.com/johnpoint/rssreader-server/src/spider"
+	"github.com/johnpoint/RssReader/backend/src/apis"
+	"github.com/johnpoint/RssReader/backend/src/model"
+	"github.com/johnpoint/RssReader/backend/src/spider"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -41,11 +41,11 @@ func Run() {
 	f.POST("/subscribe/:id", apis.SubscribeFeed)     //订阅feed
 	f.POST("/unsubscribe/:id", apis.UnSubscribeFeed) //退订feed
 	p := w.Group("/post")
-	p.POST("/read/:id", apis.PostAsRead)     //将文章设置为已读
-	p.POST("/unread/:id", apis.PostAsUnRead) //将文章设置为未读
-	p.GET("/content/:id", apis.GetPostContent)     //获取文章内容
-	p.GET("/", apis.GetPostList)             //获取文章列表
-	p.GET("/read", apis.GetReadPostList)     //获取已读文章列表
+	p.POST("/read/:id", apis.PostAsRead)       //将文章设置为已读
+	p.POST("/unread/:id", apis.PostAsUnRead)   //将文章设置为未读
+	p.GET("/content/:id", apis.GetPostContent) //获取文章内容
+	p.GET("/", apis.GetPostList)               //获取文章列表
+	p.GET("/read", apis.GetReadPostList)       //获取已读文章列表
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.Port, conf.CERTPath, conf.KEYPath))
