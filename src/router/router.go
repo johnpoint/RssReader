@@ -1,10 +1,10 @@
 package router
 
 import (
-	"github.com/johnpoint/RssReader/backend/src/apis"
-	"github.com/johnpoint/RssReader/backend/src/model"
-	"github.com/johnpoint/RssReader/backend/src/spider"
-	"github.com/labstack/echo/v4"
+	"github.com/johnpoint/RssReader/src/apis"
+	"github.com/johnpoint/RssReader/src/model"
+	"github.com/johnpoint/RssReader/src/spider"
+	"github.com/labstack/echo"
 	"github.com/labstack/echo/v4/middleware"
 )
 

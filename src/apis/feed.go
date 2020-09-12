@@ -1,8 +1,8 @@
 package apis
 
 import (
-	"github.com/johnpoint/RssReader/backend/src/model"
-	echo2 "github.com/labstack/echo/v4"
+	"github.com/johnpoint/RssReader/src/model"
+	echo2 "github.com/labstack/echo"
 	"net/http"
 )
 

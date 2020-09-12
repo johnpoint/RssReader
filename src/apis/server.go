@@ -1,7 +1,7 @@
 package apis
 
 import (
-	echo2 "github.com/labstack/echo/v4"
+	echo2 "github.com/labstack/echo"
 	"net/http"
 )
 
