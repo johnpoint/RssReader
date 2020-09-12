@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/johnpoint/RssReader/src/router"
 	"os"
+	"rssreader/src/router"
 )
 
 func main() {

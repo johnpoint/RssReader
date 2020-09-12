@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/johnpoint/RssReader/src/model"
 	echo2 "github.com/labstack/echo/v4"
 	"net/http"
+	"rssreader/src/model"
 	"strconv"
 	"time"
 )

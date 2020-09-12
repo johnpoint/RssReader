@@ -1,11 +1,11 @@
 package router
 
 import (
-	"github.com/johnpoint/RssReader/src/apis"
-	"github.com/johnpoint/RssReader/src/model"
-	"github.com/johnpoint/RssReader/src/spider"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"rssreader/src/apis"
+	"rssreader/src/model"
+	"rssreader/src/spider"
 )
 
 func Run() {
