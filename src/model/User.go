@@ -236,9 +236,8 @@ func (u *User) Read(pid int64) error {
 	if tx.Error != nil {
 		return tx.Error
 	}
-
 	_ = tx.AutoMigrate(&Read{})
-	if err := tx.Create(Read{UID: u.ID, PID: pid}).Error; err != nil {
+	if err := tx.Create(&Read{UID: u.ID, PID: pid}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

@@ -85,6 +85,27 @@ func PostAsRead(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
 
+func FeedAsRead(c echo2.Context) error {
+	fid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	user := CheckAuth(c)
+	u := model.User{Mail: user.Mail}
+	err := u.Get()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
+	}
+	f := model.Feed{}
+	f.ID = fid
+	err = f.Get()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	p := f.Post()
+	for _, i := range p {
+		u.Read(i.ID)
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
+}
+
 func PostAsUnRead(c echo2.Context) error {
 	pid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	user := CheckAuth(c)
@@ -156,6 +177,7 @@ func UnSubscribeFeed(c echo2.Context) error {
 
 type respPostList struct {
 	ID    int64
+	Feed  int64
 	Title string
 	Time  string
 }
@@ -175,6 +197,7 @@ func GetPostList(c echo2.Context) error {
 		for _, j := range post {
 			item := respPostList{
 				ID:    j.ID,
+				Feed:  j.FID,
 				Title: j.Title,
 				Time:  j.Published,
 			}
@@ -205,4 +228,23 @@ func GetPostContent(c echo2.Context) error {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: p.Content})
+}
+
+func GetFeedList(c echo2.Context) error {
+	user := CheckAuth(c)
+	u := model.User{Mail: user.Mail}
+	err := u.Get()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
+	}
+	sub := u.Sub()
+	data := []respFeed{}
+	for _, i := range sub {
+		f := model.Feed{}
+		f.ID = i.FID
+		f.Get()
+		data = append(data, respFeed{ID: i.FID, Title: f.Title, Url: f.Url})
+	}
+	bdata, _ := json.Marshal(data)
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(bdata)})
 }

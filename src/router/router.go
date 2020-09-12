@@ -4,7 +4,7 @@ import (
 	"github.com/johnpoint/RssReader/src/apis"
 	"github.com/johnpoint/RssReader/src/model"
 	"github.com/johnpoint/RssReader/src/spider"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
@@ -36,10 +36,11 @@ func Run() {
 	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.GET("/", apis.Accessible)
 	f := w.Group("/feed")
-	f.GET("/list", apis.FeedTodo)                    //列出已经订阅feed
+	f.GET("/list", apis.GetFeedList)                 //列出已经订阅feed
 	f.POST("/search", apis.SearchFeed)               //搜索feed
 	f.POST("/subscribe/:id", apis.SubscribeFeed)     //订阅feed
 	f.POST("/unsubscribe/:id", apis.UnSubscribeFeed) //退订feed
+	f.POST("/read/:id", apis.FeedAsRead)             //将该feed标为已读
 	p := w.Group("/post")
 	p.POST("/read/:id", apis.PostAsRead)       //将文章设置为已读
 	p.POST("/unread/:id", apis.PostAsUnRead)   //将文章设置为未读

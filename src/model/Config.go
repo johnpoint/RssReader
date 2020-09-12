@@ -9,7 +9,7 @@ type Config struct {
 	AllowOrigins []string
 	Port         string
 	Debug        bool
-	Database      string
+	Database     string
 	Salt         string
 	TLS          bool
 	CERTPath     string
