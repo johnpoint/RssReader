@@ -10,7 +10,7 @@ export default {
   methods: {
     check: function() {
       if (!this.$store.state.isLogin) {
-        router.push("/home");
+        router.push("/");
       }
     }
   },
