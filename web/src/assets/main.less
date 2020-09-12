@@ -1,0 +1,74 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+#main {
+  height: 90%;
+  width: 80%;
+  margin: auto;
+}
+
+#app {
+  height: 100%;
+}
+
+#topnav {
+  height: 10%;
+}
+
+.pagetip {
+  top: 30%;
+  position: relative;
+}
+
+.post {
+  padding: 5px;
+  padding-left: 15px !important;
+  transition: 0.08s;
+}
+
+.post:hover {
+  background-color: rgba(0, 0, 0, .07);
+  border-left: solid;
+  border-left-color: rgba(0, 0, 0, .5);
+}
+
+.read {
+  background-color: rgba(0, 0, 0, 0.07);
+}
+
+.unread {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.select {
+  border-bottom: solid;
+}
+
+.tab:hover {
+  transition: 0.08s;
+  border-bottom: solid;
+}
+
+#postcontext {
+  text-align: initial;
+  padding: 30px;
+}
+
+#postcontext img {
+  width: 100%;
+}
+
+@media screen and (max-width: 1000px) {
+  #main {
+    width: 100% !important;
+  }
+
+  .postdate {
+    display: none;
+  }
+}
