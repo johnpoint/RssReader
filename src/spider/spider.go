@@ -2,6 +2,7 @@ package spider
 
 import (
 	"fmt"
+	"log"
 	"rssreader/src/model"
 	"time"
 )
@@ -25,6 +26,10 @@ func getFeed() []model.Feed {
 func getUpdate() {
 	feeds := getFeed()
 	for _, i := range feeds {
-		i.Update()
+		err := i.Update()
+		if err != nil {
+			log.Println(i.Title)
+			log.Print(err.Error())
+		}
 	}
 }

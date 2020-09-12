@@ -66,6 +66,7 @@ func (f *Feed) New() error {
 		return err
 	}
 	tx.Commit()
+	f.Update()
 	return nil
 }
 

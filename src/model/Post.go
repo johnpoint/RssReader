@@ -35,7 +35,7 @@ func (p *Post) Get() error {
 }
 
 func (p *Post) New() error {
-	if p.FID == 0 || p.Url == "" || p.Title == "" || p.Content == "" || p.Description == "" || p.Published == "" {
+	if p.FID == 0 || p.Url == "" || p.Title == "" || p.Published == "" {
 		return errors.New("Incomplete parameters")
 	}
 	err := p.Get()

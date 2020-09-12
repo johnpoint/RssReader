@@ -114,7 +114,7 @@ func (u *User) DelSub(sub int64) error {
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&subscribe{})
-	if err := tx.Where(subscribe{ID: sub}).Delete(subscribe{}).Error; err != nil {
+	if err := tx.Where(subscribe{FID: sub, UID: u.ID}).Delete(subscribe{}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

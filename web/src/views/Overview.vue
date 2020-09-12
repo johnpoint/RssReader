@@ -50,6 +50,7 @@
               nowPost = index;
               showPost = true;
               i.read = false;
+              getPostContent(index);
               change(index);
             "
           >{{ i.title }}
@@ -106,8 +107,10 @@
       <h1>{{ post[nowPost].title }}</h1>
       <span>{{ post[nowPost].source }}</span> |
       <a :href="post[nowPost].link">Link</a>
-      <b-card id="postcontext" style="margin: 15px" v-html="post[nowPost].desc">
-      </b-card>
+      <b-overlay :show="showLoading" rounded="sm">
+        <b-card id="postcontext" style="margin: 15px" v-html="postContent">
+        </b-card>
+      </b-overlay>
     </div>
   </div>
 </template>
@@ -131,7 +134,7 @@ export default {
       this.post[index].read = this.post[index].read ? false : true;
     },
     read: function (index) {
-      axios.post(config.apiAddress + "/api/post/read/" + this.post[index].id, null,{
+      axios.post(config.apiAddress + "/api/post/read/" + this.post[index].id, null, {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
@@ -141,7 +144,14 @@ export default {
       })
     },
     unread: function (index) {
-      console.log(index);
+      axios.post(config.apiAddress + "/api/post/unread/" + this.post[index].id, null, {
+        headers: {
+          'Authorization': "Bearer " + this.$store.state.jwt,
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        console.log(response.data)
+      })
     },
     getReadList: function () {
       axios.get(config.apiAddress + "/api/post/read", {
@@ -155,9 +165,22 @@ export default {
           this.post.push({
             id: item.ID,
             title: item.Title,
-            date: item.Time,
+            source: item.FeedTitle,
+            date: new Date(item.Time).format("yyyy-MM-dd hh:mm:ss"),
+            link: item.Link,
             read: this.readPost.indexOf(item.ID) == -1 ? false : true
           })
+        })
+        this.post.sort(function (a, b) {
+          var x = a.date.toLowerCase();
+          var y = b.date.toLowerCase();
+          if (x < y) {
+            return 1;
+          }
+          if (x > y) {
+            return -1;
+          }
+          return 0;
         })
       })
     },
@@ -172,8 +195,18 @@ export default {
         this.getReadList()
       })
     },
-    getPostContent: function () {
-      return;
+    getPostContent: function (index) {
+      this.showLoading = true
+      this.postContent = ""
+      axios.get(config.apiAddress + "/api/post/content/" + this.post[index].id, {
+        headers: {
+          'Authorization': "Bearer " + this.$store.state.jwt,
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        this.postContent = response.data.message
+        this.showLoading = false
+      })
     }
   },
   data() {
@@ -184,7 +217,9 @@ export default {
       showUnread: true,
       nowPost: null,
       readPost: [],
-      postList: null
+      postList: null,
+      postContent: "",
+      showLoading: true
     };
   }
 };
