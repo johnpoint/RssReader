@@ -1,8 +1,28 @@
 <template>
   <div class="home">
-    <check/>
-    <div v-if="!addRss" id="list">
-      <label class="tab" @click="addRss = true">Add</label>
+    <b-spinner v-if="showLoading" style="position: fixed;top: 5px;right: 5px" variant="primary"
+               label="Spinning"></b-spinner>
+    <label class="tab" v-if="!addRss" style="margin: 5px;width: 100%;text-align: left"
+           @click="addRss = true">Add</label>
+    <label class="tab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">Cancel</label>
+    <div v-if="addRss" id="postinfo">
+      <input v-model="searchrss"/>
+      <b-button style="margin: 5px" @click="searchRss()">ok</b-button>
+      <br>
+      <span>{{ info }}</span>
+      <div v-for="(i, index) in search" :key="index" style="text-align: left">
+        <div class="post">
+          <a>{{ i.title }} </a>
+          <b-icon-plus-square
+              style="margin: 5px;float: right"
+              @click="addSub(index)"
+          ></b-icon-plus-square>
+          <span style="font-size: small;margin: 5px;float: right"> {{ i.link }}</span>
+        </div>
+      </div>
+    </div>
+    <label style="margin: 5px;text-align: left;width: 100%;font-size: larger">Subscribed</label>
+    <div id="list">
       <div v-for="(i, index) in rss" :key="index" style="text-align: left">
         <div class="post">
           <a style="font-size: large">{{ i.title }} </a>
@@ -46,37 +66,25 @@
         </div>
       </div>
     </div>
-    <div v-else id="postinfo">
-      <label class="tab" style="margin: 5px;float: left" @click="addRss = false"
-      >Back</label
-      >
-      <input v-model="searchrss"/>
-      <b-button style="margin: 5px" @click="searchRss()">ok</b-button>
-      <div v-for="(i, index) in search" :key="index" style="text-align: left">
-        <div class="post">
-          <a>{{ i.title }} </a>
-          <b-icon-plus-square
-              style="margin: 5px;float: right"
-              @click="addSub(index)"
-          ></b-icon-plus-square>
-          <span style="font-size: small;margin: 5px;float: right"> {{ i.link }}</span>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
-import check from "@/components/check";
 import axios from "axios";
 import config from "@/config";
+import router from "@/router";
 
 export default {
   name: "Overview",
-  components: {
-    check
-  },
+  components: {},
   beforeMount() {
+    if (window.localStorage.getItem("login")) {
+      this.$store.commit("setStatus", true)
+      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
+    }
+    if (!this.$store.state.isLogin) {
+      router.push("/");
+    }
     this.getRss()
   },
   methods: {
@@ -94,6 +102,8 @@ export default {
       this.post[index].read = this.post[index].read ? false : true;
     },
     addSub: function (index) {
+      this.info = ""
+      this.showLoading = true
       axios.post(config.apiAddress + "/api/feed/subscribe/" + this.search[index].id, null, {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
@@ -101,11 +111,17 @@ export default {
         }
       }).then(response => {
         console.log(response.data)
-        this.getRss()
-        this.addRss = false
+        if (response.data.code == 200) {
+          this.getRss()
+          this.addRss = false
+        } else {
+          this.info = response.data.message
+        }
+        this.showLoading = false
       })
     },
     removeRss: function (index) {
+      this.showLoading = true
       axios.post(config.apiAddress + "/api/feed/unsubscribe/" + this.rss[index].id, null, {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
@@ -115,8 +131,11 @@ export default {
         console.log(response.data)
         this.getRss()
       })
+      this.showLoading = false
     },
     searchRss: function () {
+      this.showLoading = true
+      this.info = ""
       axios.post(config.apiAddress + "/api/feed/search", {
         Url: this.searchrss
       }, {
@@ -133,16 +152,25 @@ export default {
             title: data.Title,
             link: data.Url
           })
+          this.showLoading = false
+        } else {
+          this.info = response.data.message
+          this.showLoading = false
         }
       })
     },
     getRss: function () {
+      this.info = ""
       axios.get(config.apiAddress + "/api/feed/list", {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
       }).then(response => {
+        if (response.data.code != 200) {
+          this.info = response.data.message
+          return
+        }
         this.rsslist = JSON.parse(response.data.message);
         axios.get(config.apiAddress + "/api/post/", {
           headers: {
@@ -150,6 +178,10 @@ export default {
             'Accept': 'application/json'
           }
         }).then(response => {
+          if (response.data.code != 200) {
+            this.info = response.data.message
+            return
+          }
           this.postList = JSON.parse(response.data.message)
           axios.get(config.apiAddress + "/api/post/read", {
             headers: {
@@ -157,6 +189,10 @@ export default {
               'Accept': 'application/json'
             }
           }).then(response => {
+            if (response.data.code != 200) {
+              this.info = response.data.message
+              return
+            }
             this.rss = []
             this.readPost = JSON.parse(response.data.message)
             this.rsslist.forEach(item => {
@@ -173,6 +209,7 @@ export default {
                 unread: this.unread
               })
             })
+            this.showLoading = false
           })
         })
       })
@@ -181,6 +218,7 @@ export default {
   data() {
     return {
       rss: [],
+      info: "",
       addRss: false,
       delRss: false,
       delRssIndex: 0,
@@ -188,7 +226,11 @@ export default {
       readPost: null,
       searchrss: "",
       unread: 0,
-      search: []
+      search: [],
+      showLoading: true,
+      dismissSecs: 10,
+      dismissCountDown: 0,
+      showDismissibleAlert: false
     };
   }
 };

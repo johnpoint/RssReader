@@ -1,6 +1,8 @@
 <template>
   <div class="home">
-    <check/>
+    <b-spinner v-if="showLoading" style="position: fixed;top: 5px;right: 5px" variant="primary"
+               label="Spinning"></b-spinner>
+    <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
       <label
           class="tab"
@@ -31,54 +33,57 @@
         "
       >Unread</label
       >
-      <div v-for="(i, index) in post" :key="index" style="text-align: left">
-        <div
-            class="post"
-            :class="i.read ? 'read' : 'unread'"
-            v-if="
+      <b-overlay :show="showLoading" rounded="sm">
+        <div v-for="(i, index) in post" :key="index" style="text-align: left">
+          <div
+              class="post"
+              :class="i.read ? 'read' : 'unread'"
+              v-if="
             (showRead && i.read && !showUnread) ||
               (showUnread && !i.read) ||
               (showRead && showUnread)
           "
-        >
-          <a style="font-size: small;color: rgba(0,0,0,.7)"
-          >{{ i.source }} >>
-          </a>
-          <a
-              style="font-size: large"
-              @click="
+          >
+            <a style="font-size: small;color: rgba(0,0,0,.7)"
+            >{{ i.source }} >>
+            </a>
+            <a
+                style="font-size: large"
+                @click="
               nowPost = index;
               showPost = true;
               i.read = false;
               getPostContent(index);
               change(index);
             "
-          >{{ i.title }}
-          </a>
-          <b-icon-check-square-fill
-              style="float: right;margin: 5px;color: rgb(69,123,48)"
-              v-if="i.read"
-              @click="change(index)"
-          >read
-          </b-icon-check-square-fill
-          >
-          <b-icon-check-square
-              style="float: right;margin: 5px"
-              v-else
-              @click="change(index)"
-          >unread
-          </b-icon-check-square
-          >
-          <a
-              style="font-size: small;color: rgba(0,0,0,.7);float: right;margin: 5px"
-              class="postdate"
-          >
-            {{ i.date }}
-          </a>
+            >{{ i.title }}
+            </a>
+            <b-icon-check-square-fill
+                style="float: right;margin: 5px;color: rgb(69,123,48)"
+                v-if="i.read"
+                @click="change(index)"
+            >read
+            </b-icon-check-square-fill
+            >
+            <b-icon-check-square
+                style="float: right;margin: 5px"
+                v-else
+                @click="change(index)"
+            >unread
+            </b-icon-check-square
+            >
+            <a
+                style="font-size: small;color: rgba(0,0,0,.7);float: right;margin: 5px"
+                class="postdate"
+            >
+              {{ i.date }}
+            </a>
+          </div>
         </div>
-      </div>
+      </b-overlay>
+
     </div>
-    <div v-else id="postinfo">
+    <div v-if="showPost" id="postinfo">
       <label
           class="tab"
           style="margin: 5px;float: left"
@@ -116,16 +121,21 @@
 </template>
 
 <script>
-import check from "@/components/check";
 import axios from "axios"
 import config from "@/config";
+import router from "@/router";
 
 export default {
   name: "Overview",
-  components: {
-    check
-  },
+  components: {},
   beforeMount() {
+    if (window.localStorage.getItem("login")) {
+      this.$store.commit("setStatus", true)
+      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
+    }
+    if (!this.$store.state.isLogin) {
+      router.push("/");
+    }
     this.getPostList()
   },
   methods: {
@@ -134,32 +144,46 @@ export default {
       this.post[index].read = this.post[index].read ? false : true;
     },
     read: function (index) {
+      this.info = ""
       axios.post(config.apiAddress + "/api/post/read/" + this.post[index].id, null, {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
       }).then(response => {
-        console.log(response.data)
+        if (response.data.code != 200) {
+          this.info = response.data.message
+          return
+        }
       })
     },
     unread: function (index) {
+      this.info = ""
       axios.post(config.apiAddress + "/api/post/unread/" + this.post[index].id, null, {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
       }).then(response => {
-        console.log(response.data)
+        if (response.data.code != 200) {
+          this.info = response.data.message
+          return
+        }
       })
     },
     getReadList: function () {
+      this.info = ""
+      this.showLoading = true
       axios.get(config.apiAddress + "/api/post/read", {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
       }).then(response => {
+        if (response.data.code != 200) {
+          this.info = response.data.message
+          return
+        }
         this.readPost = JSON.parse(response.data.message)
         this.postList.forEach(item => {
           this.post.push({
@@ -182,20 +206,27 @@ export default {
           }
           return 0;
         })
+        this.showLoading = false
       })
     },
     getPostList: function () {
+      this.info = ""
       axios.get(config.apiAddress + "/api/post/", {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
       }).then(response => {
+        if (response.data.code != 200) {
+          this.info = response.data.message
+          return
+        }
         this.postList = JSON.parse(response.data.message)
         this.getReadList()
       })
     },
     getPostContent: function (index) {
+      this.info = ""
       this.showLoading = true
       this.postContent = ""
       axios.get(config.apiAddress + "/api/post/content/" + this.post[index].id, {
@@ -204,6 +235,10 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
+        if (response.data.code != 200) {
+          this.info = response.data.message
+          return
+        }
         this.postContent = response.data.message
         this.showLoading = false
       })
@@ -219,7 +254,8 @@ export default {
       readPost: [],
       postList: null,
       postContent: "",
-      showLoading: true
+      showLoading: true,
+      info: ""
     };
   }
 };

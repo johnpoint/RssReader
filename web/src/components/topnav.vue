@@ -1,23 +1,39 @@
 <template>
   <div id="topnav" align="left">
-    <router-link v-if="this.$store.state.isLogin" to="/">Home</router-link
-    ><span v-if="this.$store.state.isLogin"> | </span>
-    <router-link v-if="!this.$store.state.isLogin" to="/home">Home</router-link
-    ><span v-if="!this.$store.state.isLogin"> | </span>
+    <router-link v-if="this.$store.state.isLogin" to="/overview">Posts
+    </router-link
+    >
+    <span v-if="this.$store.state.isLogin"> | </span>
+    <router-link v-if="!this.$store.state.isLogin" to="/">Home
+    </router-link
+    >
+    <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="!this.$store.state.isLogin" to="/login"
-      >Login</router-link
-    ><span v-if="!this.$store.state.isLogin"> | </span>
+    >Login
+    </router-link
+    >
+    <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="!this.$store.state.isLogin" to="/register"
-      >Register</router-link
-    ><span v-if="!this.$store.state.isLogin"> | </span>
+    >Register
+    </router-link
+    >
+    <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="this.$store.state.isLogin" to="/manager"
-      >Manager</router-link
-    ><span v-if="this.$store.state.isLogin"> | </span>
+    >Manager
+    </router-link
+    >
+    <span v-if="this.$store.state.isLogin"> | </span>
+    <router-link v-if="this.$store.state.isLogin" to="/settings"
+    >Settings
+    </router-link
+    >
+    <span v-if="this.$store.state.isLogin"> | </span>
     <router-link to="/about">About</router-link>
     <a v-if="this.$store.state.isLogin" @click="logout" style="float: right"
-      >Exit</a
+    >Exit</a
     >
-  </div></template
+  </div>
+</template
 >
 
 <script>
@@ -29,8 +45,10 @@ export default {
     return {};
   },
   methods: {
-    logout: function() {
+    logout: function () {
       this.$store.commit("setStatus", false);
+      window.localStorage.removeItem("jwt")
+      window.localStorage.setItem("login", false)
       router.push("/home");
     }
   }
