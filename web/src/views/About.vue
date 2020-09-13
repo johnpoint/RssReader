@@ -3,6 +3,7 @@
     <img alt="RRRssReader" src="../assets/rss.png" />
     <HelloWorld msg="Welcome to RssReader" />
     <a href="https://github.com/johnpoint/RssReader">Github</a>
+    <p>Powered by vue and go</p>
   </div>
 </template>
 
