@@ -110,14 +110,11 @@
       <h1>{{ post[nowPost].title }}</h1>
       <span>{{ post[nowPost].source }}</span> |
       <a :href="post[nowPost].link">Link</a>
-      <b-overlay :show="showLoading" rounded="sm">
-        <b-card id="postcontext" style="margin: 15px" v-html="postContent">
-        </b-card>
-      </b-overlay>
+      <b-card id="postcontext" style="margin: 15px" v-html="postContent">
+      </b-card>
     </div>
-    <div style="height: 100%;width: 100%;position: fixed">
-      <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
-                 label="Spinning"></b-spinner>
+    <div v-if="!showLoading">
+      <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
   </div>
 </template>
@@ -138,6 +135,7 @@ export default {
     if (!this.$store.state.isLogin) {
       router.push("/login");
     }
+    this.getData()
     this.getPostList()
   },
   methods: {
@@ -173,6 +171,15 @@ export default {
         }
       })
     },
+    saveData: function () {
+      window.localStorage.setItem("posts", JSON.stringify(this.post))
+    },
+    getData: function () {
+      if (window.localStorage.getItem("posts") === null) {
+        window.localStorage.setItem("posts", JSON.stringify([]))
+      }
+      this.post = JSON.parse(window.localStorage.getItem("posts"))
+    },
     getReadList: function () {
       this.unreadpost = 0
       this.info = ""
@@ -188,6 +195,7 @@ export default {
           return
         }
         this.readPost = JSON.parse(response.data.message)
+        this.post = []
         this.postList.forEach(item => {
           this.post.push({
             id: item.ID,
@@ -210,6 +218,7 @@ export default {
           }
           return 0;
         })
+        this.saveData()
         this.showLoading = false
       })
     },

@@ -68,9 +68,8 @@
         </b-row>
       </b-container>
     </div>
-    <div style="height: 100%;width: 100%;position: fixed">
-      <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
-                 label="Spinning"></b-spinner>
+    <div v-if="!showLoading">
+      <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
   </div>
 </template>
@@ -91,9 +90,19 @@ export default {
     if (!this.$store.state.isLogin) {
       router.push("/login");
     }
+    this.getData()
     this.getRss()
   },
   methods: {
+    saveData: function () {
+      window.localStorage.setItem("feeds", JSON.stringify(this.rss))
+    },
+    getData: function () {
+      if (window.localStorage.getItem("feeds") === null) {
+        window.localStorage.setItem("feeds", JSON.stringify([]))
+      }
+      this.rss = JSON.parse(window.localStorage.getItem("feeds"))
+    },
     readFeed: function (index) {
       axios.post(config.apiAddress + "/api/feed/read/" + this.rss[index].id, null, {
         headers: {
@@ -215,6 +224,7 @@ export default {
                 unread: this.unread
               })
             })
+            this.saveData()
             this.showLoading = false
           })
         })

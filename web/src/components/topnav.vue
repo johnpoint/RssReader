@@ -49,6 +49,8 @@ export default {
       this.$store.commit("setStatus", false);
       window.localStorage.removeItem("jwt")
       window.localStorage.setItem("login", false)
+      window.localStorage.removeItem("posts")
+      window.localStorage.removeItem("feeds")
       router.push("/");
     }
   }
