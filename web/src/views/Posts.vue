@@ -113,7 +113,7 @@
       <b-card id="postcontext" style="margin: 15px" v-html="postContent">
       </b-card>
     </div>
-    <div v-if="!showLoading">
+    <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
   </div>
