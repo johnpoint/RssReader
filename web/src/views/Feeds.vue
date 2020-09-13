@@ -1,12 +1,14 @@
 <template>
   <div class="home">
-    <b-spinner v-if="showLoading" style="position: fixed;top: 5px;right: 5px" variant="primary"
+    <b-spinner v-if="showLoading" style="position: fixed;top: 50%" variant="primary"
                label="Spinning"></b-spinner>
     <label class="tab" v-if="!addRss" style="margin: 5px;width: 100%;text-align: left"
            @click="addRss = true">Add</label>
     <label class="tab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">Cancel</label>
     <div v-if="addRss" id="postinfo">
-      <input v-model="searchrss"/>
+      <label>
+        <input v-model="searchrss"/>
+      </label>
       <b-button style="margin: 5px" @click="searchRss()">ok</b-button>
       <br>
       <span>{{ info }}</span>
@@ -35,7 +37,7 @@
           <b-col cols="3">
             <b-icon-check-square-fill
                 style="color: rgb(69,123,48);margin: 5px"
-                v-if="i.unread == 0"
+                v-if="i.unread === 0"
             >read
             </b-icon-check-square-fill
             >
@@ -47,12 +49,12 @@
             </b-icon-check-square
             >
             <b-icon-x
-                v-if="delRss && delRssIndex == index"
+                v-if="delRss && delRssIndex === index"
                 style="margin: 5px"
                 @click="delRss = false"
             ></b-icon-x>
             <b-icon-check
-                v-if="delRss && delRssIndex == index"
+                v-if="delRss && delRssIndex === index"
                 style="margin: 5px"
                 @click="removeRss(index)"
             ></b-icon-check>
@@ -80,7 +82,7 @@ export default {
   name: "Overview",
   components: {},
   beforeMount() {
-    if (window.localStorage.getItem("login")=="true") {
+    if (window.localStorage.getItem("login")==="true") {
       this.$store.commit("setStatus", true)
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
     }
@@ -101,7 +103,7 @@ export default {
       })
     },
     change: function (index) {
-      this.post[index].read = this.post[index].read ? false : true;
+      this.post[index].read = !this.post[index].read;
     },
     addSub: function (index) {
       this.info = ""
@@ -113,7 +115,7 @@ export default {
         }
       }).then(response => {
         console.log(response.data)
-        if (response.data.code == 200) {
+        if (response.data.code === 200) {
           this.getRss()
           this.addRss = false
         } else {
@@ -146,7 +148,7 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        if (response.data.code == 200) {
+        if (response.data.code === 200) {
           let data = JSON.parse(response.data.message)
           this.search = []
           this.search.push({
@@ -169,7 +171,7 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        if (response.data.code != 200) {
+        if (response.data.code !== 200) {
           this.info = response.data.message
           return
         }
@@ -180,7 +182,7 @@ export default {
             'Accept': 'application/json'
           }
         }).then(response => {
-          if (response.data.code != 200) {
+          if (response.data.code !== 200) {
             this.info = response.data.message
             return
           }
@@ -191,7 +193,7 @@ export default {
               'Accept': 'application/json'
             }
           }).then(response => {
-            if (response.data.code != 200) {
+            if (response.data.code !== 200) {
               this.info = response.data.message
               return
             }
@@ -200,7 +202,7 @@ export default {
             this.rsslist.forEach(item => {
               this.unread = 0
               this.postList.forEach(post => {
-                if (post.Feed == item.ID && this.readPost.indexOf(post.id) == -1) {
+                if (post.Feed === item.ID && this.readPost.indexOf(post.id) === -1) {
                   this.unread++
                 }
               })

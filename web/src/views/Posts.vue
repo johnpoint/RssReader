@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <b-spinner v-if="showLoading" style="position: fixed;top: 5px;right: 5px" variant="primary"
+    <b-spinner v-if="showLoading" style="position: fixed;top: 50%" variant="primary"
                label="Spinning"></b-spinner>
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
@@ -35,55 +35,53 @@
         "
       >Read</label
       >
-      <b-overlay :show="showLoading" rounded="sm">
-        <div v-for="(i, index) in post" :key="index" style="text-align: left">
-          <div
-              class="post"
-              :class="i.read ? 'read' : 'unread'"
-              v-if="
+
+      <div v-for="(i, index) in post" :key="index" style="text-align: left">
+        <div
+            class="post"
+            :class="i.read ? 'read' : 'unread'"
+            v-if="
             (showRead && i.read && !showUnread) ||
               (showUnread && !i.read) ||
               (showRead && showUnread)
           "
-          >
-            <a style="font-size: small;color: rgba(0,0,0,.7)"
-            >{{ i.source }} >>
-            </a>
-            <a
-                style="font-size: large"
-                @click="
+        >
+          <a style="font-size: small;color: rgba(0,0,0,.7)"
+          >{{ i.source }} >>
+          </a>
+          <a
+              style="font-size: large"
+              @click="
               nowPost = index;
               showPost = true;
               i.read = false;
               getPostContent(index);
               change(index);
             "
-            >{{ i.title }}
-            </a>
-            <b-icon-check-square-fill
-                style="float: right;margin: 5px;color: rgb(69,123,48)"
-                v-if="i.read"
-                @click="change(index)"
-            >read
-            </b-icon-check-square-fill
-            >
-            <b-icon-check-square
-                style="float: right;margin: 5px"
-                v-else
-                @click="change(index)"
-            >unread
-            </b-icon-check-square
-            >
-            <a
-                style="font-size: small;color: rgba(0,0,0,.7);float: right;margin: 5px"
-                class="postdate"
-            >
-              {{ i.date }}
-            </a>
-          </div>
+          >{{ i.title }}
+          </a>
+          <b-icon-check-square-fill
+              style="float: right;margin: 5px;color: rgb(69,123,48)"
+              v-if="i.read"
+              @click="change(index)"
+          >read
+          </b-icon-check-square-fill
+          >
+          <b-icon-check-square
+              style="float: right;margin: 5px"
+              v-else
+              @click="change(index)"
+          >unread
+          </b-icon-check-square
+          >
+          <a
+              style="font-size: small;color: rgba(0,0,0,.7);float: right;margin: 5px"
+              class="postdate"
+          >
+            {{ i.date }}
+          </a>
         </div>
-      </b-overlay>
-
+      </div>
     </div>
     <div v-if="showPost" id="postinfo">
       <label
@@ -131,7 +129,7 @@ export default {
   name: "Overview",
   components: {},
   beforeMount() {
-    if (window.localStorage.getItem("login")=="true") {
+    if (window.localStorage.getItem("login") === "true") {
       this.$store.commit("setStatus", true)
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
     }
@@ -143,7 +141,7 @@ export default {
   methods: {
     change: function (index) {
       this.post[index].read ? this.unread(index) : this.read(index);
-      this.post[index].read = this.post[index].read ? false : true;
+      this.post[index].read = !this.post[index].read;
     },
     read: function (index) {
       this.info = ""
@@ -153,7 +151,7 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        if (response.data.code != 200) {
+        if (response.data.code !== 200) {
           this.info = response.data.message
           return
         }
@@ -167,7 +165,7 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        if (response.data.code != 200) {
+        if (response.data.code !== 200) {
           this.info = response.data.message
           return
         }
@@ -183,7 +181,7 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        if (response.data.code != 200) {
+        if (response.data.code !== 200) {
           this.info = response.data.message
           return
         }
@@ -195,9 +193,9 @@ export default {
             source: item.FeedTitle,
             date: new Date(item.Time).format("yyyy-MM-dd hh:mm:ss"),
             link: item.Link,
-            read: this.readPost.indexOf(item.ID) == -1 ? false : true
+            read: this.readPost.indexOf(item.ID) !== -1
           })
-          this.readPost.indexOf(item.ID) == -1 ? this.unreadpost++ : null
+          this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null
         })
         this.post.sort(function (a, b) {
           var x = a.date.toLowerCase();
@@ -221,7 +219,7 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        if (response.data.code != 200) {
+        if (response.data.code !== 200) {
           this.info = response.data.message
           return
         }
@@ -239,7 +237,7 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        if (response.data.code != 200) {
+        if (response.data.code !== 200) {
           this.info = response.data.message
           return
         }
