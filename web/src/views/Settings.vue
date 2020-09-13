@@ -2,7 +2,6 @@
   <div class="home">
     <img alt="RRRssReader" src="../assets/rss.png" />
     <HelloWorld msg="Welcome to RssReader" />
-    <a href="https://github.com/johnpoint/RssReader">Github</a>
   </div>
 </template>
 
@@ -14,12 +13,6 @@ export default {
   name: "About",
   components: {
     HelloWorld
-  },
-  beforeMount() {
-    if (window.localStorage.getItem("login")=="true") {
-      this.$store.commit("setStatus", true)
-      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
-    }
   }
 };
 </script>

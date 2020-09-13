@@ -16,8 +16,12 @@ export default {
     HelloWorld
   },
   beforeMount() {
+    if (window.localStorage.getItem("login")=="true") {
+      this.$store.commit("setStatus", true)
+      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
+    }
     if (this.$store.state.isLogin) {
-      router.push("/overview")
+      router.push("/posts")
     }
   },
 };

@@ -72,6 +72,13 @@ export default {
             router.push("/login")
           });
     }
+  },
+  beforeMount() {
+    if (window.localStorage.getItem("login")=="true") {
+      this.$store.commit("setStatus", true)
+      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
+      router.push("/posts")
+    }
   }
 };
 </script>

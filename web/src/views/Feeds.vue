@@ -23,48 +23,50 @@
     </div>
     <label style="margin: 5px;text-align: left;width: 100%;font-size: larger">Subscribed</label>
     <div id="list">
-      <div v-for="(i, index) in rss" :key="index" style="text-align: left">
-        <div class="post">
-          <a style="font-size: large">{{ i.title }} </a>
-          <span style="font-size: small">{{ i.link }}</span>
-          <b-icon-x
-              v-if="delRss && delRssIndex == index"
-              style="float: right;margin: 5px"
-              @click="delRss = false"
-          ></b-icon-x>
-          <b-icon-check
-              v-if="delRss && delRssIndex == index"
-              style="float: right;margin: 5px"
-              @click="removeRss(index)"
-          ></b-icon-check>
-          <b-icon-trash
-              v-else
-              style="float: right;margin: 5px;"
-              @click="
+      <b-container v-for="(i, index) in rss" :key="index" style="text-align: left">
+        <b-row class="post">
+          <b-col><a
+              style="font-size: small;color: rgba(0,0,0,.7);margin: 5px"
+          >{{ i.unread }}
+          </a>
+            <a style="font-size: large">{{ i.title }} </a>
+            <span style="font-size: small">{{ i.link }}</span>
+          </b-col>
+          <b-col cols="3">
+            <b-icon-check-square-fill
+                style="color: rgb(69,123,48);margin: 5px"
+                v-if="i.unread == 0"
+            >read
+            </b-icon-check-square-fill
+            >
+            <b-icon-check-square
+                v-else
+                style="margin: 5px"
+                @click="i.unread = 0;readFeed(index)"
+            >unread
+            </b-icon-check-square
+            >
+            <b-icon-x
+                v-if="delRss && delRssIndex == index"
+                style="margin: 5px"
+                @click="delRss = false"
+            ></b-icon-x>
+            <b-icon-check
+                v-if="delRss && delRssIndex == index"
+                style="margin: 5px"
+                @click="removeRss(index)"
+            ></b-icon-check>
+            <b-icon-trash
+                v-else
+                style="margin: 5px"
+                @click="
               delRss = true;
               delRssIndex = index;
             "
-          ></b-icon-trash>
-          <b-icon-check-square-fill
-              style="float: right;margin: 5px;color: rgb(69,123,48)"
-              v-if="i.unread == 0"
-          >read
-          </b-icon-check-square-fill
-          >
-          <b-icon-check-square
-              style="float: right;margin: 5px"
-              v-else
-              @click="i.unread = 0;readFeed(index)"
-          >unread
-          </b-icon-check-square
-          >
-          <a
-              style="font-size: small;color: rgba(0,0,0,.7);float: right;margin: 5px"
-          >
-            {{ i.unread }}
-          </a>
-        </div>
-      </div>
+            ></b-icon-trash>
+          </b-col>
+        </b-row>
+      </b-container>
     </div>
   </div>
 </template>
@@ -78,12 +80,12 @@ export default {
   name: "Overview",
   components: {},
   beforeMount() {
-    if (window.localStorage.getItem("login")) {
+    if (window.localStorage.getItem("login")=="true") {
       this.$store.commit("setStatus", true)
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
     }
     if (!this.$store.state.isLogin) {
-      router.push("/");
+      router.push("/login");
     }
     this.getRss()
   },

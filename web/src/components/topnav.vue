@@ -1,6 +1,6 @@
 <template>
   <div id="topnav" align="left">
-    <router-link v-if="this.$store.state.isLogin" to="/overview">Posts
+    <router-link v-if="this.$store.state.isLogin" to="/posts">Posts
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
@@ -18,8 +18,8 @@
     </router-link
     >
     <span v-if="!this.$store.state.isLogin"> | </span>
-    <router-link v-if="this.$store.state.isLogin" to="/manager"
-    >Manager
+    <router-link v-if="this.$store.state.isLogin" to="/feeds"
+    >Feeds
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
@@ -49,7 +49,7 @@ export default {
       this.$store.commit("setStatus", false);
       window.localStorage.removeItem("jwt")
       window.localStorage.setItem("login", false)
-      router.push("/home");
+      router.push("/");
     }
   }
 };

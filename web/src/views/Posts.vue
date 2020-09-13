@@ -6,6 +6,18 @@
     <div v-if="!showPost" id="list">
       <label
           class="tab"
+          :class="showUnread && !showRead ? 'select' : ''"
+          @click="
+          showUnread = true;
+          showRead = false;
+        "
+      >Unread
+        <b-badge pill variant="success">{{ unreadpost }}</b-badge>
+      </label
+      >
+      |
+      <label
+          class="tab"
           :class="showRead && showUnread ? 'select' : ''"
           @click="
           showUnread = true;
@@ -22,16 +34,6 @@
           showRead = true;
         "
       >Read</label
-      >
-      |
-      <label
-          class="tab"
-          :class="showUnread && !showRead ? 'select' : ''"
-          @click="
-          showUnread = true;
-          showRead = false;
-        "
-      >Unread</label
       >
       <b-overlay :show="showLoading" rounded="sm">
         <div v-for="(i, index) in post" :key="index" style="text-align: left">
@@ -129,12 +131,12 @@ export default {
   name: "Overview",
   components: {},
   beforeMount() {
-    if (window.localStorage.getItem("login")) {
+    if (window.localStorage.getItem("login")=="true") {
       this.$store.commit("setStatus", true)
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
     }
     if (!this.$store.state.isLogin) {
-      router.push("/");
+      router.push("/login");
     }
     this.getPostList()
   },
@@ -172,6 +174,7 @@ export default {
       })
     },
     getReadList: function () {
+      this.unreadpost = 0
       this.info = ""
       this.showLoading = true
       axios.get(config.apiAddress + "/api/post/read", {
@@ -194,6 +197,7 @@ export default {
             link: item.Link,
             read: this.readPost.indexOf(item.ID) == -1 ? false : true
           })
+          this.readPost.indexOf(item.ID) == -1 ? this.unreadpost++ : null
         })
         this.post.sort(function (a, b) {
           var x = a.date.toLowerCase();
@@ -248,14 +252,15 @@ export default {
     return {
       post: [],
       showPost: false,
-      showRead: true,
+      showRead: false,
       showUnread: true,
       nowPost: null,
       readPost: [],
       postList: null,
       postContent: "",
       showLoading: true,
-      info: ""
+      info: "",
+      unreadpost: 0
     };
   }
 };

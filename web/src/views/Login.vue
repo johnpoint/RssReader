@@ -75,7 +75,7 @@ export default {
               this.$store.commit("setjwt", response.data.message);
               window.localStorage.setItem("jwt", response.data.message)
               window.localStorage.setItem("login", true)
-              router.push("/");
+              router.push("/posts");
             }
           });
     }

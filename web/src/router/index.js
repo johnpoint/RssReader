@@ -11,14 +11,19 @@ const routes = [
         component: Home
     },
     {
-        path: "/overview",
-        name: "Overview",
-        component: () => import("../views/Overview.vue")
+        path: "/posts",
+        name: "Posts",
+        component: () => import("../views/Posts.vue")
     },
     {
-        path: "/manager",
-        name: "Manager",
-        component: () => import("../views/Manager.vue")
+        path: "/settings",
+        name: "Settings",
+        component: () => import("../views/Settings.vue")
+    },
+    {
+        path: "/feeds",
+        name: "Feeds",
+        component: () => import("../views/Feeds.vue")
     },
     {
         path: "/about",
