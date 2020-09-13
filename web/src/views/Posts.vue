@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <b-spinner v-if="showLoading" style="position: fixed;top: 50%" variant="primary"
+    <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
                label="Spinning"></b-spinner>
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">

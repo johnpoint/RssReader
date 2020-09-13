@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <b-spinner v-if="showLoading" style="position: fixed;top: 50%" variant="primary"
+    <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
                label="Spinning"></b-spinner>
     <label class="tab" v-if="!addRss" style="margin: 5px;width: 100%;text-align: left"
            @click="addRss = true">Add</label>
@@ -82,7 +82,7 @@ export default {
   name: "Overview",
   components: {},
   beforeMount() {
-    if (window.localStorage.getItem("login")==="true") {
+    if (window.localStorage.getItem("login") === "true") {
       this.$store.commit("setStatus", true)
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
     }
