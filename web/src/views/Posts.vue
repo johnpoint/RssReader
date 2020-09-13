@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-    <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
-               label="Spinning"></b-spinner>
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
       <label
@@ -116,6 +114,10 @@
         <b-card id="postcontext" style="margin: 15px" v-html="postContent">
         </b-card>
       </b-overlay>
+    </div>
+    <div style="height: 100%;width: 100%;position: fixed">
+      <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
+                 label="Spinning"></b-spinner>
     </div>
   </div>
 </template>

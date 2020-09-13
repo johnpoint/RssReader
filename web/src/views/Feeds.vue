@@ -1,7 +1,5 @@
 <template>
   <div class="home">
-    <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
-               label="Spinning"></b-spinner>
     <label class="tab" v-if="!addRss" style="margin: 5px;width: 100%;text-align: left"
            @click="addRss = true">Add</label>
     <label class="tab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">Cancel</label>
@@ -69,6 +67,10 @@
           </b-col>
         </b-row>
       </b-container>
+    </div>
+    <div style="height: 100%;width: 100%;position: fixed">
+      <b-spinner v-if="showLoading" style="position: sticky;top: 50%;" variant="primary"
+                 label="Spinning"></b-spinner>
     </div>
   </div>
 </template>
