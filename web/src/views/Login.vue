@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Login</h1>
+    <span>{{ info }}</span>
     <b-card style="width: 350px;margin: auto">
       <b-form v-if="show">
         <b-form-group
@@ -41,6 +42,9 @@
         >
       </b-form>
     </b-card>
+    <div v-if="showLoading">
+      <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -57,19 +61,23 @@ export default {
         email: "",
         password: ""
       },
-      show: true
+      show: true,
+      info: "",
+      showLoading: false
     };
   },
   methods: {
     onSubmit() {
+      this.showLoading = true
       axios
           .post(config.apiAddress + "/api/login", {
             mail: this.form.email,
             password: this.form.password
           })
           .then(response => {
+            this.showLoading = false
             if (response.data.code != 200) {
-              alert(response.data.message);
+              this.info = response.data.message
             } else {
               this.$store.commit("setStatus", true);
               this.$store.commit("setjwt", response.data.message);

@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Register</h1>
+    <span>{{ info }}</span>
     <b-card style="width: 350px;margin: auto">
       <b-form v-if="show">
         <b-form-group
@@ -41,6 +42,9 @@
         >
       </b-form>
     </b-card>
+    <div v-if="showLoading">
+      <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -57,24 +61,29 @@ export default {
         email: "",
         password: ""
       },
-      show: true
+      show: true,
+      showLoading: false,
+      info: "",
     };
   },
   methods: {
     onSubmit() {
+      this.showLoading = true
+      this.info = ""
       axios
           .post(config.apiAddress + "/api/register", {
             mail: this.form.email,
             password: this.form.password
           })
           .then(response => {
-            alert(response.data.message);
+            this.showLoading = false
+            this.info = response.data.message
             router.push("/login")
           });
     }
   },
   beforeMount() {
-    if (window.localStorage.getItem("login")=="true") {
+    if (window.localStorage.getItem("login") == "true") {
       this.$store.commit("setStatus", true)
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
       router.push("/posts")
