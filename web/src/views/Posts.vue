@@ -239,6 +239,11 @@ export default {
       })
     },
     getPostContent: function (index) {
+      if (window.localStorage.getItem("post" + this.post[index].id) !== null) {
+        this.postContent = window.localStorage.getItem("post" + this.post[index].id)
+        this.showLoading = false
+        return
+      }
       this.info = ""
       this.showLoading = true
       this.postContent = ""
@@ -253,6 +258,7 @@ export default {
           return
         }
         this.postContent = response.data.message
+        window.localStorage.setItem("post" + this.post[index].id, response.data.message)
         this.showLoading = false
       })
     }

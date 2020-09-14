@@ -211,17 +211,19 @@ export default {
             this.rss = []
             this.readPost = JSON.parse(response.data.message)
             this.rsslist.forEach(item => {
-              this.unread = 0
+              let unread = 0
               this.postList.forEach(post => {
-                if (post.Feed === item.ID && this.readPost.indexOf(post.id) === -1) {
-                  this.unread++
+                if (post.Feed === item.ID && this.readPost.indexOf(post.ID) === -1) {
+                  unread++
+                  console.log(unread)
                 }
               })
+
               this.rss.push({
                 id: item.ID,
                 title: item.Title,
                 link: item.Url,
-                unread: this.unread
+                unread: unread
               })
             })
             this.saveData()
@@ -246,7 +248,8 @@ export default {
       showLoading: true,
       dismissSecs: 10,
       dismissCountDown: 0,
-      showDismissibleAlert: false
+      showDismissibleAlert: false,
+      postList: []
     };
   }
 };
