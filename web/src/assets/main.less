@@ -1,4 +1,33 @@
+@font-face {
+  font-family: 'FZJL';
+  src: url('https://cdn.lvcshu.info/font/FZJL.ttf');
+}
+
+@font-face {
+  font-family: 'graphik';
+  src: url('https://cdn.lvcshu.info/font/graphik-normal-300.woff2')
+}
+
+@font-face {
+  font-family: 'nei';
+  src: url('https://cdn.lvcshu.info/font/nei.woff');
+}
+
+.title {
+  font-family: 'nei', 'schnyder', Times, serif;
+  font-size: 40px;
+}
+
+.postlisttitle {
+  font-family: 'graphik', Times, serif;
+  font-size: 19px;
+  line-height: 33px;
+  font-weight: 400;
+  color: black;
+}
+
 html {
+  font-family: "SF Pro Display", PingFangSC-Thin, graphik, PingFang-SC-W3, "Segoe UI", Roboto, "Microsoft YaHei UI", "Source Han Sans SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
   height: 100%;
 }
 
@@ -63,6 +92,20 @@ body {
   width: 100%;
 }
 
+#postcontext p {
+  font-size: 20px;
+  line-height: 36px;
+  font-weight: 300;
+  margin: 20px 0;
+}
+
+#postcontext h2 {
+  line-height: 38px;
+  font-size: 30px;
+  font-weight: 400;
+  font-family: 'graphik', Times, serif;
+}
+
 .loading {
   //height: 100%;
   //width: 100%;
@@ -81,4 +124,37 @@ body {
   .postdate {
     display: none;
   }
+
+  .backtab {
+    background-color: #42b983;
+    color: white;
+    bottom: 0px !important;
+    left: 0px !important;
+    padding: 5px;
+    z-index: 99;
+    margin: 0 !important;
+  }
+
+  .readtab {
+    background-color: #42b983;
+    color: white;
+    bottom: 0px !important;
+    right: 0px !important;
+    padding: 5px;
+    z-index: 99;
+    margin: 0 !important;
+  }
+}
+
+.backtab {
+  margin: 5px;
+  position: fixed;
+  left: 50px;
+  z-index: 99
+}
+
+.readtab {
+  position: fixed;
+  right: 50px;
+  z-index: 99
 }

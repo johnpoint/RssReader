@@ -2,6 +2,7 @@
   <div class="home">
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
+      <label @click="getPostList()" class="tab backtab">更新</label>
       <label
           class="tab"
           :class="showUnread && !showRead ? 'select' : ''"
@@ -56,6 +57,7 @@
               getPostContent(index);
               change(index);
             "
+              class="postlisttitle"
           >{{ i.title }}
           </a>
           <b-icon-check-square-fill
@@ -82,32 +84,17 @@
       </div>
     </div>
     <div v-if="showPost" id="postinfo">
-      <label
-          class="tab"
-          style="margin: 5px;float: left"
-          @click="showPost = false"
-      >Back</label
-      >
-      <div style="float: right">
-        <b-icon-check-square-fill
-            style="float: right;margin: 5px;color: rgb(69,123,48)"
-            v-if="post[nowPost].read"
-            @click="change(nowPost)"
-        >read
-        </b-icon-check-square-fill
+      <div>
+        <label
+            class="tab backtab"
+            @click="showPost = false;info=''"
+        >Back</label
         >
-        <label v-if="post[nowPost].read">已读</label>
-        <b-icon-check-square
-            style="float: right;margin: 5px"
-            v-if="!post[nowPost].read"
-            @click="change(nowPost)"
-        >unread
-        </b-icon-check-square
-        >
-        <label v-if="!post[nowPost].read">未读</label>
+        <label @click="change(nowPost)" class="readtab" v-if="post[nowPost].read">标为未读</label>
+        <label @click="change(nowPost)" class="readtab" v-if="!post[nowPost].read">标为已读</label>
       </div>
 
-      <h1>{{ post[nowPost].title }}</h1>
+      <h1 class="title">{{ post[nowPost].title }}</h1>
       <span>{{ post[nowPost].source }}</span> |
       <a :href="post[nowPost].link">Link</a>
       <b-card id="postcontext" style="margin: 15px" v-html="postContent">
@@ -155,6 +142,9 @@ export default {
           this.info = response.data.message
           return
         }
+      }, err => {
+        console.log(err)
+        this.info = "请检查网络连接";
       })
     },
     unread: function (index) {
@@ -169,6 +159,9 @@ export default {
           this.info = response.data.message
           return
         }
+      }, err => {
+        console.log(err)
+        this.info = "请检查网络连接";
       })
     },
     saveData: function () {
@@ -220,6 +213,9 @@ export default {
         })
         this.saveData()
         this.showLoading = false
+      }, err => {
+        console.log(err)
+        this.info = "请检查网络连接";
       })
     },
     getPostList: function () {
@@ -236,7 +232,13 @@ export default {
         }
         this.postList = JSON.parse(response.data.message)
         this.getReadList()
+      }, err => {
+        console.log(err)
+        this.info = "请检查网络连接";
       })
+    },
+    clearInfo: function () {
+      this.info = ""
     },
     getPostContent: function (index) {
       if (window.localStorage.getItem("post" + this.post[index].id) !== null) {
@@ -260,6 +262,9 @@ export default {
         this.postContent = response.data.message
         window.localStorage.setItem("post" + this.post[index].id, response.data.message)
         this.showLoading = false
+      }, err => {
+        console.log(err)
+        this.info = "请检查网络连接";
       })
     }
   },
