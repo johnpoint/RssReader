@@ -93,8 +93,8 @@
             @click="showPost = false;info='';backTop();"
         >返回</label
         >
-        <label @click="change(nowPost)" class="righttab" v-if="post[nowPost].read">标为未读</label>
-        <label @click="change(nowPost)" class="righttab" v-if="!post[nowPost].read">标为已读</label>
+        <label @click="change(nowPost)" class="tab righttab" v-if="post[nowPost].read">标为未读</label>
+        <label @click="change(nowPost)" class="tab righttab" v-if="!post[nowPost].read">标为已读</label>
       </div>
 
       <h1 class="title">{{ post[nowPost].title }}</h1>
