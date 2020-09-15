@@ -18,7 +18,7 @@
   font-size: 40px;
 }
 
-.home{
+.home {
   min-height: 90%;
 }
 
@@ -35,6 +35,19 @@
   line-height: 33px;
   font-weight: 400;
   color: black;
+  text-underline: none;
+}
+
+.postlisttitle:link {
+  text-underline: none !important;
+}
+
+.postlisttitle:hover {
+  font-size: 120px;
+  line-height: 33px;
+  font-weight: 400;
+  color: #31875f;
+  text-underline: none !important;
 }
 
 html {
@@ -77,6 +90,16 @@ body {
   border-left-color: rgba(0, 0, 0, .5);
 }
 
+#topnav a:link {
+  text-decoration: none;
+}
+
+#topnav a:hover {
+  transition: 0.08s;
+  border-bottom: solid;
+  border-color: #42b983;
+}
+
 .read {
   background-color: rgba(0, 0, 0, 0.07);
 }
@@ -87,11 +110,13 @@ body {
 
 .select {
   border-bottom: solid;
+  border-color: #42b983;
 }
 
 .tab:hover {
   transition: 0.08s;
   border-bottom: solid;
+  border-color: #42b983;
 }
 
 #postcontext {

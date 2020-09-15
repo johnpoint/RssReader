@@ -12,7 +12,7 @@
           showRead = false;
         "
       >未读
-        <b-badge pill variant="success">{{ unreadpost }}</b-badge>
+        <a pill variant="success" style="color: #42b983">{{ unreadpost }}</a>
       </label
       >
       |
@@ -64,6 +64,7 @@
           </a>
           <b-icon-check-square-fill
               class="readbtn"
+              style="float: right;margin: 5px;color: #42b983"
               v-if="i.read"
               @click="change(index)"
           >read
@@ -71,8 +72,7 @@
           >
           <b-icon-check-square
               class="readbtn"
-              scale="color: rgb(69, 123, 48)"
-              style="float: right;margin: 5px"
+              style="float: right;margin: 5px;"
               v-else
               @click="change(index)"
           >unread
