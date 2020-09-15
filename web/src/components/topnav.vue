@@ -1,36 +1,36 @@
 <template>
   <div id="topnav" align="left">
-    <router-link v-if="this.$store.state.isLogin" to="/posts">Posts
+    <router-link v-if="this.$store.state.isLogin" to="/posts">文章
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
-    <router-link v-if="!this.$store.state.isLogin" to="/">Home
+    <router-link v-if="!this.$store.state.isLogin" to="/">主页
     </router-link
     >
     <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="!this.$store.state.isLogin" to="/login"
-    >Login
+    >登录
     </router-link
     >
     <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="!this.$store.state.isLogin" to="/register"
-    >Register
+    >注册
     </router-link
     >
     <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="this.$store.state.isLogin" to="/feeds"
-    >Feeds
+    >订阅源
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
     <router-link v-if="this.$store.state.isLogin" to="/settings"
-    >Settings
+    >设置
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
-    <router-link to="/about">About</router-link>
+    <router-link to="/about">关于</router-link>
     <a v-if="this.$store.state.isLogin" @click="logout" style="float: right"
-    >Exit</a
+    >退出</a
     >
   </div>
 </template

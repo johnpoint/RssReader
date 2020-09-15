@@ -18,6 +18,17 @@
   font-size: 40px;
 }
 
+.home{
+  min-height: 90%;
+}
+
+.foot {
+  bottom: 0px;
+  position: inherit;
+  width: 100%;
+  left: 0px;
+}
+
 .postlisttitle {
   font-family: 'graphik', Times, serif;
   font-size: 19px;
@@ -116,16 +127,30 @@ body {
   width: 20px;
 }
 
+.postdate {
+  font-size: small;
+  color: rgba(0, 0, 0, .7);
+  float: right;
+  margin: 5px
+}
+
 @media screen and (max-width: 1000px) {
   #main {
     width: 100% !important;
   }
 
   .postdate {
+    font-size: small;
+    position: absolute;
+    right: 30px;
+    margin: 5px
+  }
+
+  .postdate {
     display: none;
   }
 
-  .backtab {
+  .lefttab {
     background-color: #42b983;
     color: white;
     bottom: 0px !important;
@@ -135,7 +160,7 @@ body {
     margin: 0 !important;
   }
 
-  .readtab {
+  .righttab {
     background-color: #42b983;
     color: white;
     bottom: 0px !important;
@@ -144,17 +169,33 @@ body {
     z-index: 99;
     margin: 0 !important;
   }
+
+  .readbtn {
+    position: absolute;
+    right: 5px;
+  }
 }
 
-.backtab {
+@media screen and (min-width: 1200px) {
+  #postcontext {
+    width: 930px !important;
+    margin: auto !important;
+  }
+}
+
+.lefttab {
   margin: 5px;
   position: fixed;
   left: 50px;
   z-index: 99
 }
 
-.readtab {
+.righttab {
   position: fixed;
   right: 50px;
   z-index: 99
+}
+
+.readbtn {
+  margin: 5px;
 }

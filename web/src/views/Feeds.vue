@@ -1,13 +1,13 @@
 <template>
   <div class="home">
-    <label class="tab" v-if="!addRss" style="margin: 5px;width: 100%;text-align: left"
-           @click="addRss = true">Add</label>
-    <label class="tab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">Cancel</label>
+    <label class="lefttab" v-if="!addRss" style="margin: 5px;width: 100%;text-align: left"
+           @click="addRss = true">添加订阅源</label>
+    <label class="lefttab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">取消</label>
     <div v-if="addRss" id="postinfo">
       <label>
         <input v-model="searchrss"/>
       </label>
-      <b-button style="margin: 5px" @click="searchRss()">ok</b-button>
+      <b-button style="margin: 5px" @click="searchRss()">搜索</b-button>
       <br>
       <span>{{ info }}</span>
       <div v-for="(i, index) in search" :key="index" style="text-align: left">
@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-    <label style="margin: 5px;text-align: left;width: 100%;font-size: larger">Subscribed</label>
+    <label style="margin: 5px;text-align: left;width: 100%;font-size: larger">已订阅</label>
     <div id="list">
       <b-container v-for="(i, index) in rss" :key="index" style="text-align: left">
         <b-row class="post">
@@ -125,7 +125,6 @@ export default {
           'Accept': 'application/json'
         }
       }).then(response => {
-        console.log(response.data)
         if (response.data.code === 200) {
           this.getRss()
           this.addRss = false
@@ -142,8 +141,7 @@ export default {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
-      }).then(response => {
-        console.log(response.data)
+      }).then(() => {
         this.getRss()
       })
       this.showLoading = false
@@ -215,7 +213,6 @@ export default {
               this.postList.forEach(post => {
                 if (post.Feed === item.ID && this.readPost.indexOf(post.ID) === -1) {
                   unread++
-                  console.log(unread)
                 }
               })
 

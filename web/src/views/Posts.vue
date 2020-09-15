@@ -2,7 +2,8 @@
   <div class="home">
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
-      <label @click="getPostList()" class="tab backtab">更新</label>
+      <label @click="getPostList()" class="tab lefttab">更新</label>
+      <label @click="top=0;backTop()" class="tab righttab">回到顶部</label>
       <label
           class="tab"
           :class="showUnread && !showRead ? 'select' : ''"
@@ -10,7 +11,7 @@
           showUnread = true;
           showRead = false;
         "
-      >Unread
+      >未读
         <b-badge pill variant="success">{{ unreadpost }}</b-badge>
       </label
       >
@@ -22,7 +23,7 @@
           showUnread = true;
           showRead = true;
         "
-      >All</label
+      >全部</label
       >
       |
       <label
@@ -32,7 +33,7 @@
           showUnread = false;
           showRead = true;
         "
-      >Read</label
+      >已读</label
       >
 
       <div v-for="(i, index) in post" :key="index" style="text-align: left">
@@ -51,6 +52,7 @@
           <a
               style="font-size: large"
               @click="
+              setTop();
               nowPost = index;
               showPost = true;
               i.read = false;
@@ -61,13 +63,15 @@
           >{{ i.title }}
           </a>
           <b-icon-check-square-fill
-              style="float: right;margin: 5px;color: rgb(69,123,48)"
+              class="readbtn"
               v-if="i.read"
               @click="change(index)"
           >read
           </b-icon-check-square-fill
           >
           <b-icon-check-square
+              class="readbtn"
+              scale="color: rgb(69, 123, 48)"
               style="float: right;margin: 5px"
               v-else
               @click="change(index)"
@@ -75,7 +79,6 @@
           </b-icon-check-square
           >
           <a
-              style="font-size: small;color: rgba(0,0,0,.7);float: right;margin: 5px"
               class="postdate"
           >
             {{ i.date }}
@@ -86,12 +89,12 @@
     <div v-if="showPost" id="postinfo">
       <div>
         <label
-            class="tab backtab"
-            @click="showPost = false;info=''"
-        >Back</label
+            class="tab lefttab"
+            @click="showPost = false;info='';backTop();"
+        >返回</label
         >
-        <label @click="change(nowPost)" class="readtab" v-if="post[nowPost].read">标为未读</label>
-        <label @click="change(nowPost)" class="readtab" v-if="!post[nowPost].read">标为已读</label>
+        <label @click="change(nowPost)" class="righttab" v-if="post[nowPost].read">标为未读</label>
+        <label @click="change(nowPost)" class="righttab" v-if="!post[nowPost].read">标为已读</label>
       </div>
 
       <h1 class="title">{{ post[nowPost].title }}</h1>
@@ -126,6 +129,13 @@ export default {
     this.getPostList()
   },
   methods: {
+    setTop: function () {
+      this.top = document.documentElement.scrollTop
+      document.documentElement.scrollTop = 0
+    },
+    backTop: function () {
+      document.documentElement.scrollTop = this.top
+    },
     change: function (index) {
       this.post[index].read ? this.unread(index) : this.read(index);
       this.post[index].read = !this.post[index].read;
@@ -280,7 +290,8 @@ export default {
       postContent: "",
       showLoading: true,
       info: "",
-      unreadpost: 0
+      unreadpost: 0,
+      top: 0
     };
   }
 };
