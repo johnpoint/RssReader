@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <label class="lefttab" v-if="!addRss" style="margin: 5px;width: 100%;text-align: left"
+    <label class="lefttab" v-if="!addRss" style="width: 100%"
            @click="addRss = true">添加订阅源</label>
     <label class="lefttab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">取消</label>
     <div v-if="addRss" id="postinfo">
