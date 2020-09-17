@@ -17,7 +17,10 @@ func (f *Feed) Get() error {
 	if f.ID == 0 && f.Url == "" {
 		return errors.New("Url and ID can not be empty")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	_ = db.AutoMigrate(&User{})
 	Feeds := []Feed{}
@@ -47,7 +50,10 @@ func (f *Feed) New() error {
 	}
 	f.Title = feed.Title
 	f.Feed = feed.String()
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -85,18 +91,24 @@ func (f *Feed) Update() error {
 		return err
 	}
 	p := Post{}
-	for _, i := range feed.Items {
+	conf := Config{}
+	err = conf.Load()
+	if err != nil {
+		return err
+	}
+	num := len(feed.Items)
+	if len(feed.Items) > int(conf.Maxpost) {
+		num = int(conf.Maxpost)
+	}
+	for j := 0; j < num; j++ {
 		p.ID = 0
 		p.FID = f.ID
-		p.Title = i.Title
-		p.Content = i.Content
-		p.Description = i.Description
-		p.Url = i.Link
-		p.Published = i.Published
-		err := p.New()
-		if err != nil {
-			return err
-		}
+		p.Title = feed.Items[j].Title
+		p.Content = feed.Items[j].Content
+		p.Description = feed.Items[j].Description
+		p.Url = feed.Items[j].Link
+		p.Published = feed.Items[j].Published
+		p.New()
 	}
 	f.Feed = feed.String()
 	err = f.save()
@@ -104,7 +116,10 @@ func (f *Feed) Update() error {
 }
 
 func (f *Feed) save() error {
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -130,9 +145,12 @@ func (f *Feed) save() error {
 func (f *Feed) Post() []Post {
 	err := f.Get()
 	if err != nil {
-		return nil
+		return []Post{}
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return []Post{}
+	}
 	defer db.Close()
 	_ = db.AutoMigrate(&Post{})
 	Posts := []Post{}

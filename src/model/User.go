@@ -34,7 +34,10 @@ func (u *User) GetSub() error {
 	if u.ID == 0 {
 		return errors.New("Incomplete parameters")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	_ = db.AutoMigrate(&subscribe{})
 	subscribes := []subscribe{}
@@ -61,7 +64,10 @@ func (u *User) AddSub(sub int64) error {
 			return errors.New("Already subscribed")
 		}
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -102,7 +108,10 @@ func (u *User) DelSub(sub int64) error {
 	if flag == 0 {
 		return errors.New("Feed does not exist")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -123,7 +132,10 @@ func (u *User) DelSub(sub int64) error {
 }
 
 func (u *User) Get() error {
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	_ = db.AutoMigrate(&User{})
 	Users := []User{}
@@ -146,7 +158,10 @@ func (u *User) New() error {
 	if err == nil {
 		return errors.New("Email has been used")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -176,7 +191,10 @@ func (u *User) VerPassword(getPassword string) bool {
 }
 
 func (u *User) Save() error {
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -203,7 +221,10 @@ func (u *User) ReadPost() ([]int64, error) {
 	if u.ID == 0 {
 		return nil, errors.New("Incomplete parameters")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return []int64{}, err
+	}
 	defer db.Close()
 	_ = db.AutoMigrate(&Read{})
 	reads := []Read{}
@@ -224,7 +245,10 @@ func (u *User) Read(pid int64) error {
 	if err != nil {
 		return err
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -254,7 +278,10 @@ func (u *User) UnRead(pid int64) error {
 	if err != nil {
 		return err
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {

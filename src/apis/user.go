@@ -14,14 +14,17 @@ import (
 
 func Login(c echo2.Context) error {
 	conf := model.Config{}
-	conf.Load()
+	err := conf.Load()
+	if err != nil {
+		return err
+	}
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
 	user := u
-	err := u.Get()
+	err = u.Get()
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "account or password incorrect"})
 	}
@@ -32,8 +35,8 @@ func Login(c echo2.Context) error {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "account or password incorrect"})
 	}
 	claims := &model.JwtCustomClaims{
-		u.Mail,
-		jwt.StandardClaims{
+		Mail: u.Mail,
+		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 168).Unix(),
 		},
 	}
@@ -47,7 +50,10 @@ func Login(c echo2.Context) error {
 
 func Register(c echo2.Context) error {
 	conf := model.Config{}
-	conf.Load()
+	err := conf.Load()
+	if err != nil {
+		return err
+	}
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
@@ -57,7 +63,7 @@ func Register(c echo2.Context) error {
 	has := md5.Sum(data)
 	md5Password := fmt.Sprintf("%x", has)
 	u.Password = md5Password
-	err := u.New()
+	err = u.New()
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
@@ -101,7 +107,10 @@ func FeedAsRead(c echo2.Context) error {
 	}
 	p := f.Post()
 	for _, i := range p {
-		u.Read(i.ID)
+		err := u.Read(i.ID)
+		if err != nil {
+			return err
+		}
 	}
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
@@ -172,7 +181,10 @@ func UnSubscribeFeed(c echo2.Context) error {
 	f.ID = fid
 	p := f.Post()
 	for _, i := range p {
-		u.UnRead(i.ID)
+		err := u.UnRead(i.ID)
+		if err != nil {
+			return err
+		}
 	}
 	err = u.DelSub(fid)
 	if err != nil {
@@ -198,7 +210,8 @@ func GetPostList(c echo2.Context) error {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
 	}
 	sub := u.Sub()
-	rep := []respPostList{}
+	var rep []respPostList
+
 	for _, i := range sub {
 		f := model.Feed{ID: i.FID}
 		post := f.Post()
@@ -251,11 +264,14 @@ func GetFeedList(c echo2.Context) error {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
 	}
 	sub := u.Sub()
-	data := []respFeed{}
+	var data []respFeed
 	for _, i := range sub {
 		f := model.Feed{}
 		f.ID = i.FID
-		f.Get()
+		err := f.Get()
+		if err != nil {
+			return err
+		}
 		data = append(data, respFeed{ID: i.FID, Title: f.Title, Url: f.Url})
 	}
 	bdata, _ := json.Marshal(data)

@@ -16,7 +16,10 @@ func (p *Post) Get() error {
 	if p.FID == 0 && p.ID == 0 {
 		return errors.New("Incomplete parameters")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	_ = db.AutoMigrate(&Post{})
 	Posts := []Post{}
@@ -42,7 +45,10 @@ func (p *Post) New() error {
 	if err == nil {
 		return errors.New("Post already exist")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {
@@ -68,7 +74,10 @@ func (p *Post) Delete() error {
 	if p.ID == 0 {
 		return errors.New("Incomplete parameters")
 	}
-	db := Initdatabase()
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
 	defer db.Close()
 	tx := db.Begin()
 	defer func() {

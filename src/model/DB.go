@@ -6,10 +6,12 @@ import (
 	"log"
 )
 
-func Initdatabase() *gorm.DB {
+func Initdatabase() (*gorm.DB, error) {
 	conf := Config{}
-	conf.Load()
-	var err error
+	err := conf.Load()
+	if err != nil {
+		return nil, err
+	}
 	var db *gorm.DB
 	db, err = gorm.Open("sqlite3", conf.Database)
 	if conf.Debug {
@@ -19,7 +21,7 @@ func Initdatabase() *gorm.DB {
 	}
 	if err != nil {
 		log.Println(err.Error())
-		return nil
+		return nil, err
 	}
-	return db
+	return db, nil
 }
