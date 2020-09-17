@@ -16,7 +16,10 @@ func Spider() {
 }
 
 func getFeed() []model.Feed {
-	db := model.Initdatabase()
+	db, err := model.Initdatabase()
+	if err != nil {
+		return []model.Feed{}
+	}
 	_ = db.AutoMigrate(&model.Feed{})
 	feeds := []model.Feed{}
 	db.Find(&feeds)
