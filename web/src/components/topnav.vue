@@ -34,8 +34,8 @@
     <a v-if="this.$store.state.isLogin" @click="logout" style="float: right;margin: 5px"
     >{{ $t("nav.exit") }}</a
     >
-    <span style="float: right;margin: 5px"> | </span>
-    <a v-if="this.$store.state.isLogin" @click="changeLg()" style="float: right;margin: 5px"
+    <span v-if="this.$store.state.isLogin" style="float: right;margin: 5px"> | </span>
+    <a @click="changeLg()" style="float: right;margin: 5px"
     >中 / EN</a
     >
   </div>
