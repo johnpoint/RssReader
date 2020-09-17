@@ -96,18 +96,14 @@ func (f *Feed) Update() error {
 	if err != nil {
 		return err
 	}
-	num := len(feed.Items)
-	if len(feed.Items) > int(conf.Maxpost) {
-		num = int(conf.Maxpost)
-	}
-	for j := 0; j < num; j++ {
+	for _, i := range feed.Items {
 		p.ID = 0
 		p.FID = f.ID
-		p.Title = feed.Items[j].Title
-		p.Content = feed.Items[j].Content
-		p.Description = feed.Items[j].Description
-		p.Url = feed.Items[j].Link
-		p.Published = feed.Items[j].Published
+		p.Title = i.Title
+		p.Content = i.Content
+		p.Description = i.Description
+		p.Url = i.Link
+		p.Published = i.Published
 		p.New()
 	}
 	f.Feed = feed.String()

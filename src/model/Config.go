@@ -15,7 +15,6 @@ type Config struct {
 	TLS          bool
 	CERTPath     string
 	KEYPath      string
-	Maxpost      int64
 }
 
 func (c *Config) Load() error {
