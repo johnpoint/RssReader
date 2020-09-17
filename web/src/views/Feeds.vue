@@ -1,13 +1,13 @@
 <template>
   <div class="home">
     <label class="lefttab" v-if="!addRss" style="width: 100%"
-           @click="addRss = true">添加订阅源</label>
-    <label class="lefttab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">取消</label>
+           @click="addRss = true">{{ $t("feed.add") }}</label>
+    <label class="lefttab" v-else style="margin: 5px;width: 100%;text-align: left" @click="addRss = false">{{ $t("feed.cancel") }}</label>
     <div v-if="addRss" id="postinfo">
       <label>
         <input v-model="searchrss"/>
       </label>
-      <b-button style="margin: 5px" @click="searchRss()">搜索</b-button>
+      <b-button style="margin: 5px" @click="searchRss()">{{ $t("feed.search") }}</b-button>
       <br>
       <span>{{ info }}</span>
       <div v-for="(i, index) in search" :key="index" style="text-align: left">
@@ -21,7 +21,7 @@
         </div>
       </div>
     </div>
-    <label style="margin: 5px;text-align: left;width: 100%;font-size: larger">已订阅</label>
+    <label style="margin: 5px;text-align: left;width: 100%;font-size: larger">{{ $t("feed.subscribed") }}</label>
     <div id="list">
       <b-container v-for="(i, index) in rss" :key="index" style="text-align: left">
         <b-row class="post">

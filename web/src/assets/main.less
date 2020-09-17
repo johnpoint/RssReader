@@ -12,6 +12,20 @@
   font-family: 'nei';
   src: url('https://cdn.lvcshu.info/font/nei.woff');
 }
+:root {
+  --text: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #fff;
+  }
+}
+
+body {
+  color: var(--color-text);
+}
+
 
 .title {
   font-family: 'nei', 'schnyder', Times, serif;

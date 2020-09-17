@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "Home",
+    "posts": "Posts",
+    "feeds": "Feeds",
+    "login": "Login",
+    "about": "About",
+    "exit": "Exit",
+    "settings": "Settings",
+    "register": "Register"
+  },
+  "post": {
+    "update": "Update",
+    "totop": "To Top",
+    "unread": "Unread",
+    "read": "Read",
+    "all": "All",
+    "back": "Back",
+    "setread": "Set As Read",
+    "setunread": "Set As Unread",
+    "link": "Link"
+  },
+  "feed": {
+    "search": "Search",
+    "add": "Add",
+    "cancel": "Cancel",
+    "subscribed": "Subscribed"
+  },
+  "footer": {
+    "text": "Powered by Vue and Go"
+  },
+  "about": {
+    "text": "Easy-to-use online RSS reader"
+  }
+}

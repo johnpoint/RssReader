@@ -2,8 +2,8 @@
   <div class="home">
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
-      <label @click="getPostList()" class="tab lefttab">更新</label>
-      <label @click="top=0;backTop()" class="tab righttab">回到顶部</label>
+      <label @click="getPostList()" class="tab lefttab">{{ $t("post.update") }}</label>
+      <label @click="top=0;backTop()" class="tab righttab">{{ $t("post.totop") }}</label>
       <label
           class="tab"
           :class="showUnread && !showRead ? 'select' : ''"
@@ -11,8 +11,8 @@
           showUnread = true;
           showRead = false;
         "
-      >未读
-        <a pill variant="success" style="color: #42b983">{{ unreadpost }}</a>
+      >{{ $t("post.unread") }}
+        <a style="color: #42b983">{{ unreadpost }}</a>
       </label
       >
       |
@@ -23,7 +23,7 @@
           showUnread = true;
           showRead = true;
         "
-      >全部</label
+      >{{ $t("post.all") }}</label
       >
       |
       <label
@@ -33,7 +33,7 @@
           showUnread = false;
           showRead = true;
         "
-      >已读</label
+      >{{ $t("post.read") }}</label
       >
 
       <div v-for="(i, index) in post" :key="index" style="text-align: left">
@@ -91,15 +91,15 @@
         <label
             class="tab lefttab"
             @click="showPost = false;info='';backTop();"
-        >返回</label
+        >{{ $t("post.back") }}</label
         >
-        <label @click="change(nowPost)" class="tab righttab" v-if="post[nowPost].read">标为未读</label>
-        <label @click="change(nowPost)" class="tab righttab" v-if="!post[nowPost].read">标为已读</label>
+        <label @click="change(nowPost)" class="tab righttab" v-if="post[nowPost].read">{{ $t("post.setunread") }}</label>
+        <label @click="change(nowPost)" class="tab righttab" v-if="!post[nowPost].read">{{ $t("post.setread") }}</label>
       </div>
 
       <h1 class="title">{{ post[nowPost].title }}</h1>
       <span>{{ post[nowPost].source }}</span> |
-      <a :href="post[nowPost].link">Link</a>
+      <a :href="post[nowPost].link">{{ $t("post.link") }}</a>
       <b-card id="postcontext" style="margin: 15px" v-html="postContent">
       </b-card>
     </div>

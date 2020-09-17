@@ -1,36 +1,42 @@
 <template>
   <div id="topnav" align="left">
-    <router-link v-if="this.$store.state.isLogin" to="/posts">文章
+    <router-link v-if="this.$store.state.isLogin" to="/posts">{{ $t("nav.posts") }}
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
-    <router-link v-if="!this.$store.state.isLogin" to="/">主页
+    <router-link v-if="!this.$store.state.isLogin" to="/">{{ $t("nav.home") }}
     </router-link
     >
     <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="!this.$store.state.isLogin" to="/login"
-    >登录
+    >{{ $t("nav.login") }}
     </router-link
     >
     <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="!this.$store.state.isLogin" to="/register"
-    >注册
+    >{{ $t("nav.register") }}
     </router-link
     >
     <span v-if="!this.$store.state.isLogin"> | </span>
     <router-link v-if="this.$store.state.isLogin" to="/feeds"
-    >订阅源
+    >{{ $t("nav.feeds") }}
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
     <router-link v-if="this.$store.state.isLogin" to="/settings"
-    >设置
+    >{{ $t("nav.settings") }}
     </router-link
     >
     <span v-if="this.$store.state.isLogin"> | </span>
-    <router-link to="/about">关于</router-link>
-    <a v-if="this.$store.state.isLogin" @click="logout" style="float: right"
-    >退出</a
+    <router-link to="/about">{{ $t("nav.about") }}</router-link>
+
+
+    <a v-if="this.$store.state.isLogin" @click="logout" style="float: right;margin: 5px"
+    >{{ $t("nav.exit") }}</a
+    >
+    <span style="float: right;margin: 5px"> | </span>
+    <a v-if="this.$store.state.isLogin" @click="changeLg()" style="float: right;margin: 5px"
+    >中 / EN</a
     >
   </div>
 </template
@@ -44,6 +50,13 @@ export default {
   data() {
     return {};
   },
+  beforeMount() {
+    if (window.localStorage.getItem("i18n") === undefined) {
+      window.localStorage.setItem("i18n", "zh");
+    } else {
+      this.$i18n.locale = window.localStorage.getItem("i18n")
+    }
+  },
   methods: {
     logout: function () {
       this.$store.commit("setStatus", false);
@@ -52,6 +65,10 @@ export default {
       window.localStorage.removeItem("posts")
       window.localStorage.removeItem("feeds")
       router.push("/");
+    },
+    changeLg: function () {
+      this.$i18n.locale = (this.$i18n.locale === "zh" ? "en" : "zh")
+      window.localStorage.setItem("i18n", this.$i18n.locale)
     }
   }
 };

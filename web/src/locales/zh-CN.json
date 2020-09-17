@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "主页",
+    "posts": "文章",
+    "feeds": "订阅源",
+    "login": "登录",
+    "about": "关于",
+    "exit": "退出",
+    "settings": "设置",
+    "register": "注册"
+  },
+  "post": {
+    "update": "更新",
+    "totop": "回到顶部",
+    "unread": "未读",
+    "read": "已读",
+    "all": "全部",
+    "back": "返回",
+    "setread": "标为已读",
+    "setunread": "标为未读",
+    "link": "原文链接"
+  },
+  "feed": {
+    "search": "搜索",
+    "add": "添加订阅源",
+    "cancel": "取消",
+    "subscribed": "已订阅"
+  },
+  "footer": {
+    "text": "由 Vue 与 Go 强劲驱动"
+  },
+  "about": {
+    "text": "简单易用的在线 RSS 阅读器"
+  }
+}

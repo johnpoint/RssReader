@@ -1,6 +1,6 @@
 <template>
   <div class="foot">
-    <p style="text-align: center;margin: 25px;"><a href="https://github.com/johnpoint/RssReader">RssReader</a> - 由 Vue 与 Go 强劲驱动</p>
+    <p style="text-align: center;margin: 25px;"><a href="https://github.com/johnpoint/RssReader">RssReader</a> - {{ $t("footer.text") }}</p>
   </div>
 </template>
 

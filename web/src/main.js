@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import i18n from "@/locales"
 import App from "./App.vue";
 import router from "./router";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
@@ -57,6 +58,7 @@ const store = new Vuex.Store({
 
 new Vue({
   router,
+  i18n,
   store: store,
   render: h => h(App)
 }).$mount("#app");
