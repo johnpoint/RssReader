@@ -86,7 +86,7 @@
         </div>
       </div>
     </div>
-    <label class="tab">{{ $t("post.prev") }}</label> | <label class="tab">{{ $t("post.next") }}</label>
+    <!--<label class="tab">{{ $t("post.prev") }}</label> | <label class="tab">{{ $t("post.next") }}</label>-->
     <div v-if="showPost" id="postinfo">
       <div>
         <label
