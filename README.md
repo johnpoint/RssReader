@@ -2,4 +2,9 @@
 
 vue + go 的在线 rss 阅读器
 
-version 0.0.13
+<hr>
+version 0.13
+
+## 部署
+
+// TODO
