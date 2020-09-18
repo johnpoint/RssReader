@@ -1,4 +1,8 @@
 {
+  "auth": {
+    "login": "Login",
+    "register": "Register"
+  },
   "nav": {
     "home": "Home",
     "posts": "Posts",

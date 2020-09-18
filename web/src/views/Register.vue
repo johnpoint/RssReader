@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Register</h1>
+    <h1>{{ $t("auth.register") }}</h1>
     <span>{{ info }}</span>
     <b-card style="width: 350px;margin: auto">
       <b-form v-if="show">
@@ -35,9 +35,9 @@
           ></b-form-input>
         </b-form-group>
 
-        <b-button @click="onSubmit" variant="primary">Submit</b-button>
+        <b-button @click="onSubmit" variant="primary">OK</b-button>
         <router-link style="font-size: small;float: right" to="/login"
-        >login
+        >{{ $t("auth.login") }}
         </router-link
         >
       </b-form>

@@ -1,12 +1,12 @@
 <template>
   <div>
-    <h1>Login</h1>
+    <h1>{{ $t("auth.login") }}</h1>
     <span>{{ info }}</span>
     <b-card style="width: 350px;margin: auto">
       <b-form v-if="show">
         <b-form-group
             id="input-group-1"
-            label="Email:"
+            label="Email"
             label-align="left"
             label-for="input-1"
             description="We'll never share your email with anyone else."
@@ -35,9 +35,9 @@
           ></b-form-input>
         </b-form-group>
 
-        <b-button @click="onSubmit" variant="primary">Submit</b-button>
+        <b-button @click="onSubmit" variant="primary">OK</b-button>
         <router-link style="font-size: small;float: right" to="/register"
-        >register
+        >{{ $t("auth.register") }}
         </router-link
         >
       </b-form>

@@ -1,4 +1,8 @@
 {
+  "auth": {
+    "login": "登录",
+    "register": "注册"
+  },
   "nav": {
     "home": "主页",
     "posts": "文章",
@@ -18,7 +22,9 @@
     "back": "返回",
     "setread": "标为已读",
     "setunread": "标为未读",
-    "link": "原文链接"
+    "link": "原文链接",
+    "prev": "上一页",
+    "next": "下一页"
   },
   "feed": {
     "search": "搜索",

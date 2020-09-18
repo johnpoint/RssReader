@@ -86,6 +86,7 @@
         </div>
       </div>
     </div>
+    <label class="tab">{{ $t("post.prev") }}</label> | <label class="tab">{{ $t("post.next") }}</label>
     <div v-if="showPost" id="postinfo">
       <div>
         <label
@@ -93,7 +94,9 @@
             @click="showPost = false;info='';backTop();"
         >{{ $t("post.back") }}</label
         >
-        <label @click="change(nowPost)" class="tab righttab" v-if="post[nowPost].read">{{ $t("post.setunread") }}</label>
+        <label @click="change(nowPost)" class="tab righttab" v-if="post[nowPost].read">{{
+            $t("post.setunread")
+          }}</label>
         <label @click="change(nowPost)" class="tab righttab" v-if="!post[nowPost].read">{{ $t("post.setread") }}</label>
       </div>
 
@@ -281,6 +284,7 @@ export default {
   data() {
     return {
       post: [],
+      postListPage: 0,
       showPost: false,
       showRead: false,
       showUnread: true,

@@ -1,42 +1,43 @@
 <template>
-  <div id="topnav" align="left">
-    <router-link v-if="this.$store.state.isLogin" to="/posts">{{ $t("nav.posts") }}
+  <div id="topnav">
+    <router-link style="margin: 5px" v-if="this.$store.state.isLogin" to="/posts">{{ $t("nav.posts") }}
     </router-link
     >
-    <span v-if="this.$store.state.isLogin"> | </span>
-    <router-link v-if="!this.$store.state.isLogin" to="/">{{ $t("nav.home") }}
+    <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
+    <router-link style="margin: 5px" v-if="!this.$store.state.isLogin" to="/">{{ $t("nav.home") }}
     </router-link
     >
-    <span v-if="!this.$store.state.isLogin"> | </span>
-    <router-link v-if="!this.$store.state.isLogin" to="/login"
+    <span style="margin: 5px" v-if="!this.$store.state.isLogin"> | </span>
+    <router-link style="margin: 5px" v-if="!this.$store.state.isLogin" to="/login"
     >{{ $t("nav.login") }}
     </router-link
     >
-    <span v-if="!this.$store.state.isLogin"> | </span>
-    <router-link v-if="!this.$store.state.isLogin" to="/register"
+    <span style="margin: 5px" v-if="!this.$store.state.isLogin"> | </span>
+    <router-link style="margin: 5px" v-if="!this.$store.state.isLogin" to="/register"
     >{{ $t("nav.register") }}
     </router-link
     >
-    <span v-if="!this.$store.state.isLogin"> | </span>
-    <router-link v-if="this.$store.state.isLogin" to="/feeds"
+    <span style="margin: 5px" v-if="!this.$store.state.isLogin"> | </span>
+    <router-link style="margin: 5px" v-if="this.$store.state.isLogin" to="/feeds"
     >{{ $t("nav.feeds") }}
     </router-link
     >
-    <span v-if="this.$store.state.isLogin"> | </span>
-    <router-link v-if="this.$store.state.isLogin" to="/settings"
+    <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
+    <router-link style="margin: 5px" v-if="this.$store.state.isLogin" to="/settings"
     >{{ $t("nav.settings") }}
     </router-link
     >
-    <span v-if="this.$store.state.isLogin"> | </span>
-    <router-link to="/about">{{ $t("nav.about") }}</router-link>
+    <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
+    <router-link style="margin: 5px" to="/about">{{ $t("nav.about") }}</router-link>
 
 
-    <a v-if="this.$store.state.isLogin" @click="logout" style="float: right;margin: 5px"
-    >{{ $t("nav.exit") }}</a
+    <span style="margin: 5px"> | </span>
+    <a @click="changeLg()" style="margin: 5px"
+    >{{ $i18n.locale == "zh" ? "EN" : "中文" }}</a
     >
-    <span v-if="this.$store.state.isLogin" style="float: right;margin: 5px"> | </span>
-    <a @click="changeLg()" style="float: right;margin: 5px"
-    >中 / EN</a
+    <span v-if="this.$store.state.isLogin" style="margin: 5px"> | </span>
+    <a v-if="this.$store.state.isLogin" @click="logout" style="margin: 5px"
+    >{{ $t("nav.exit") }}</a
     >
   </div>
 </template
