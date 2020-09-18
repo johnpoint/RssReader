@@ -87,6 +87,10 @@ func (u *User) AddSub(sub int64) error {
 		return err
 	}
 	tx.Commit()
+	f := Feed{ID: sub}
+	_ = f.Get()
+	f.Num = f.Num + 1
+	_ = f.save()
 	return nil
 }
 
@@ -128,6 +132,18 @@ func (u *User) DelSub(sub int64) error {
 		return err
 	}
 	tx.Commit()
+	f := Feed{ID: sub}
+	_ = f.Get()
+	p := f.Post()
+	for _, i := range p {
+		_ = u.UnRead(i.ID)
+	}
+	f.Num = f.Num - 1
+	if f.Num <= 0 {
+		_ = f.Detele()
+	} else {
+		_ = f.save()
+	}
 	return nil
 }
 

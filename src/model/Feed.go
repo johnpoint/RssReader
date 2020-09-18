@@ -11,6 +11,7 @@ type Feed struct {
 	Title string
 	Url   string
 	Feed  string
+	Num   int64
 }
 
 func (f *Feed) Get() error {
@@ -130,7 +131,7 @@ func (f *Feed) save() error {
 	}
 	_ = tx.AutoMigrate(&Feed{})
 	where := Feed{ID: f.ID}
-	if err := tx.Model(&where).Updates(f).Error; err != nil {
+	if err := tx.Model(&where).Where(where).Update(f).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -139,10 +140,6 @@ func (f *Feed) save() error {
 }
 
 func (f *Feed) Post() []Post {
-	err := f.Get()
-	if err != nil {
-		return []Post{}
-	}
 	db, err := Initdatabase()
 	if err != nil {
 		return []Post{}
@@ -152,4 +149,41 @@ func (f *Feed) Post() []Post {
 	Posts := []Post{}
 	db.Where(Post{FID: f.ID}).Find(&Posts)
 	return Posts
+}
+
+func (f *Feed) Detele() error {
+	if f.Num != -1 {
+		return errors.New("Feed can not be delete")
+	}
+	if f.ID == 0 {
+		return errors.New("ID can not be empty")
+	}
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		fmt.Println(tx.Error)
+		return tx.Error
+	}
+	_ = tx.AutoMigrate(&Feed{})
+	where := Feed{ID: f.ID}
+	if err := tx.Where(where).Delete(f).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	p := f.Post()
+	for _, i := range p {
+		_ = i.Delete()
+	}
+	return nil
 }
