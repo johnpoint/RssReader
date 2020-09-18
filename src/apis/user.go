@@ -211,9 +211,9 @@ func GetPostList(c echo2.Context) error {
 	}
 	sub := u.Sub()
 	var rep []respPostList
-
 	for _, i := range sub {
 		f := model.Feed{ID: i.FID}
+		f.Get()
 		post := f.Post()
 		for _, j := range post {
 			item := respPostList{
