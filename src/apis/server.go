@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-const VERSION = "0.14"
+const VERSION = "0.15"
 
 func Accessible(c echo2.Context) error {
 	return c.HTML(http.StatusOK, "<h1>RssReader api</h1>(´・ω・`) 运行正常<br><hr>Ver: "+VERSION)

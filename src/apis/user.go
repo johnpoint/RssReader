@@ -131,9 +131,10 @@ func PostAsUnRead(c echo2.Context) error {
 }
 
 type respFeed struct {
-	ID    int64
-	Title string
-	Url   string
+	ID         int64
+	Title      string
+	Url        string
+	Subscriber int64
 }
 
 func SearchFeed(c echo2.Context) error {
@@ -147,10 +148,10 @@ func SearchFeed(c echo2.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 		}
-		t, _ := json.Marshal(respFeed{ID: f.ID, Title: f.Title, Url: f.Url})
+		t, _ := json.Marshal(respFeed{ID: f.ID, Title: f.Title, Url: f.Url, Subscriber: f.Num})
 		return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(t)})
 	}
-	t, _ := json.Marshal(respFeed{ID: f.ID, Title: f.Title, Url: f.Url})
+	t, _ := json.Marshal(respFeed{ID: f.ID, Title: f.Title, Url: f.Url, Subscriber: f.Num})
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(t)})
 }
 

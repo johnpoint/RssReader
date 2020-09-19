@@ -33,6 +33,7 @@ func (f *Feed) Get() error {
 	f.Title = Feeds[0].Title
 	f.Url = Feeds[0].Url
 	f.Feed = Feeds[0].Feed
+	f.Num = Feeds[0].Num
 	return nil
 }
 
