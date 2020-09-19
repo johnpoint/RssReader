@@ -29,9 +29,7 @@
     >
     <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
     <router-link style="margin: 5px" to="/about">{{ $t("nav.about") }}</router-link>
-
-
-    <span style="margin: 5px"> | </span>
+    <br>
     <a @click="changeLg()" style="margin: 5px"
     >{{ $i18n.locale == "zh" ? "EN" : "中文" }}</a
     >

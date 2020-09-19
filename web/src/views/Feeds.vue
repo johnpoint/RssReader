@@ -3,6 +3,9 @@
     <label class="tab lefttab" v-if="!addRss"
            @click="addRss = true">{{ $t("feed.add") }}</label>
     <label class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false">{{ $t("feed.cancel") }}</label>
+    <label class="tab righttab"
+    >{{ $t("feed.import") }}</label>
+
     <div v-if="addRss" id="postinfo">
       <label>
         <input v-model="searchrss"/>
@@ -10,16 +13,21 @@
       <b-button style="margin: 5px" @click="searchRss()">{{ $t("feed.search") }}</b-button>
       <br>
       <span>{{ info }}</span>
-      <div v-for="(i, index) in search" :key="index" style="text-align: left">
-        <div class="post">
-          <a>{{ i.title }} </a>
-          <b-icon-plus-square
-              style="margin: 5px;float: right"
-              @click="addSub(index)"
-          ></b-icon-plus-square>
-          <span style="font-size: small;margin: 5px;float: right"> {{ i.link }}</span>
-        </div>
-      </div>
+      <b-container>
+        <b-row>
+          <b-col v-for="(i, index) in search" :key="index" style="text-align: left">
+            <b-card>
+              <p>{{ i.title }}</p><span style="font-size: small">{{ i.link }}</span>
+              <hr>
+              <span>{{ $t("feed.subscriber") }} {{ i.subscriber }}</span>
+              <b-icon-plus-square
+                  style="margin: 5px;float: right"
+                  @click="addSub(index)"
+              ></b-icon-plus-square>
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-container>
     </div>
     <label style="margin: 5px;font-size: larger">{{ $t("feed.subscribed") }}</label>
     <div id="list">
@@ -163,7 +171,8 @@ export default {
           this.search.push({
             id: data.ID,
             title: data.Title,
-            link: data.Url
+            link: data.Url,
+            subscriber: data.Subscriber
           })
           this.showLoading = false
         } else {

@@ -28,7 +28,9 @@
     "search": "Search",
     "add": "Add",
     "cancel": "Cancel",
-    "subscribed": "Subscribed"
+    "subscribed": "Subscribed",
+    "subscriber": "Subscriber",
+    "import": "import / export"
   },
   "footer": {
     "text": "Powered by Vue and Go"

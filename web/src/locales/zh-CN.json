@@ -30,7 +30,9 @@
     "search": "搜索",
     "add": "添加订阅源",
     "cancel": "取消",
-    "subscribed": "已订阅"
+    "subscribed": "已订阅",
+    "subscriber": "订阅数",
+    "import": "导入 / 导出"
   },
   "footer": {
     "text": "由 Vue 与 Go 强劲驱动"
