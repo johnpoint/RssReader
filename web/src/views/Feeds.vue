@@ -29,8 +29,8 @@
         </b-row>
       </b-container>
     </div>
-    <label style="margin: 5px;font-size: larger">{{ $t("feed.subscribed") }}</label>
-    <div id="list">
+    <label v-if="!addRss" style="margin: 5px;font-size: larger">{{ $t("feed.subscribed") }}</label>
+    <div v-if="!addRss" id="list">
       <b-container v-for="(i, index) in rss" :key="index" style="text-align: left">
         <b-row class="post">
           <b-col><a
@@ -136,6 +136,8 @@ export default {
         if (response.data.code === 200) {
           this.getRss()
           this.addRss = false
+          this.searchrss = ""
+          this.search = []
         } else {
           this.info = response.data.message
         }
