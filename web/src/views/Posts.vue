@@ -2,56 +2,64 @@
   <div class="home">
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
-      <label @click="getPostList()" class="tab lefttab">{{ $t("post.update") }}</label>
-      <label @click="top=0;backTop()" class="tab righttab">{{ $t("post.totop") }}</label>
+      <label @click="getPostList()" class="tab lefttab">{{
+        $t("post.update")
+      }}</label>
       <label
-          class="tab"
-          :class="showUnread && !showRead ? 'select' : ''"
-          @click="
+        @click="
+          top = 0;
+          backTop();
+        "
+        class="tab righttab"
+        >{{ $t("post.totop") }}</label
+      >
+      <label
+        class="tab"
+        :class="showUnread && !showRead ? 'select' : ''"
+        @click="
           showUnread = true;
           showRead = false;
         "
-      >{{ $t("post.unread") }}
+        >{{ $t("post.unread") }}
         <a style="color: #42b983">{{ unreadpost }}</a>
-      </label
-      >
+      </label>
       |
       <label
-          class="tab"
-          :class="showRead && showUnread ? 'select' : ''"
-          @click="
+        class="tab"
+        :class="showRead && showUnread ? 'select' : ''"
+        @click="
           showUnread = true;
           showRead = true;
         "
-      >{{ $t("post.all") }}</label
+        >{{ $t("post.all") }}</label
       >
       |
       <label
-          class="tab"
-          :class="showRead && !showUnread ? 'select' : ''"
-          @click="
+        class="tab"
+        :class="showRead && !showUnread ? 'select' : ''"
+        @click="
           showUnread = false;
           showRead = true;
         "
-      >{{ $t("post.read") }}</label
+        >{{ $t("post.read") }}</label
       >
 
       <div v-for="(i, index) in post" :key="index" style="text-align: left">
         <div
-            class="post"
-            :class="i.read ? 'read' : 'unread'"
-            v-if="
+          class="post"
+          :class="i.read ? 'read' : 'unread'"
+          v-if="
             (showRead && i.read && !showUnread) ||
-              (showUnread && !i.read) ||
-              (showRead && showUnread)
+            (showUnread && !i.read) ||
+            (showRead && showUnread)
           "
         >
-          <a style="font-size: small;color: rgba(0,0,0,.7)"
-          >{{ i.source }} >>
+          <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
+            >{{ i.source }} >>
           </a>
           <a
-              style="font-size: large"
-              @click="
+            style="font-size: large"
+            @click="
               setTop();
               nowPost = index;
               showPost = true;
@@ -59,28 +67,24 @@
               getPostContent(index);
               change(index);
             "
-              class="postlisttitle"
-          >{{ i.title }}
+            class="postlisttitle"
+            >{{ i.title }}
           </a>
           <b-icon-check-square-fill
-              class="readbtn"
-              style="float: right;margin: 5px;color: #42b983"
-              v-if="i.read"
-              @click="change(index)"
-          >read
-          </b-icon-check-square-fill
-          >
+            class="readbtn"
+            style="float: right; margin: 5px; color: #42b983"
+            v-if="i.read"
+            @click="change(index)"
+            >read
+          </b-icon-check-square-fill>
           <b-icon-check-square
-              class="readbtn"
-              style="float: right;margin: 5px;"
-              v-else
-              @click="change(index)"
-          >unread
-          </b-icon-check-square
-          >
-          <a
-              class="postdate"
-          >
+            class="readbtn"
+            style="float: right; margin: 5px"
+            v-else
+            @click="change(index)"
+            >unread
+          </b-icon-check-square>
+          <a class="postdate">
             {{ i.date }}
           </a>
         </div>
@@ -90,14 +94,26 @@
     <div v-if="showPost" id="postinfo">
       <div>
         <label
-            class="tab lefttab"
-            @click="showPost = false;info='';backTop();"
-        >{{ $t("post.back") }}</label
+          class="tab lefttab"
+          @click="
+            showPost = false;
+            info = '';
+            backTop();
+          "
+          >{{ $t("post.back") }}</label
         >
-        <label @click="change(nowPost)" class="tab righttab" v-if="post[nowPost].read">{{
-            $t("post.setunread")
-          }}</label>
-        <label @click="change(nowPost)" class="tab righttab" v-if="!post[nowPost].read">{{ $t("post.setread") }}</label>
+        <label
+          @click="change(nowPost)"
+          class="tab righttab"
+          v-if="post[nowPost].read"
+          >{{ $t("post.setunread") }}</label
+        >
+        <label
+          @click="change(nowPost)"
+          class="tab righttab"
+          v-if="!post[nowPost].read"
+          >{{ $t("post.setread") }}</label
+        >
       </div>
 
       <h1 class="title">{{ post[nowPost].title }}</h1>
@@ -113,7 +129,7 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
 import config from "@/config";
 import router from "@/router";
 
@@ -122,164 +138,205 @@ export default {
   components: {},
   beforeMount() {
     if (window.localStorage.getItem("login") === "true") {
-      this.$store.commit("setStatus", true)
-      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
+      this.$store.commit("setStatus", true);
+      this.$store.commit("setjwt", window.localStorage.getItem("jwt"));
     }
     if (!this.$store.state.isLogin) {
       router.push("/login");
     }
-    this.getData()
-    this.getPostList()
+    this.getData();
+    this.getPostList();
   },
   methods: {
     setTop: function () {
-      this.top = document.documentElement.scrollTop
-      document.documentElement.scrollTop = 0
+      this.top = document.documentElement.scrollTop;
+      document.documentElement.scrollTop = 0;
     },
     backTop: function () {
-      document.documentElement.scrollTop = this.top
+      document.documentElement.scrollTop = this.top;
     },
     change: function (index) {
       this.post[index].read ? this.unread(index) : this.read(index);
       this.post[index].read = !this.post[index].read;
     },
     read: function (index) {
-      this.info = ""
-      axios.post(config.apiAddress + "/api/post/read/" + this.post[index].id, null, {
-        headers: {
-          'Authorization': "Bearer " + this.$store.state.jwt,
-          'Accept': 'application/json'
-        }
-      }).then(response => {
-        if (response.data.code !== 200) {
-          this.info = response.data.message
-          return
-        }
-      }, err => {
-        console.log(err)
-        this.info = "请检查网络连接";
-      })
+      this.info = "";
+      axios
+        .post(
+          config.apiAddress + "/api/post/read/" + this.post[index].id,
+          null,
+          {
+            headers: {
+              Authorization: "Bearer " + this.$store.state.jwt,
+              Accept: "application/json",
+            },
+          }
+        )
+        .then(
+          (response) => {
+            if (response.data.code !== 200) {
+              this.info = response.data.message;
+              this.unreadpost--;
+              return;
+            }
+          },
+          (err) => {
+            console.log(err);
+            this.info = "请检查网络连接";
+          }
+        );
     },
     unread: function (index) {
-      this.info = ""
-      axios.post(config.apiAddress + "/api/post/unread/" + this.post[index].id, null, {
-        headers: {
-          'Authorization': "Bearer " + this.$store.state.jwt,
-          'Accept': 'application/json'
-        }
-      }).then(response => {
-        if (response.data.code !== 200) {
-          this.info = response.data.message
-          return
-        }
-      }, err => {
-        console.log(err)
-        this.info = "请检查网络连接";
-      })
+      this.info = "";
+      axios
+        .post(
+          config.apiAddress + "/api/post/unread/" + this.post[index].id,
+          null,
+          {
+            headers: {
+              Authorization: "Bearer " + this.$store.state.jwt,
+              Accept: "application/json",
+            },
+          }
+        )
+        .then(
+          (response) => {
+            if (response.data.code !== 200) {
+              this.info = response.data.message;
+              this.unreadpost++;
+              return;
+            }
+          },
+          (err) => {
+            console.log(err);
+            this.info = "请检查网络连接";
+          }
+        );
     },
     saveData: function () {
-      window.localStorage.setItem("posts", JSON.stringify(this.post))
+      window.localStorage.setItem("posts", JSON.stringify(this.post));
     },
     getData: function () {
       if (window.localStorage.getItem("posts") === null) {
-        window.localStorage.setItem("posts", JSON.stringify([]))
+        window.localStorage.setItem("posts", JSON.stringify([]));
       }
-      this.post = JSON.parse(window.localStorage.getItem("posts"))
+      this.post = JSON.parse(window.localStorage.getItem("posts"));
     },
     getReadList: function () {
-      this.unreadpost = 0
-      this.info = ""
-      this.showLoading = true
-      axios.get(config.apiAddress + "/api/post/read", {
-        headers: {
-          'Authorization': "Bearer " + this.$store.state.jwt,
-          'Accept': 'application/json'
-        }
-      }).then(response => {
-        if (response.data.code !== 200) {
-          this.info = response.data.message
-          return
-        }
-        this.readPost = JSON.parse(response.data.message)
-        this.post = []
-        this.postList.forEach(item => {
-          this.post.push({
-            id: item.ID,
-            title: item.Title,
-            source: item.FeedTitle,
-            date: new Date(item.Time).format("yyyy-MM-dd hh:mm:ss"),
-            link: item.Link,
-            read: this.readPost.indexOf(item.ID) !== -1
-          })
-          this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null
+      this.unreadpost = 0;
+      this.info = "";
+      this.showLoading = true;
+      axios
+        .get(config.apiAddress + "/api/post/read", {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.jwt,
+            Accept: "application/json",
+          },
         })
-        this.post.sort(function (a, b) {
-          var x = a.date.toLowerCase();
-          var y = b.date.toLowerCase();
-          if (x < y) {
-            return 1;
+        .then(
+          (response) => {
+            if (response.data.code !== 200) {
+              this.info = response.data.message;
+              return;
+            }
+            this.readPost = JSON.parse(response.data.message);
+            this.post = [];
+            this.unreadpost = 0;
+            this.postList.forEach((item) => {
+              this.post.push({
+                id: item.ID,
+                title: item.Title,
+                source: item.FeedTitle,
+                date: new Date(item.Time).format("yyyy-MM-dd hh:mm:ss"),
+                link: item.Link,
+                read: this.readPost.indexOf(item.ID) !== -1,
+              });
+              this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null;
+            });
+            this.post.sort(function (a, b) {
+              var x = a.date.toLowerCase();
+              var y = b.date.toLowerCase();
+              if (x < y) {
+                return 1;
+              }
+              if (x > y) {
+                return -1;
+              }
+              return 0;
+            });
+            this.saveData();
+            this.showLoading = false;
+          },
+          (err) => {
+            console.log(err);
+            this.info = "请检查网络连接";
           }
-          if (x > y) {
-            return -1;
-          }
-          return 0;
-        })
-        this.saveData()
-        this.showLoading = false
-      }, err => {
-        console.log(err)
-        this.info = "请检查网络连接";
-      })
+        );
     },
     getPostList: function () {
-      this.info = ""
-      axios.get(config.apiAddress + "/api/post/", {
-        headers: {
-          'Authorization': "Bearer " + this.$store.state.jwt,
-          'Accept': 'application/json'
-        }
-      }).then(response => {
-        if (response.data.code !== 200) {
-          this.info = response.data.message
-          return
-        }
-        this.postList = JSON.parse(response.data.message)
-        this.getReadList()
-      }, err => {
-        console.log(err)
-        this.info = "请检查网络连接";
-      })
+      this.info = "";
+      axios
+        .get(config.apiAddress + "/api/post/", {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.jwt,
+            Accept: "application/json",
+          },
+        })
+        .then(
+          (response) => {
+            if (response.data.code !== 200) {
+              this.info = response.data.message;
+              return;
+            }
+            this.postList = JSON.parse(response.data.message);
+            this.getReadList();
+          },
+          (err) => {
+            console.log(err);
+            this.info = "请检查网络连接";
+          }
+        );
     },
     clearInfo: function () {
-      this.info = ""
+      this.info = "";
     },
     getPostContent: function (index) {
       if (window.localStorage.getItem("post" + this.post[index].id) !== null) {
-        this.postContent = window.localStorage.getItem("post" + this.post[index].id)
-        this.showLoading = false
-        return
+        this.postContent = window.localStorage.getItem(
+          "post" + this.post[index].id
+        );
+        this.showLoading = false;
+        return;
       }
-      this.info = ""
-      this.showLoading = true
-      this.postContent = ""
-      axios.get(config.apiAddress + "/api/post/content/" + this.post[index].id, {
-        headers: {
-          'Authorization': "Bearer " + this.$store.state.jwt,
-          'Accept': 'application/json'
-        }
-      }).then(response => {
-        if (response.data.code !== 200) {
-          this.info = response.data.message
-          return
-        }
-        this.postContent = response.data.message
-        window.localStorage.setItem("post" + this.post[index].id, response.data.message)
-        this.showLoading = false
-      }, err => {
-        console.log(err)
-        this.info = "请检查网络连接";
-      })
-    }
+      this.info = "";
+      this.showLoading = true;
+      this.postContent = "";
+      axios
+        .get(config.apiAddress + "/api/post/content/" + this.post[index].id, {
+          headers: {
+            Authorization: "Bearer " + this.$store.state.jwt,
+            Accept: "application/json",
+          },
+        })
+        .then(
+          (response) => {
+            if (response.data.code !== 200) {
+              this.info = response.data.message;
+              return;
+            }
+            this.postContent = response.data.message;
+            window.localStorage.setItem(
+              "post" + this.post[index].id,
+              response.data.message
+            );
+            this.showLoading = false;
+          },
+          (err) => {
+            console.log(err);
+            this.info = "请检查网络连接";
+          }
+        );
+    },
   },
   data() {
     return {
@@ -294,9 +351,9 @@ export default {
       postContent: "",
       showLoading: true,
       info: "",
-      unreadpost: 0,
-      top: 0
+      unreadpost: "-",
+      top: 0,
     };
-  }
+  },
 };
 </script>
