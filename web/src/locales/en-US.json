@@ -22,7 +22,8 @@
     "back": "Back",
     "setread": "Set As Read",
     "setunread": "Set As Unread",
-    "link": "Link"
+    "link": "Link",
+    "empty":"Empty"
   },
   "feed": {
     "search": "Search",

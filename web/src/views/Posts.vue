@@ -1,6 +1,8 @@
 <template>
   <div class="home">
     <span>{{ info }}</span>
+    <span v-if="unreadpost == 0" id="nopost">{{ $t("post.empty") }}</span>
+    <span v-else id="nopost" style="color:rgba(0,0,0,0)">1</span>
     <div v-if="!showPost" id="list">
       <label @click="getPostList()" class="tab lefttab">{{
         $t("post.update")
@@ -176,9 +178,9 @@ export default {
           (response) => {
             if (response.data.code !== 200) {
               this.info = response.data.message;
-              this.unreadpost--;
               return;
             }
+            this.unreadpost -= 1;
           },
           (err) => {
             console.log(err);
@@ -203,9 +205,10 @@ export default {
           (response) => {
             if (response.data.code !== 200) {
               this.info = response.data.message;
-              this.unreadpost++;
               return;
             }
+            console.log(this.unreadpost);
+            this.unreadpost += 1;
           },
           (err) => {
             console.log(err);
@@ -247,7 +250,9 @@ export default {
                 id: item.ID,
                 title: item.Title,
                 source: item.FeedTitle,
-                date: new Date(parseInt(item.Time)*1000).format("yyyy-MM-dd hh:mm:ss"),
+                date: new Date(parseInt(item.Time) * 1000).format(
+                  "yyyy-MM-dd hh:mm:ss"
+                ),
                 link: item.Link,
                 read: this.readPost.indexOf(item.ID) !== -1,
               });

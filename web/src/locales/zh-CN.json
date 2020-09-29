@@ -24,7 +24,8 @@
     "setunread": "标为未读",
     "link": "原文链接",
     "prev": "上一页",
-    "next": "下一页"
+    "next": "下一页",
+    "empty":"无未读文章"
   },
   "feed": {
     "search": "搜索",
