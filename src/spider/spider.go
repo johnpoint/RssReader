@@ -1,7 +1,6 @@
 package spider
 
 import (
-	"fmt"
 	"log"
 	"rssreader/src/model"
 	"time"
@@ -9,7 +8,7 @@ import (
 
 func Spider() {
 	for true {
-		fmt.Println("Update Feed")
+		log.Println("Spider Running!")
 		getUpdate()
 		time.Sleep(time.Minute * 15)
 	}
@@ -28,11 +27,13 @@ func getFeed() []model.Feed {
 
 func getUpdate() {
 	feeds := getFeed()
+	log.Println("=== Update Start ===")
 	for _, i := range feeds {
 		err := i.Update()
+		log.Println(i.Title)
 		if err != nil {
-			log.Println(i.Title)
 			log.Print(err.Error())
 		}
 	}
+	log.Println("=== Update Finish ===")
 }

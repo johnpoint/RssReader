@@ -4,12 +4,14 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	echo2 "github.com/labstack/echo/v4"
 	"net/http"
 	"rssreader/src/model"
+	"sort"
 	"strconv"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	echo2 "github.com/labstack/echo/v4"
 )
 
 func Login(c echo2.Context) error {
@@ -228,6 +230,12 @@ func GetPostList(c echo2.Context) error {
 			rep = append(rep, item)
 		}
 	}
+	sort.Slice(rep, func(i, j int) bool {
+		if rep[i].Time > rep[j].Time {
+			return true
+		}
+		return false
+	})
 	data, _ := json.Marshal(rep)
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(data)})
 }

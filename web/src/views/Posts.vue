@@ -247,22 +247,11 @@ export default {
                 id: item.ID,
                 title: item.Title,
                 source: item.FeedTitle,
-                date: new Date(item.Time).format("yyyy-MM-dd hh:mm:ss"),
+                date: new Date(parseInt(item.Time)*1000).format("yyyy-MM-dd hh:mm:ss"),
                 link: item.Link,
                 read: this.readPost.indexOf(item.ID) !== -1,
               });
               this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null;
-            });
-            this.post.sort(function (a, b) {
-              var x = a.date.toLowerCase();
-              var y = b.date.toLowerCase();
-              if (x < y) {
-                return 1;
-              }
-              if (x > y) {
-                return -1;
-              }
-              return 0;
             });
             this.saveData();
             this.showLoading = false;

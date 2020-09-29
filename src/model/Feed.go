@@ -3,6 +3,9 @@ package model
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/mmcdole/gofeed"
 )
 
@@ -92,21 +95,59 @@ func (f *Feed) Update() error {
 	if err != nil {
 		return err
 	}
-	p := Post{}
 	conf := Config{}
 	err = conf.Load()
 	if err != nil {
 		return err
 	}
 	for _, i := range feed.Items {
-		p.ID = 0
+		p := Post{}
+		p.Url = i.Link
+		errGet := p.Get()
+		/*
+				RFC822      = "02 Jan 06 15:04 MST"
+			    RFC822Z     = "02 Jan 06 15:04 -0700" // RFC822 with numeric zone
+			    RFC850      = "Monday, 02-Jan-06 15:04:05 MST"
+			    RFC1123     = "Mon, 02 Jan 2006 15:04:05 MST"
+			    RFC1123Z    = "Mon, 02 Jan 2006 15:04:05 -0700" // RFC1123 with numeric zone
+			    RFC3339     = "2006-01-02T15:04:05Z07:00"
+			    RFC3339Nano = "2006-01-02T15:04:05.999999999Z07:00"
+		*/
+		t, err := time.Parse(time.RFC822, i.Published)
+		if err != nil {
+			err = nil
+			t, err = time.Parse(time.RFC822Z, i.Published)
+		}
+		if err != nil {
+			err = nil
+			t, err = time.Parse(time.RFC850, i.Published)
+		}
+		if err != nil {
+			err = nil
+			t, err = time.Parse(time.RFC1123, i.Published)
+		}
+		if err != nil {
+			err = nil
+			t, err = time.Parse(time.RFC1123Z, i.Published)
+		}
+		if err != nil {
+			err = nil
+			t, err = time.Parse(time.RFC3339, i.Published)
+		}
+		if err != nil {
+			err = nil
+			t, err = time.Parse(time.RFC3339Nano, i.Published)
+		}
 		p.FID = f.ID
 		p.Title = i.Title
 		p.Content = i.Content
 		p.Description = i.Description
-		p.Url = i.Link
-		p.Published = i.Published
-		p.New()
+		p.Published = strconv.FormatInt(t.Unix(), 10)
+		if errGet != nil && errGet.Error() == "Not Found" {
+			p.New()
+		} else {
+			p.save()
+		}
 	}
 	f.Feed = feed.String()
 	err = f.save()

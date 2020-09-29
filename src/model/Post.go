@@ -1,6 +1,8 @@
 package model
 
-import "errors"
+import (
+	"errors"
+)
 
 type Post struct {
 	ID          int64 `gorm:"AUTO_INCREMENT"`
@@ -13,7 +15,7 @@ type Post struct {
 }
 
 func (p *Post) Get() error {
-	if p.FID == 0 && p.ID == 0 {
+	if p.FID == 0 && p.ID == 0 && p.Url == "" {
 		return errors.New("Incomplete parameters")
 	}
 	db, err := Initdatabase()
@@ -90,6 +92,32 @@ func (p *Post) Delete() error {
 	}
 	_ = tx.AutoMigrate(&Post{})
 	if err := tx.Where(Post{ID: p.ID}).Delete(Post{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
+func (p *Post) save() error {
+	db, err := Initdatabase()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		return tx.Error
+	}
+	_ = tx.AutoMigrate(&Post{})
+	where := Post{ID: p.ID}
+	if err := tx.Model(&where).Where(where).Update(p).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
