@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <span>{{ info }}</span>
-    <span v-if="unreadpost == 0" id="nopost">{{ $t("post.empty") }}</span>
-    <span v-else id="nopost" style="color:rgba(0,0,0,0)">1</span>
+    <span v-if="unreadpost == 0 && !showLoading" id="empty">{{ $t("post.empty") }}</span>
+    <span v-else id="empty" style="color:rgba(0,0,0,0)">1</span>
     <div v-if="!showPost" id="list">
       <label @click="getPostList()" class="tab lefttab">{{
         $t("post.update")
