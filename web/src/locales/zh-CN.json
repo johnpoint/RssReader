@@ -15,7 +15,9 @@
   "setting": {
     "CachedArticle": "已缓存文章",
     "exit": "退出",
-    "clearCache":"清除缓存"
+    "clearCache":"清除缓存",
+    "info": "统计",
+    "hide": "隐藏统计"
   },
   "post": {
     "update": "更新",

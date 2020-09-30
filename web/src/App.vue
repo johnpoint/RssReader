@@ -3,18 +3,15 @@
     <topnav />
     <div id="main">
       <router-view />
-      <footers />
     </div>
   </div>
 </template>
 
 <script>
 import topnav from "@/components/topnav";
-import footers from "@/components/Footer"
 export default {
   components: {
-    topnav,
-    footers
+    topnav
   },
   data() {
     return {};

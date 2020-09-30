@@ -15,7 +15,9 @@
   "setting": {
     "CachedArticle": "Cached article",
     "exit": "Exit",
-    "clearCache":"Clear cache"
+    "clearCache":"Clear cache",
+    "info": "Analysis",
+    "hide": "Hide Analysis"
   },
   "post": {
     "update": "Update",

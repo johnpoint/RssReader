@@ -3,63 +3,63 @@
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
       <label @click="getPostList()" class="tab lefttab">{{
-        $t("post.update")
-      }}</label>
+          $t("post.update")
+        }}</label>
       <label
-        @click="
+          @click="
           top = 0;
           backTop();
         "
-        class="tab righttab"
-        >{{ $t("post.totop") }}</label
+          class="tab righttab"
+      >{{ $t("post.totop") }}</label
       >
       <label
-        class="tab"
-        :class="showUnread && !showRead ? 'select' : ''"
-        @click="
+          class="tab"
+          :class="showUnread && !showRead ? 'select' : ''"
+          @click="
           showUnread = true;
           showRead = false;
         "
-        >{{ $t("post.unread") }}
+      >{{ $t("post.unread") }}
         <a style="color: #42b983">{{ unreadpost }}</a>
       </label>
       |
       <label
-        class="tab"
-        :class="showRead && showUnread ? 'select' : ''"
-        @click="
+          class="tab"
+          :class="showRead && showUnread ? 'select' : ''"
+          @click="
           showUnread = true;
           showRead = true;
         "
-        >{{ $t("post.all") }}</label
+      >{{ $t("post.all") }}</label
       >
       |
       <label
-        class="tab"
-        :class="showRead && !showUnread ? 'select' : ''"
-        @click="
+          class="tab"
+          :class="showRead && !showUnread ? 'select' : ''"
+          @click="
           showUnread = false;
           showRead = true;
         "
-        >{{ $t("post.read") }}</label
+      >{{ $t("post.read") }}</label
       >
 
       <div v-for="(i, index) in post" :key="index" style="text-align: left">
         <div
-          class="post"
-          :class="i.read ? 'read' : 'unread'"
-          v-if="
+            class="post"
+            :class="i.read ? 'read' : 'unread'"
+            v-if="
             (showRead && i.read && !showUnread) ||
             (showUnread && !i.read) ||
             (showRead && showUnread)
           "
         >
           <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
-            >{{ i.source }} >>
+          >{{ i.source }} >>
           </a>
           <a
-            style="font-size: large"
-            @click="
+              style="font-size: large"
+              @click="
               setTop();
               nowPost = index;
               showPost = true;
@@ -67,22 +67,22 @@
               getPostContent(index);
               change(index);
             "
-            class="postlisttitle"
-            >{{ i.title }}
+              class="postlisttitle"
+          >{{ i.title }}
           </a>
           <b-icon-check-square-fill
-            class="readbtn"
-            style="float: right; margin: 5px; color: #42b983"
-            v-if="i.read"
-            @click="change(index)"
-            >read
+              class="readbtn"
+              style="float: right; margin: 5px; color: #42b983"
+              v-if="i.read"
+              @click="change(index)"
+          >read
           </b-icon-check-square-fill>
           <b-icon-check-square
-            class="readbtn"
-            style="float: right; margin: 5px"
-            v-else
-            @click="change(index)"
-            >unread
+              class="readbtn"
+              style="float: right; margin: 5px"
+              v-else
+              @click="change(index)"
+          >unread
           </b-icon-check-square>
           <a class="postdate">
             {{ i.date }}
@@ -94,25 +94,25 @@
     <div v-if="showPost" id="postinfo">
       <div>
         <label
-          class="tab lefttab"
-          @click="
+            class="tab lefttab"
+            @click="
             showPost = false;
             info = '';
             backTop();
           "
-          >{{ $t("post.back") }}</label
+        >{{ $t("post.back") }}</label
         >
         <label
-          @click="change(nowPost)"
-          class="tab righttab"
-          v-if="post[nowPost].read"
-          >{{ $t("post.setunread") }}</label
+            @click="change(nowPost)"
+            class="tab righttab"
+            v-if="post[nowPost].read"
+        >{{ $t("post.setunread") }}</label
         >
         <label
-          @click="change(nowPost)"
-          class="tab righttab"
-          v-if="!post[nowPost].read"
-          >{{ $t("post.setread") }}</label
+            @click="change(nowPost)"
+            class="tab righttab"
+            v-if="!post[nowPost].read"
+        >{{ $t("post.setread") }}</label
         >
       </div>
 
@@ -164,57 +164,57 @@ export default {
     read: function (index) {
       this.info = "";
       axios
-        .post(
-          config.apiAddress + "/api/post/read/" + this.post[index].id,
-          null,
-          {
-            headers: {
-              Authorization: "Bearer " + this.$store.state.jwt,
-              Accept: "application/json",
-            },
-          }
-        )
-        .then(
-          (response) => {
-            if (response.data.code !== 200) {
-              this.info = response.data.message;
-              return;
-            }
-            this.unreadpost -= 1;
-          },
-          (err) => {
-            console.log(err);
-            this.info = "请检查网络连接";
-          }
-        );
+          .post(
+              config.apiAddress + "/api/post/read/" + this.post[index].id,
+              null,
+              {
+                headers: {
+                  Authorization: "Bearer " + this.$store.state.jwt,
+                  Accept: "application/json",
+                },
+              }
+          )
+          .then(
+              (response) => {
+                if (response.data.code !== 200) {
+                  this.info = response.data.message;
+                  return;
+                }
+                this.unreadpost -= 1;
+              },
+              (err) => {
+                console.log(err);
+                this.info = "请检查网络连接";
+              }
+          );
     },
     unread: function (index) {
       this.info = "";
       axios
-        .post(
-          config.apiAddress + "/api/post/unread/" + this.post[index].id,
-          null,
-          {
-            headers: {
-              Authorization: "Bearer " + this.$store.state.jwt,
-              Accept: "application/json",
-            },
-          }
-        )
-        .then(
-          (response) => {
-            if (response.data.code !== 200) {
-              this.info = response.data.message;
-              return;
-            }
-            console.log(this.unreadpost);
-            this.unreadpost += 1;
-          },
-          (err) => {
-            console.log(err);
-            this.info = "请检查网络连接";
-          }
-        );
+          .post(
+              config.apiAddress + "/api/post/unread/" + this.post[index].id,
+              null,
+              {
+                headers: {
+                  Authorization: "Bearer " + this.$store.state.jwt,
+                  Accept: "application/json",
+                },
+              }
+          )
+          .then(
+              (response) => {
+                if (response.data.code !== 200) {
+                  this.info = response.data.message;
+                  return;
+                }
+                console.log(this.unreadpost);
+                this.unreadpost += 1;
+              },
+              (err) => {
+                console.log(err);
+                this.info = "请检查网络连接";
+              }
+          );
     },
     saveData: function () {
       window.localStorage.setItem("posts", JSON.stringify(this.post));
@@ -230,75 +230,75 @@ export default {
       this.info = "";
       this.showLoading = true;
       axios
-        .get(config.apiAddress + "/api/post/read", {
-          headers: {
-            Authorization: "Bearer " + this.$store.state.jwt,
-            Accept: "application/json",
-          },
-        })
-        .then(
-          (response) => {
-            if (response.data.code !== 200) {
-              this.info = response.data.message;
-              return;
-            }
-            this.readPost = JSON.parse(response.data.message);
-            this.post = [];
-            this.unreadpost = 0;
-            this.postList.forEach((item) => {
-              this.post.push({
-                id: item.ID,
-                title: item.Title,
-                source: item.FeedTitle,
-                date: new Date(parseInt(item.Time) * 1000).format(
-                  "yyyy-MM-dd hh:mm:ss"
-                ),
-                link: item.Link,
-                read: this.readPost.indexOf(item.ID) !== -1,
-              });
-              this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null;
-            });
-            this.saveData();
-            this.showLoading = false;
-          },
-          (err) => {
-            console.log(err);
-            this.info = "请检查网络连接";
-          }
-        );
+          .get(config.apiAddress + "/api/post/read", {
+            headers: {
+              Authorization: "Bearer " + this.$store.state.jwt,
+              Accept: "application/json",
+            },
+          })
+          .then(
+              (response) => {
+                if (response.data.code !== 200) {
+                  this.info = response.data.message;
+                  return;
+                }
+                this.readPost = JSON.parse(response.data.message);
+                this.post = [];
+                this.unreadpost = 0;
+                this.postList.forEach((item) => {
+                  this.post.push({
+                    id: item.ID,
+                    title: item.Title,
+                    source: item.FeedTitle,
+                    date: new Date(parseInt(item.Time) * 1000).format(
+                        "yyyy-MM-dd hh:mm:ss"
+                    ),
+                    link: item.Link,
+                    read: this.readPost.indexOf(item.ID) !== -1,
+                  });
+                  this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null;
+                });
+                this.saveData();
+                this.showLoading = false;
+              },
+              (err) => {
+                console.log(err);
+                this.info = "请检查网络连接";
+              }
+          );
     },
     getPostList: function () {
       this.info = "";
       axios
-        .get(config.apiAddress + "/api/post/", {
-          headers: {
-            Authorization: "Bearer " + this.$store.state.jwt,
-            Accept: "application/json",
-          },
-        })
-        .then(
-          (response) => {
-            if (response.data.code !== 200) {
-              this.info = response.data.message;
-              return;
-            }
-            this.postList = JSON.parse(response.data.message);
-            this.getReadList();
-          },
-          (err) => {
-            console.log(err);
-            this.info = "请检查网络连接";
-          }
-        );
+          .get(config.apiAddress + "/api/post/", {
+            headers: {
+              Authorization: "Bearer " + this.$store.state.jwt,
+              Accept: "application/json",
+            },
+          })
+          .then(
+              (response) => {
+                if (response.data.code !== 200) {
+                  this.info = response.data.message;
+                  return;
+                }
+                this.postList = JSON.parse(response.data.message);
+                this.getReadList();
+              },
+              (err) => {
+                console.log(err);
+                this.info = "请检查网络连接";
+              }
+          );
     },
     clearInfo: function () {
       this.info = "";
     },
     getPostContent: function (index) {
       if (window.localStorage.getItem("post" + this.post[index].id) !== null) {
-        this.postContent = window.localStorage.getItem(
-          "post" + this.post[index].id
-        );
+        this.postContent = JSON.parse(window.localStorage.getItem(
+            "post" + this.post[index].id
+        )).content;
         this.showLoading = false;
         return;
       }
@@ -306,30 +306,33 @@ export default {
       this.showLoading = true;
       this.postContent = "";
       axios
-        .get(config.apiAddress + "/api/post/content/" + this.post[index].id, {
-          headers: {
-            Authorization: "Bearer " + this.$store.state.jwt,
-            Accept: "application/json",
-          },
-        })
-        .then(
-          (response) => {
-            if (response.data.code !== 200) {
-              this.info = response.data.message;
-              return;
-            }
-            this.postContent = response.data.message;
-            window.localStorage.setItem(
-              "post" + this.post[index].id,
-              response.data.message
-            );
-            this.showLoading = false;
-          },
-          (err) => {
-            console.log(err);
-            this.info = "请检查网络连接";
-          }
-        );
+          .get(config.apiAddress + "/api/post/content/" + this.post[index].id, {
+            headers: {
+              Authorization: "Bearer " + this.$store.state.jwt,
+              Accept: "application/json",
+            },
+          })
+          .then(
+              (response) => {
+                if (response.data.code !== 200) {
+                  this.info = response.data.message;
+                  return;
+                }
+                this.postContent = response.data.message;
+                let newPostCache = {"title": this.post[this.nowPost].title}
+                newPostCache.content = this.postContent
+                newPostCache.source = this.post[this.nowPost].source
+                window.localStorage.setItem(
+                    "post" + this.post[index].id,
+                    JSON.stringify(newPostCache)
+                );
+                this.showLoading = false;
+              },
+              (err) => {
+                console.log(err);
+                this.info = "请检查网络连接";
+              }
+          );
     },
   },
   data() {
