@@ -12,10 +12,11 @@
                 @click="showAnalysis();Analysis=!Analysis">
         {{ Analysis ? $t("setting.hide") : $t("setting.info") }}
       </b-button>
-      <div v-if="Analysis">
-        <div v-for="i in cacheAnalysis" :key="i">
-          {{ i.source }}: {{ i.num }}
-        </div>
+    </div>
+    <div v-if="Analysis" class="setting">
+      <span># {{ $t("setting.info") }}</span>
+      <div v-for="i in cacheAnalysis" :key="i">
+        {{ i.source }}: {{ i.num }}
       </div>
     </div>
     <hr>
