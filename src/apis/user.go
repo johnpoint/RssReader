@@ -236,6 +236,9 @@ func GetPostList(c echo2.Context) error {
 		}
 		return false
 	})
+	if len(rep) >= 50 {
+		rep = rep[:50]
+	}
 	data, _ := json.Marshal(rep)
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(data)})
 }
