@@ -2,7 +2,7 @@
   <div class="home">
     <img alt="RssReader" src="../assets/rss.png" />
     <HelloWorld msg="Welcome to RssReader" />
-    <a href="https://github.com/johnpoint/RssReader">Github</a>
+    <p style="text-align: center;margin: 25px;"><a href="https://github.com/johnpoint/RssReader">RssReader</a> - {{ $t("footer.text") }}</p>
   </div>
 </template>
 
