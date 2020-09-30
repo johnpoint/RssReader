@@ -16,7 +16,7 @@
     <div v-if="Analysis" class="setting">
       <span># {{ $t("setting.info") }}</span>
       <div v-for="i in cacheAnalysis" :key="i">
-        {{ i.source }}: {{ i.num }}
+        <a style="color: #42b983">{{ i.num }}</a> {{ i.source }}
       </div>
     </div>
     <hr>
@@ -69,17 +69,17 @@ export default {
   methods: {
     showAnalysis: function () {
       this.cache = []
-      let keys = Object.keys(this.cache)
       for (let i of this.localpost) {
+        let keys = Object.keys(this.cache)
         let csource = JSON.parse(window.localStorage.getItem(i)).source
-        if (keys.indexOf(csource) == -1) {
+        if (keys.indexOf(csource) === -1) {
           this.cache[csource] = 1
         } else {
           this.cache[csource] += 1
         }
       }
       this.cacheAnalysis = []
-      keys = Object.keys(this.cache)
+      let keys = Object.keys(this.cache)
       for (let i of keys) {
         this.cacheAnalysis.push(
             {
@@ -88,6 +88,9 @@ export default {
             }
         )
       }
+      this.cacheAnalysis.sort(function (a, b) {
+        return -(a["num"] - b["num"]);
+      });
     },
     changeLg: function () {
       this.$i18n.locale = (this.$i18n.locale === "zh" ? "en" : "zh")
