@@ -1,5 +1,5 @@
 <template>
-  <div class="pagetip">
+  <div>
     <h3>404 | Not Found</h3>
     <h5>3 秒后跳转回主页</h5>
   </div>
