@@ -1,8 +1,6 @@
 <template>
   <div class="home">
     <span>{{ info }}</span>
-    <span v-if="unreadpost == 0 && !showLoading" id="empty">{{ $t("post.empty") }}</span>
-    <span v-else id="empty" style="color:rgba(0,0,0,0)">1</span>
     <div v-if="!showPost" id="list">
       <label @click="getPostList()" class="tab lefttab">{{
         $t("post.update")
@@ -127,6 +125,8 @@
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
+    <span v-if="unreadpost == 0 && !showLoading" class="empty">{{ $t("post.empty") }}</span>
+    <span v-else class="empty" style="color:rgba(0,0,0,0)">1</span>
   </div>
 </template>
 

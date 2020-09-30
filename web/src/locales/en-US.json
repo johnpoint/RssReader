@@ -9,9 +9,13 @@
     "feeds": "Feeds",
     "login": "Login",
     "about": "About",
-    "exit": "Exit",
     "settings": "Settings",
     "register": "Register"
+  },
+  "setting": {
+    "CachedArticle": "Cached article",
+    "exit": "Exit",
+    "clearCache":"Clear cache"
   },
   "post": {
     "update": "Update",

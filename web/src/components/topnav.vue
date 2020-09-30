@@ -29,20 +29,11 @@
     >
     <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
     <router-link style="margin: 5px" to="/about">{{ $t("nav.about") }}</router-link>
-    <br>
-    <a @click="changeLg()" style="margin: 5px"
-    >{{ $i18n.locale == "zh" ? "EN" : "中文" }}</a
-    >
-    <span v-if="this.$store.state.isLogin" style="margin: 5px"> | </span>
-    <a v-if="this.$store.state.isLogin" @click="logout" style="margin: 5px"
-    >{{ $t("nav.exit") }}</a
-    >
   </div>
 </template
 >
 
 <script>
-import router from "@/router";
 
 export default {
   name: "topnav",
@@ -54,20 +45,6 @@ export default {
       window.localStorage.setItem("i18n", "zh");
     } else {
       this.$i18n.locale = window.localStorage.getItem("i18n")
-    }
-  },
-  methods: {
-    logout: function () {
-      this.$store.commit("setStatus", false);
-      window.localStorage.removeItem("jwt")
-      window.localStorage.setItem("login", false)
-      window.localStorage.removeItem("posts")
-      window.localStorage.removeItem("feeds")
-      router.push("/");
-    },
-    changeLg: function () {
-      this.$i18n.locale = (this.$i18n.locale === "zh" ? "en" : "zh")
-      window.localStorage.setItem("i18n", this.$i18n.locale)
     }
   }
 };
