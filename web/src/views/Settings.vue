@@ -21,6 +21,16 @@
     </div>
     <hr>
     <div class="setting">
+      <span>{{ $t("setting.autodownload") }}</span>
+      <b-button size="sm" style="float: right;margin: 5px" @click="autodownload=!autodownload" :variant='autodownload?"outline-primary":"outline-danger"' >
+        {{ autodownload ? "ON" : "OFF" }}
+      </b-button>
+    </div>
+    <div v-if="autodownload" class="setting">
+      <span># {{ $t("setting.autodownloadset") }}</span>
+    </div>
+    <hr>
+    <div class="setting">
       <span>语言 / Language</span>
       <b-button size="sm" style="float: right;margin: 5px" @click="changeLg()" variant="outline-primary">{{
           $i18n.locale == "zh" ? "EN" : "中文"
@@ -53,7 +63,8 @@ export default {
       showLoading: false,
       cache: [],
       cacheAnalysis: [],
-      Analysis: false
+      Analysis: false,
+      autodownload: false
     };
   },
   beforeMount() {

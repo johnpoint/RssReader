@@ -43,6 +43,44 @@
         "
       >{{ $t("post.read") }}</label
       >
+      |
+      <label
+          class="tab"
+          :class="!showRead && !showUnread ? 'select' : ''"
+          @click="
+          showUnread = false;
+          showRead = false;
+        "
+      >{{ $t("post.cache") }}</label
+      >
+      <div v-for="(i,index) in savePostData" :key="i.title" style="text-align: left">
+        <div
+            class="post"
+            v-if="!showRead&&!showUnread"
+        >
+          <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
+          >{{ i.source }} >>
+          </a>
+          <a
+              style="font-size: large"
+              @click="
+              setTop();
+              showPost = true;
+              nowPost=index;
+              nowData=savePostData;
+              postContent=nowData[index].content
+            "
+              class="postlisttitle"
+          >{{ i.title }}
+          </a>
+          <b-icon-trash
+              class="readbtn"
+              style="float: right; margin: 5px;"
+              @click="removeCache(index)"
+          >saved
+          </b-icon-trash>
+        </div>
+      </div>
 
       <div v-for="(i, index) in post" :key="index" style="text-align: left">
         <div
@@ -54,6 +92,18 @@
             (showRead && showUnread)
           "
         >
+          <b-icon-box-seam
+              style="margin-right: 10px;"
+              v-if="savePost.indexOf(String(post[index].id))!==-1"
+              @click="save(index)"
+          >saved
+          </b-icon-box-seam>
+          <b-icon-download
+              style="margin-right: 10px;"
+              v-else
+              @click="save(index)"
+          >save
+          </b-icon-download>
           <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
           >{{ i.source }} >>
           </a>
@@ -64,6 +114,7 @@
               nowPost = index;
               showPost = true;
               i.read = false;
+              nowData=savePostData=post;
               getPostContent(index);
               change(index);
             "
@@ -116,16 +167,16 @@
         >
       </div>
 
-      <h1 class="title">{{ post[nowPost].title }}</h1>
-      <span>{{ post[nowPost].source }}</span> |
-      <a :href="post[nowPost].link">{{ $t("post.link") }}</a>
+      <h1 class="title">{{ nowData[nowPost].title }}</h1>
+      <span>{{ nowData[nowPost].source }}</span> |
+      <a :href="nowData[nowPost].link">{{ $t("post.link") }}</a>
       <b-card id="postcontext" style="margin: 15px" v-html="postContent">
       </b-card>
     </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
-    <span v-if="unreadpost == 0 && !showLoading" class="empty">{{ $t("post.empty") }}</span>
+    <span v-if="unreadpost === 0 && !showLoading" class="empty">{{ $t("post.empty") }}</span>
     <span v-else class="empty" style="color:rgba(0,0,0,0)">1</span>
   </div>
 </template>
@@ -148,14 +199,35 @@ export default {
     }
     this.getData();
     this.getPostList();
+    this.updateCache();
   },
   methods: {
+    removeCache: function (index) {
+      window.localStorage.removeItem("post" + this.savePostData[index].id);
+      this.updateCache();
+    },
+    updateCache: function () {
+      let cachePost = Object.keys(window.localStorage);
+      this.savePost = [];
+      this.savePostData = [];
+      for (let i of cachePost) {
+        if (i.indexOf("post") !== -1 && i.indexOf("posts") === -1) {
+          this.savePost.push(i.replace("post", ""))
+          let data = JSON.parse(window.localStorage.getItem(i))
+          data.id = parseInt(i.replace("post", ""))
+          this.savePostData.push(data)
+        }
+      }
+    },
     setTop: function () {
       this.top = document.documentElement.scrollTop;
       document.documentElement.scrollTop = 0;
     },
     backTop: function () {
       document.documentElement.scrollTop = this.top;
+    },
+    save: function (index) {
+      this.getPostContent(index);
     },
     change: function (index) {
       this.post[index].read ? this.unread(index) : this.read(index);
@@ -291,9 +363,6 @@ export default {
               }
           );
     },
-    clearInfo: function () {
-      this.info = "";
-    },
     getPostContent: function (index) {
       if (window.localStorage.getItem("post" + this.post[index].id) !== null) {
         this.postContent = JSON.parse(window.localStorage.getItem(
@@ -319,14 +388,15 @@ export default {
                   return;
                 }
                 this.postContent = response.data.message;
-                let newPostCache = {"title": this.post[this.nowPost].title}
+                let newPostCache = {"title": this.post[index].title}
                 newPostCache.content = this.postContent
-                newPostCache.source = this.post[this.nowPost].source
+                newPostCache.source = this.post[index].source
                 window.localStorage.setItem(
                     "post" + this.post[index].id,
                     JSON.stringify(newPostCache)
                 );
                 this.showLoading = false;
+                this.updateCache();
               },
               (err) => {
                 console.log(err);
@@ -350,6 +420,9 @@ export default {
       info: "",
       unreadpost: "-",
       top: 0,
+      savePost: [],
+      savePostData: [],
+      nowData: null,
     };
   },
 };

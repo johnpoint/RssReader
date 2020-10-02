@@ -17,7 +17,9 @@
     "exit": "Exit",
     "clearCache":"Clear cache",
     "info": "Analysis",
-    "hide": "Hide Analysis"
+    "hide": "Hide Analysis",
+    "autodownload": "Auto download",
+    "autodownloadset": "Download Settings"
   },
   "post": {
     "update": "Update",
@@ -29,7 +31,8 @@
     "setread": "Set As Read",
     "setunread": "Set As Unread",
     "link": "Link",
-    "empty":"Empty"
+    "empty":"Empty",
+    "cache": "Cached"
   },
   "feed": {
     "search": "Search",
