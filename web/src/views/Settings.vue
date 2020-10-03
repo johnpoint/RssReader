@@ -39,6 +39,16 @@
     </div>
     <hr>
     <div class="setting">
+      <span>{{ $t("setting.syncsetting") }}</span>
+      <div style="float: right;">
+        <span>{{ $t("setting.lastupdate") }} {{ new Date().format("yyyy-MM-dd") }}</span>
+        <b-button size="sm" style="margin: 5px" variant="outline-info">
+          {{ $t("setting.sync") }}
+        </b-button>
+      </div>
+    </div>
+    <hr>
+    <div class="setting">
       <b-button size="sm" style="float: right;margin: 5px" variant="outline-danger" @click="logout">
         {{ $t("setting.exit") }}
       </b-button>

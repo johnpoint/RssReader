@@ -156,13 +156,13 @@
         <label
             @click="change(nowPost)"
             class="tab righttab"
-            v-if="post[nowPost].read"
+            v-if="post[nowPost].read!==undefined&&post[nowPost].read"
         >{{ $t("post.setunread") }}</label
         >
         <label
             @click="change(nowPost)"
             class="tab righttab"
-            v-if="!post[nowPost].read"
+            v-if="post[nowPost].read!==undefined&&!post[nowPost].read"
         >{{ $t("post.setread") }}</label
         >
       </div>
@@ -391,6 +391,7 @@ export default {
                 let newPostCache = {"title": this.post[index].title}
                 newPostCache.content = this.postContent
                 newPostCache.source = this.post[index].source
+                newPostCache.link = this.post[index].link
                 window.localStorage.setItem(
                     "post" + this.post[index].id,
                     JSON.stringify(newPostCache)
