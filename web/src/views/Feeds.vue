@@ -1,10 +1,13 @@
 <template>
   <div class="home">
-    <label class="tab lefttab" v-if="!addRss"
-           @click="addRss = true">{{ $t("feed.add") }}</label>
-    <label class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false">{{ $t("feed.cancel") }}</label>
-    <label class="tab righttab"
-    >{{ $t("feed.import") }}</label>
+    <div class="tablist">
+      <label class="tab lefttab" v-if="!addRss"
+             @click="addRss = true">{{ $t("feed.add") }}</label>
+      <label class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false">{{ $t("feed.cancel") }}</label>
+      <label class="tab righttab"
+      >{{ $t("feed.import") }}</label>
+    </div>
+
 
     <div v-if="addRss" id="postinfo">
       <label>

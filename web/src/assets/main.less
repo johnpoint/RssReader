@@ -39,7 +39,7 @@ body {
 
 .home {
   min-height: 90%;
-  padding-bottom: 70px;
+  padding-bottom: 30px;
 }
 
 .foot {
@@ -84,7 +84,7 @@ div.lefttab > hr {
 }
 
 #main {
-  padding-top: 150px;
+  padding-top: 15px;
   height: 90%;
   width: 80%;
   margin: auto;
@@ -96,7 +96,6 @@ div.lefttab > hr {
 
 #topnav {
   height: 80px;
-  position: fixed;
   z-index: 999;
   background: white;
   width: 100%;
@@ -202,15 +201,6 @@ div.lefttab > hr {
     width: 100% !important;
   }
 
-  #topnav {
-    height: 110px;
-    position: fixed;
-    z-index: 999;
-    background: white;
-    width: 100%;
-    box-shadow: 0 0 7px 0px black;
-  }
-
   .postdate {
     font-size: small;
     position: absolute;
@@ -226,22 +216,39 @@ div.lefttab > hr {
     float: none !important;
   }
 
+  .tablist {
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    height: 50px;
+    box-shadow: 0 0 12px black;
+    z-index: 999;
+    background-color: white;
+  }
+
   .lefttab {
-    left: 0px !important;
-    top: 60px;
     margin: 0px !important;
-    padding: 10px;
+    position: initial !important;
+    padding: 15px;
     width: 50%;
     z-index: 9999 !important;
   }
 
   .righttab {
-    right: 0px !important;
-    top: 60px;
     margin: 0px !important;
-    padding: 10px;
+    padding: 15px;
+    position: initial !important;
     width: 50%;
     z-index: 9999 !important;
+  }
+
+  .tab:hover {
+    transition: 0.08s;
+    border-bottom: none;
+  }
+
+  .tab:active {
+    background-color: #42b983;
   }
 
   .readbtn {

@@ -2,17 +2,20 @@
   <div class="home">
     <span>{{ info }}</span>
     <div v-if="!showPost" id="list">
-      <label @click="getPostList()" class="tab lefttab">{{
-          $t("post.update")
-        }}</label>
-      <label
-          @click="
+      <div class="tablist">
+        <label @click="getPostList()" class="tab lefttab">{{
+            $t("post.update")
+          }}</label>
+        <label
+            @click="
           top = 0;
           backTop();
         "
-          class="tab righttab"
-      >{{ $t("post.totop") }}</label
-      >
+            class="tab righttab"
+        >{{ $t("post.totop") }}</label
+        >
+      </div>
+
       <label
           class="tab"
           :class="showUnread && !showRead ? 'select' : ''"
@@ -144,7 +147,7 @@
     </div>
     <!--<label class="tab">{{ $t("post.prev") }}</label> | <label class="tab">{{ $t("post.next") }}</label>-->
     <div v-if="showPost" id="postinfo">
-      <div>
+      <div class="tablist">
         <label
             class="tab lefttab"
             @click="
