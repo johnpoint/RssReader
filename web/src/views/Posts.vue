@@ -19,6 +19,7 @@
           @click="
           showUnread = true;
           showRead = false;
+          nowData=post;
         "
       >{{ $t("post.unread") }}
         <a style="color: #42b983">{{ unreadpost }}</a>
@@ -53,7 +54,7 @@
         "
       >{{ $t("post.readafter") }}</label
       >
-      <div v-for="(i,index) in savePostData" :key="i.title" style="text-align: left">
+      <div v-for="(i,index) in readafter" :key="i.title" style="text-align: left">
         <div
             class="post"
             v-if="!showRead&&!showUnread&&i.readafter==true"
@@ -125,7 +126,7 @@
               class="readbtn"
               style="float: right; margin: 5px; color: #42b983"
               v-if="i.read"
-              @click="change(index)"
+              @click="change(index);"
           >read
           </b-icon-check-square-fill>
           <b-icon-check-square
@@ -176,7 +177,9 @@
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
-    <span v-if="unreadpost === 0 && !showLoading" class="empty">{{ $t("post.empty") }}</span>
+    <span
+        v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length==0)) && !showLoading"
+        class="empty">{{ $t("post.empty") }}</span>
     <span v-else class="empty" style="color:rgba(0,0,0,0)">1</span>
   </div>
 </template>
@@ -200,6 +203,7 @@ export default {
     this.getData();
     this.getPostList();
     this.updateCache();
+    this.nowData = this.post;
   },
   methods: {
     removeCache: function (index) {
@@ -218,7 +222,13 @@ export default {
           this.savePostData.push(data)
         }
       }
-      this.savePostData.sort(function (m, n) {
+      this.readafter = []
+      for (let i of this.savePostData) {
+        if (i.readafter) {
+          this.readafter.push(i)
+        }
+      }
+      this.readafter.sort(function (m, n) {
         return -(m["time"] - n["time"])
       })
     },
@@ -235,8 +245,12 @@ export default {
     change: function (index) {
       this.nowData[index].read ? this.unread(index) : this.read(index);
       this.nowData[index].read = !this.nowData[index].read;
+      this.post = this.nowData
     },
     readAfter: function (index) {
+      if (this.nowData[index].read !== true) {
+        this.change(index)
+      }
       let now = JSON.parse(window.localStorage.getItem("post" + this.nowData[index].id))
       now.readafter = true
       now.time = Date.parse(new Date())
@@ -246,6 +260,9 @@ export default {
     },
     read: function (index) {
       this.info = "";
+      if (this.nowData[index].read === true) {
+        return
+      }
       axios
           .post(
               config.apiAddress + "/api/post/read/" + this.post[index].id,
@@ -290,7 +307,6 @@ export default {
                   this.info = response.data.message;
                   return;
                 }
-                console.log(this.unreadpost);
                 this.unreadpost += 1;
               },
               (err) => {
@@ -437,6 +453,8 @@ export default {
       savePost: [],
       savePostData: [],
       nowData: null,
+      readafter: [],
+      empty: false
     };
   },
 };

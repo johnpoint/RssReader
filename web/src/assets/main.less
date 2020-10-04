@@ -79,7 +79,12 @@ body {
   height: 100%;
 }
 
+div.lefttab > hr {
+  margin-top: 0rem !important;
+}
+
 #main {
+  padding-top: 150px;
   height: 90%;
   width: 80%;
   margin: auto;
@@ -90,7 +95,12 @@ body {
 }
 
 #topnav {
-  height: 10%;
+  height: 80px;
+  position: fixed;
+  z-index: 999;
+  background: white;
+  width: 100%;
+  box-shadow: 0 0 7px 0px black;
 }
 
 .post {
@@ -98,7 +108,7 @@ body {
   padding-left: 15px !important;
   transition: 0.08s;
   border-bottom: solid;
-  border-color: rgba(0,0,0,.05);
+  border-color: rgba(0, 0, 0, .05);
   border-bottom-width: thin;
 }
 
@@ -191,6 +201,15 @@ body {
     width: 100% !important;
   }
 
+  #topnav {
+    height: 110px;
+    position: fixed;
+    z-index: 999;
+    background: white;
+    width: 100%;
+    box-shadow: 0 0 7px 0px black;
+  }
+
   .postdate {
     font-size: small;
     position: absolute;
@@ -207,27 +226,21 @@ body {
   }
 
   .lefttab {
-    background-color: #42b983;
-    color: white;
-    bottom: 0px !important;
     left: 0px !important;
-    padding: 15px;
-    z-index: 99;
-    margin: 0 !important;
+    top: 60px;
+    margin: 0px !important;
+    padding: 10px;
     width: 50%;
-    border: solid;
+    z-index: 9999 !important;
   }
 
   .righttab {
-    background-color: #42b983;
-    color: white;
-    bottom: 0px !important;
     right: 0px !important;
-    padding: 15px;
-    z-index: 99;
-    margin: 0 !important;
+    top: 60px;
+    margin: 0px !important;
+    padding: 10px;
     width: 50%;
-    border: solid;
+    z-index: 9999 !important;
   }
 
   .readbtn {
