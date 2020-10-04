@@ -240,7 +240,6 @@ export default {
       let now = JSON.parse(window.localStorage.getItem("post" + this.nowData[index].id))
       now.readafter = true
       now.time = Date.parse(new Date())
-      now.read = false
       window.localStorage.setItem("post" + this.nowData[index].id, JSON.stringify(now))
       this.showPost = false
       this.updateCache()
