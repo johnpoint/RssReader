@@ -51,12 +51,12 @@
           showUnread = false;
           showRead = false;
         "
-      >{{ $t("post.cache") }}</label
+      >{{ $t("post.readafter") }}</label
       >
       <div v-for="(i,index) in savePostData" :key="i.title" style="text-align: left">
         <div
             class="post"
-            v-if="!showRead&&!showUnread"
+            v-if="!showRead&&!showUnread&&i.readafter==true"
         >
           <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
           >{{ i.source }} >>
@@ -154,15 +154,15 @@
         >{{ $t("post.back") }}</label
         >
         <label
-            @click="change(nowPost)"
+            @click="readAfter(nowPost)"
             class="tab righttab"
-            v-if="post[nowPost].read!==undefined&&post[nowPost].read"
+            v-if="nowData[nowPost].read!==undefined&&nowData[nowPost].read"
         >{{ $t("post.setunread") }}</label
         >
         <label
             @click="change(nowPost)"
             class="tab righttab"
-            v-if="post[nowPost].read!==undefined&&!post[nowPost].read"
+            v-if="nowData[nowPost].read!==undefined&&!nowData[nowPost].read"
         >{{ $t("post.setread") }}</label
         >
       </div>
@@ -218,6 +218,9 @@ export default {
           this.savePostData.push(data)
         }
       }
+      this.savePostData.sort(function (m, n) {
+        return -(m["time"] - n["time"])
+      })
     },
     setTop: function () {
       this.top = document.documentElement.scrollTop;
@@ -230,8 +233,17 @@ export default {
       this.getPostContent(index);
     },
     change: function (index) {
-      this.post[index].read ? this.unread(index) : this.read(index);
-      this.post[index].read = !this.post[index].read;
+      this.nowData[index].read ? this.unread(index) : this.read(index);
+      this.nowData[index].read = !this.nowData[index].read;
+    },
+    readAfter: function (index) {
+      let now = JSON.parse(window.localStorage.getItem("post" + this.nowData[index].id))
+      now.readafter = true
+      now.time = Date.parse(new Date())
+      now.read = false
+      window.localStorage.setItem("post" + this.nowData[index].id, JSON.stringify(now))
+      this.showPost = false
+      this.updateCache()
     },
     read: function (index) {
       this.info = "";
@@ -327,6 +339,7 @@ export default {
                     ),
                     link: item.Link,
                     read: this.readPost.indexOf(item.ID) !== -1,
+                    readAfter: false
                   });
                   this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null;
                 });
@@ -392,6 +405,7 @@ export default {
                 newPostCache.content = this.postContent
                 newPostCache.source = this.post[index].source
                 newPostCache.link = this.post[index].link
+                newPostCache.readafter = false
                 window.localStorage.setItem(
                     "post" + this.post[index].id,
                     JSON.stringify(newPostCache)

@@ -19,16 +19,16 @@
         <a style="color: #42b983">{{ i.num }}</a> {{ i.source }}
       </div>
     </div>
-    <hr>
+    <!--<hr>
     <div class="setting">
       <span>{{ $t("setting.autodownload") }}</span>
-      <b-button size="sm" style="float: right;margin: 5px" @click="autodownload=!autodownload" :variant='autodownload?"outline-primary":"outline-danger"' >
+      <b-button size="sm" style="float: right;margin: 5px" @click="autodownload=!autodownload" :variant='autodownload?"outline-primary":"outline-danger"'>
         {{ autodownload ? "ON" : "OFF" }}
       </b-button>
     </div>
     <div v-if="autodownload" class="setting">
       <span># {{ $t("setting.autodownloadset") }}</span>
-    </div>
+    </div>-->
     <hr>
     <div class="setting">
       <span>语言 / Language</span>
@@ -38,7 +38,7 @@
       </b-button>
     </div>
     <hr>
-    <div class="setting">
+    <!--<div class="setting">
       <span>{{ $t("setting.syncsetting") }}</span>
       <div style="float: right;">
         <span>{{ $t("setting.lastupdate") }} {{ new Date().format("yyyy-MM-dd") }}</span>
@@ -47,7 +47,7 @@
         </b-button>
       </div>
     </div>
-    <hr>
+    <hr>-->
     <div class="setting">
       <b-button size="sm" style="float: right;margin: 5px" variant="outline-danger" @click="logout">
         {{ $t("setting.exit") }}

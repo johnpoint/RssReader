@@ -35,7 +35,7 @@
     "setunread": "Read after",
     "link": "Link",
     "empty":"Empty",
-    "cache": "Cached"
+    "readafter": "Read after"
   },
   "feed": {
     "search": "Search",

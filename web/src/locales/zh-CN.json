@@ -37,7 +37,7 @@
     "prev": "上一页",
     "next": "下一页",
     "empty":"无未读文章",
-    "cache": "已缓存"
+    "readafter": "稍后阅读"
   },
   "feed": {
     "search": "搜索",
