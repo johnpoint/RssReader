@@ -71,8 +71,8 @@
               setTop();
               showPost = true;
               nowPost=index;
-              nowData=savePostData;
-              postContent=nowData[index].content
+              nowData=readafter
+              postContent=readafter[index].content
             "
               class="postlisttitle"
           >{{ i.title }}
