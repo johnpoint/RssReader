@@ -262,10 +262,11 @@ func GetPostContent(c echo2.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	if p.Content == "" {
-		return c.JSON(http.StatusOK, model.Response{Code: 200, Message: p.Description})
+	b, err := json.Marshal(p)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: p.Content})
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(b)})
 }
 
 func GetFeedList(c echo2.Context) error {

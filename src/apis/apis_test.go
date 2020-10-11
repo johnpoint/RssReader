@@ -38,6 +38,8 @@ func TestMain(m *testing.M) {
 	result := m.Run() //运行go的测试
 	log.Println("=== 释放资源 ===")
 	_ = os.Remove("./testDB.db")
+	_ = os.Remove("./cover.out")
+	_ = os.Remove("./config.json")
 	os.Exit(result) //退出程序
 }
 
