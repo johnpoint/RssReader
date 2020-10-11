@@ -95,6 +95,13 @@ div.lefttab > hr {
 }
 
 #topnav {
+  moz-user-select: -moz-none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   height: 80px;
   z-index: 999;
   background: white;
@@ -147,16 +154,23 @@ div.lefttab > hr {
 }
 
 .tab {
+  moz-user-select: -moz-none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   border-bottom: solid;
   border-color: rgba(0, 0, 0, 0);
 }
 
-#postcontext {
+.postcontext {
   text-align: initial;
   padding: 30px;
 }
 
-#postcontext * {
+.postcontext * {
   max-width: 100% !important;
 }
 
@@ -166,14 +180,14 @@ div.lefttab > hr {
   width: 100%;
 }
 
-#postcontext p {
+.postcontext p {
   font-size: 20px;
   line-height: 36px;
   font-weight: 300;
   margin: 20px 0;
 }
 
-#postcontext h2 {
+.postcontext h2 {
   line-height: 38px;
   font-size: 30px;
   font-weight: 400;
@@ -217,6 +231,13 @@ div.lefttab > hr {
   }
 
   .tablist {
+    moz-user-select: -moz-none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     position: fixed;
     bottom: 0px;
     width: 100%;
@@ -258,7 +279,7 @@ div.lefttab > hr {
 }
 
 @media screen and (min-width: 1200px) {
-  #postcontext {
+  .postcontext {
     width: 930px !important;
     margin: auto !important;
   }

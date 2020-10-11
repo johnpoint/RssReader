@@ -10,7 +10,7 @@
             @click="
           top = 0;
           backTop();
-        "
+          "
             class="tab righttab"
         >{{ $t("post.totop") }}</label
         >
@@ -63,19 +63,18 @@
             v-if="!showRead&&!showUnread&&i.readafter==true"
         >
           <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
-          >{{ i.source }} >>
+          >{{ i.Source }} >>
           </a>
           <a
               style="font-size: large"
               @click="
               setTop();
               showPost = true;
-              nowPost=index;
               nowData=readafter
-              postContent=readafter[index].content
+              nowshowpost=readafter[index]
             "
               class="postlisttitle"
-          >{{ i.title }}
+          >{{ i.Title }}
           </a>
           <b-icon-trash
               class="readbtn"
@@ -96,34 +95,30 @@
             (showRead && showUnread)
           "
         >
-          <b-icon-box-seam
+          <!--<b-icon-box-seam
               style="margin-right: 10px;"
-              v-if="savePost.indexOf(String(post[index].id))!==-1"
-              @click="save(index)"
+              v-if="cachePostList.indexOf(String(post[index].id))!==-1"
           >saved
           </b-icon-box-seam>
           <b-icon-download
               style="margin-right: 10px;"
               v-else
-              @click="save(index)"
+              @click="getPostContent(post[index].id)"
           >save
-          </b-icon-download>
+          </b-icon-download>-->
           <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
-          >{{ i.source }} >>
+          >{{ i.Source }} >>
           </a>
           <a
               style="font-size: large"
               @click="
               setTop();
-              nowPost = index;
               showPost = true;
-              i.read = false;
-              nowData=savePostData=post;
-              getPostContent(index);
-              change(index);
-            "
+              getPostContent(post[index].ID);
+              !post[index].read?change(index):'';
+          "
               class="postlisttitle"
-          >{{ i.title }}
+          >{{ i.Title }}
           </a>
           <b-icon-check-square-fill
               class="readbtn"
@@ -145,43 +140,26 @@
         </div>
       </div>
     </div>
-    <!--<label class="tab">{{ $t("post.prev") }}</label> | <label class="tab">{{ $t("post.next") }}</label>-->
     <div v-if="showPost" id="postinfo">
       <div class="tablist">
         <label
             class="tab lefttab"
-            @click="
-            showPost = false;
-            info = '';
-            backTop();
-          "
+            @click="showPost=false;nowshowpost=loadingShowPost"
         >{{ $t("post.back") }}</label
         >
         <label
-            @click="readAfter(nowPost)"
+            @click="readAfter(nowshowpost);nowshowpost=loadingShowPost"
             class="tab righttab"
-            v-if="nowData[nowPost].read!==undefined&&nowData[nowPost].read"
         >{{ $t("post.setunread") }}</label
         >
-        <label
-            @click="change(nowPost)"
-            class="tab righttab"
-            v-if="nowData[nowPost].read!==undefined&&!nowData[nowPost].read"
-        >{{ $t("post.setread") }}</label
-        >
       </div>
-
-      <h1 class="title">{{ nowData[nowPost].title }}</h1>
-      <span>{{ nowData[nowPost].source }}</span> |
-      <a :href="nowData[nowPost].link">{{ $t("post.link") }}</a>
-      <b-card id="postcontext" style="margin: 15px" v-html="postContent">
-      </b-card>
+      <post :post="nowshowpost"/>
     </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
     <span
-        v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length==0)) && !showLoading"
+        v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length==0)) && !showLoading && !showPost"
         class="empty">{{ $t("post.empty") }}</span>
     <span v-else class="empty" style="color:rgba(0,0,0,0)">1</span>
   </div>
@@ -191,11 +169,15 @@
 import axios from "axios";
 import config from "@/config";
 import router from "@/router";
+import post from "@/components/Post"
 
 export default {
   name: "Overview",
-  components: {},
+  components: {
+    post
+  },
   beforeMount() {
+    // check power
     if (window.localStorage.getItem("login") === "true") {
       this.$store.commit("setStatus", true);
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"));
@@ -203,30 +185,36 @@ export default {
     if (!this.$store.state.isLogin) {
       router.push("/login");
     }
-    this.getData();
+    // get post list cache
+    if (window.localStorage.getItem("posts") === null) {
+      window.localStorage.setItem("posts", JSON.stringify([]));
+    }
+    this.post = JSON.parse(window.localStorage.getItem("posts"));
+    // something
     this.getPostList();
     this.updateCache();
-    this.nowData = this.post;
   },
   methods: {
     removeCache: function (index) {
-      window.localStorage.removeItem("post" + this.savePostData[index].id);
+      // console.log("removeCache")
+      window.localStorage.removeItem("post" + this.cachePostData[index].id);
       this.updateCache();
     },
     updateCache: function () {
       let cachePost = Object.keys(window.localStorage);
-      this.savePost = [];
-      this.savePostData = [];
-      for (let i of cachePost) {
+      this.cachePostList = [];
+      this.cachePostData = [];
+      for (let i1 = 0; i1 < cachePost.length; i1++) {
+        let i = cachePost[i1];
         if (i.indexOf("post") !== -1 && i.indexOf("posts") === -1) {
-          this.savePost.push(i.replace("post", ""))
+          this.cachePostList.push(i.replace("post", ""))
           let data = JSON.parse(window.localStorage.getItem(i))
           data.id = parseInt(i.replace("post", ""))
-          this.savePostData.push(data)
+          this.cachePostData.push(data)
         }
       }
       this.readafter = []
-      for (let i of this.savePostData) {
+      for (let i of this.cachePostData) {
         if (i.readafter) {
           this.readafter.push(i)
         }
@@ -236,39 +224,51 @@ export default {
       })
     },
     setTop: function () {
+      // console.log("setTop")
       this.top = document.documentElement.scrollTop;
       document.documentElement.scrollTop = 0;
     },
     backTop: function () {
+      // console.log("backTop")
       document.documentElement.scrollTop = this.top;
     },
-    save: function (index) {
-      this.getPostContent(index);
-    },
     change: function (index) {
-      this.nowData[index].read ? this.unread(index) : this.read(index);
-      this.nowData[index].read = !this.nowData[index].read;
-      this.post = this.nowData
+      // console.log("change")
+      this.post[index].read ? this.unread(this.post[index].ID) : this.read(this.post[index].ID);
+      this.post[index].read = !this.post[index].read;
     },
-    readAfter: function (index) {
-      if (this.nowData[index].read !== true) {
-        this.change(index)
+    readAfter: function (data) {
+      // console.log("readAfter")
+      // console.log(data)
+      if (data.read !== true) {
+        let j = 0;
+        for (let i of this.post) {
+          if (i.ID == data.ID) {
+            this.change(j)
+            break
+          }
+          j++;
+        }
       }
-      let now = JSON.parse(window.localStorage.getItem("post" + this.nowData[index].id))
+      let now = JSON.parse(window.localStorage.getItem("post" + this.nowshowpost.ID))
       now.readafter = true
       now.time = Date.parse(new Date())
-      window.localStorage.setItem("post" + this.nowData[index].id, JSON.stringify(now))
+      window.localStorage.setItem("post" + this.nowshowpost.ID, JSON.stringify(now))
       this.showPost = false
       this.updateCache()
     },
-    read: function (index) {
-      this.info = "";
-      if (this.nowData[index].read === true) {
-        return
+    read: function (id) {
+      // console.log("read")
+      if (id == 0) {
+        id = this.nowshowpost.id
+        if (this.nowshowpost.read === true) {
+          return
+        }
       }
+      this.info = "";
       axios
           .post(
-              config.apiAddress + "/api/post/read/" + this.post[index].id,
+              config.apiAddress + "/api/post/read/" + id,
               null,
               {
                 headers: {
@@ -284,6 +284,7 @@ export default {
                   return;
                 }
                 this.unreadpost -= 1;
+                this.savePostListCache(JSON.stringify(this.post));
               },
               (err) => {
                 console.log(err);
@@ -291,11 +292,15 @@ export default {
               }
           );
     },
-    unread: function (index) {
+    unread: function (id) {
+      // console.log("unread")
+      if (id == undefined) {
+        id = this.nowshowpost.id
+      }
       this.info = "";
       axios
           .post(
-              config.apiAddress + "/api/post/unread/" + this.post[index].id,
+              config.apiAddress + "/api/post/unread/" + id,
               null,
               {
                 headers: {
@@ -311,6 +316,7 @@ export default {
                   return;
                 }
                 this.unreadpost += 1;
+                this.savePostListCache(JSON.stringify(this.post));
               },
               (err) => {
                 console.log(err);
@@ -318,16 +324,12 @@ export default {
               }
           );
     },
-    saveData: function () {
-      window.localStorage.setItem("posts", JSON.stringify(this.post));
+    savePostListCache: function (data) {
+      // console.log("savePostListCache")
+      window.localStorage.setItem("posts", data);
     },
-    getData: function () {
-      if (window.localStorage.getItem("posts") === null) {
-        window.localStorage.setItem("posts", JSON.stringify([]));
-      }
-      this.post = JSON.parse(window.localStorage.getItem("posts"));
-    },
-    getReadList: function () {
+    getReadList: function (postList) {
+      // console.log("getReadList")
       this.unreadpost = 0;
       this.info = "";
       this.showLoading = true;
@@ -347,11 +349,11 @@ export default {
                 this.readPost = JSON.parse(response.data.message);
                 this.post = [];
                 this.unreadpost = 0;
-                this.postList.forEach((item) => {
+                postList.forEach((item) => {
                   this.post.push({
-                    id: item.ID,
-                    title: item.Title,
-                    source: item.FeedTitle,
+                    ID: item.ID,
+                    Title: item.Title,
+                    Source: item.FeedTitle,
                     date: new Date(parseInt(item.Time) * 1000).format(
                         "yyyy-MM-dd hh:mm:ss"
                     ),
@@ -361,7 +363,7 @@ export default {
                   });
                   this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null;
                 });
-                this.saveData();
+                this.savePostListCache(JSON.stringify(this.post));
                 this.showLoading = false;
               },
               (err) => {
@@ -371,6 +373,7 @@ export default {
           );
     },
     getPostList: function () {
+      // console.log("getPostList")
       this.info = "";
       axios
           .get(config.apiAddress + "/api/post/", {
@@ -385,8 +388,8 @@ export default {
                   this.info = response.data.message;
                   return;
                 }
-                this.postList = JSON.parse(response.data.message);
-                this.getReadList();
+                let postList = JSON.parse(response.data.message);
+                this.getReadList(postList);
               },
               (err) => {
                 console.log(err);
@@ -394,19 +397,19 @@ export default {
               }
           );
     },
-    getPostContent: function (index) {
-      if (window.localStorage.getItem("post" + this.post[index].id) !== null) {
-        this.postContent = JSON.parse(window.localStorage.getItem(
-            "post" + this.post[index].id
-        )).content;
+    getPostContent: function (id) {
+      // console.log("getPostContent")
+      if (window.localStorage.getItem("post" + id) !== null) {
+        this.nowshowpost = JSON.parse(window.localStorage.getItem(
+            "post" + id
+        ));
         this.showLoading = false;
         return;
       }
       this.info = "";
       this.showLoading = true;
-      this.postContent = "";
       axios
-          .get(config.apiAddress + "/api/post/content/" + this.post[index].id, {
+          .get(config.apiAddress + "/api/post/content/" + id, {
             headers: {
               Authorization: "Bearer " + this.$store.state.jwt,
               Accept: "application/json",
@@ -418,17 +421,24 @@ export default {
                   this.info = response.data.message;
                   return;
                 }
-                this.postContent = response.data.message;
-                let newPostCache = {"title": this.post[index].title}
-                newPostCache.content = this.postContent
-                newPostCache.source = this.post[index].source
-                newPostCache.link = this.post[index].link
+
+                let data = JSON.parse(response.data.message)
+                let newPostCache = data
+                for (let i of this.post) {
+                  if (i.ID === newPostCache.ID) {
+                    newPostCache.Source = i.Source
+                    newPostCache.read = i.read
+                    break
+                  }
+                }
                 newPostCache.readafter = false
                 window.localStorage.setItem(
-                    "post" + this.post[index].id,
+                    "post" + id,
                     JSON.stringify(newPostCache)
                 );
                 this.showLoading = false;
+                this.nowshowpost = newPostCache
+                // console.log(newPostCache)
                 this.updateCache();
               },
               (err) => {
@@ -440,24 +450,31 @@ export default {
   },
   data() {
     return {
-      post: [],
-      postListPage: 0,
-      showPost: false,
-      showRead: false,
-      showUnread: true,
-      nowPost: null,
-      readPost: [],
-      postList: null,
-      postContent: "",
-      showLoading: true,
-      info: "",
-      unreadpost: "-",
-      top: 0,
-      savePost: [],
-      savePostData: [],
-      nowData: null,
-      readafter: [],
-      empty: false
+      post: [],//文章列表
+      showPost: false,// tab控制开关
+      showRead: false,// tab控制开关
+      showUnread: true,// tab控制开关
+      readPost: [], // 已阅读文章列表
+      showLoading: true,// 加载图标显示开关
+      info: "",// 提示信息
+      unreadpost: "-",// 未读文章计数
+      top: 0,// 页面所处高度
+      cachePostList: [],// 缓存文章key
+      cachePostData: [],// 缓存文章数据
+      readafter: [],// 稍后阅读列表
+      empty: false,// 判断文章列表是否为空
+      nowshowpost: {
+        Title: "Loading Title",
+        Url: "/",
+        Source: "Loading",
+        Description: "Loading"
+      },// 显示的文章
+      loadingShowPost: {
+        Title: "Loading Title",
+        Url: "/",
+        Source: "Loading",
+        Description: "Loading"
+      },
     };
   },
 };

@@ -92,7 +92,7 @@ export default {
       this.cache = []
       for (let i of this.localpost) {
         let keys = Object.keys(this.cache)
-        let csource = JSON.parse(window.localStorage.getItem(i)).source
+        let csource = JSON.parse(window.localStorage.getItem(i)).Source
         if (keys.indexOf(csource) === -1) {
           this.cache[csource] = 1
         } else {
