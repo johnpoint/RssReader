@@ -38,7 +38,6 @@ func TestMain(m *testing.M) {
 	result := m.Run() //运行go的测试
 	log.Println("=== 释放资源 ===")
 	_ = os.Remove("./testDB.db")
-	_ = os.Remove("./cover.out")
 	_ = os.Remove("./config.json")
 	os.Exit(result) //退出程序
 }
@@ -295,19 +294,38 @@ func TestPostAsUnRead(t *testing.T) {
 
 func TestRegister(t *testing.T) {
 	type args struct {
-		c echo.Context
+		mail     string
+		password string
 	}
 	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
+		name string
+		args args
+		want int64
 	}{
-		// TODO: Add test cases.
+		{name: "passRegister", want: 200, args: args{mail: "test@test.test", password: "testpassword"}},
+		{name: "repeatRegister", want: 0, args: args{mail: "test@test.test", password: "testpassword"}},
+		{name: "blankPassword", want: 0, args: args{mail: "test@testq.test", password: ""}},
+		{name: "blankMail", want: 0, args: args{mail: "", password: "testpassword"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := Register(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("Register() error = %v, wantErr %v", err, tt.wantErr)
+			e := echo.New()
+			userJSON := `{"mail":"` + tt.args.mail + `","password":"` + tt.args.password + `"}`
+			req := httptest.NewRequest(http.MethodPost, "/api/register", strings.NewReader(userJSON))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+			err := Register(c)
+			if err != nil {
+				panic(err)
+			}
+			b := rec.Body.String()
+			sj, err := simplejson.NewJson([]byte(b))
+			if err != nil {
+				panic(err)
+			}
+			if (rec.Body != nil) && sj.Get("code").MustInt64() != tt.want {
+				t.Errorf("Register() got = %v, want %v", sj.Get("code").MustInt64(), tt.want)
 			}
 		})
 	}

@@ -18,11 +18,11 @@ type Read struct {
 	UID int64
 }
 
-type Star struct {
+/*type Star struct {
 	ID  int64 `gorm:"AUTO_INCREMENT"`
 	PID int64
 	UID int64
-}
+}*/
 
 type subscribe struct {
 	ID  int64 `gorm:"AUTO_INCREMENT"`

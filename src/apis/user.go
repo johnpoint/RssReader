@@ -61,6 +61,9 @@ func Register(c echo2.Context) error {
 	if err := c.Bind(&u); err != nil {
 		return err
 	}
+	if u.Mail == "" || u.Password == "" {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "Password or mail can not be blank"})
+	}
 	data := []byte(u.Mail + salt + u.Password)
 	has := md5.Sum(data)
 	md5Password := fmt.Sprintf("%x", has)
