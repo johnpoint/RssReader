@@ -75,3 +75,12 @@ i18n: String (zh/en)
     "readafter":false
 }
 ```
+
+#### userConfig
+
+```json
+{
+    "loadPostNum": 50,
+    "i18n": "zh"
+}
+```

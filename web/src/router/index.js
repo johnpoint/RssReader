@@ -15,11 +15,11 @@ const routes = [
         name: "Posts",
         component: () => import("../views/Posts.vue")
     },
-    {
+    /*{
         path: "/post/:id",
         name: "Post",
         component: () => import("../views/Posts.vue")
-    },
+    },*/
     {
         path: "/settings",
         name: "Settings",

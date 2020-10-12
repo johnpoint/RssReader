@@ -57,10 +57,10 @@
         "
       >{{ $t("post.readafter") }}</label
       >
-      <div v-for="(i,index) in readafter" :key="i.title" style="text-align: left">
+      <div v-for="(i,index) in cachePostData" :key="i.title" style="text-align: left">
         <div
             class="post"
-            v-if="!showRead&&!showUnread&&i.readafter==true"
+            v-if="!showRead&&!showUnread&&i.readafter===true"
         >
           <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
           >{{ i.Source }} >>
@@ -70,8 +70,7 @@
               @click="
               setTop();
               showPost = true;
-              nowData=readafter
-              nowshowpost=readafter[index]
+              nowshowpost=cachePostData[index]
             "
               class="postlisttitle"
           >{{ i.Title }}
@@ -120,6 +119,12 @@
               class="postlisttitle"
           >{{ i.Title }}
           </a>
+          <!--<b-icon-clock-history
+              class="readbtn"
+              style="float: right; margin: 5px;"
+              v-if="!i.readafter"
+              @click="readAfter(getPostContent(post[index].ID));nowshowpost=loadingShowPost">
+          </b-icon-clock-history>-->
           <b-icon-check-square-fill
               class="readbtn"
               style="float: right; margin: 5px; color: #42b983"
@@ -159,7 +164,7 @@
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
     <span
-        v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length==0)) && !showLoading && !showPost"
+        v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length===0)) && !showLoading && !showPost"
         class="empty">{{ $t("post.empty") }}</span>
     <span v-else class="empty" style="color:rgba(0,0,0,0)">1</span>
   </div>
@@ -239,27 +244,26 @@ export default {
     },
     readAfter: function (data) {
       // console.log("readAfter")
-      // console.log(data)
       if (data.read !== true) {
         let j = 0;
         for (let i of this.post) {
-          if (i.ID == data.ID) {
+          if (i.ID === data.ID) {
             this.change(j)
             break
           }
           j++;
         }
       }
-      let now = JSON.parse(window.localStorage.getItem("post" + this.nowshowpost.ID))
+      let now = JSON.parse(window.localStorage.getItem("post" + data.ID))
       now.readafter = true
       now.time = Date.parse(new Date())
-      window.localStorage.setItem("post" + this.nowshowpost.ID, JSON.stringify(now))
+      window.localStorage.setItem("post" + data.ID, JSON.stringify(now))
       this.showPost = false
       this.updateCache()
     },
     read: function (id) {
       // console.log("read")
-      if (id == 0) {
+      if (id === 0) {
         id = this.nowshowpost.id
         if (this.nowshowpost.read === true) {
           return
@@ -294,7 +298,7 @@ export default {
     },
     unread: function (id) {
       // console.log("unread")
-      if (id == undefined) {
+      if (id === undefined) {
         id = this.nowshowpost.id
       }
       this.info = "";
@@ -421,9 +425,7 @@ export default {
                   this.info = response.data.message;
                   return;
                 }
-
-                let data = JSON.parse(response.data.message)
-                let newPostCache = data
+                let newPostCache = JSON.parse(response.data.message)
                 for (let i of this.post) {
                   if (i.ID === newPostCache.ID) {
                     newPostCache.Source = i.Source
