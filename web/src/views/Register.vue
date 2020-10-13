@@ -77,12 +77,15 @@ export default {
           })
           .then(response => {
                 this.showLoading = false
-                this.info = response.data.message
-                router.push("/login")
+                if (response.data.code !== 200) {
+                  this.info = response.data.message;
+                } else {
+                  router.push("/login")
+                }
               },
               (error) => {
                 let errText
-                if (error.response == undefined) {
+                if (error.response === undefined) {
                   errText = "Unable to connect to server";
                 } else {
                   errText = error.response.status + " " + error.response.data.message;
