@@ -290,9 +290,14 @@ export default {
                 this.unreadpost -= 1;
                 this.savePostListCache(JSON.stringify(this.post));
               },
-              (err) => {
-                console.log(err);
-                this.info = "请检查网络连接";
+              (error) => {
+                let errText
+                if (error.response === undefined) {
+                  errText = "Unable to connect to server";
+                } else {
+                  errText = error.response.status + " " + error.response.data.message;
+                }
+                this.info = errText;
               }
           );
     },
@@ -322,9 +327,14 @@ export default {
                 this.unreadpost += 1;
                 this.savePostListCache(JSON.stringify(this.post));
               },
-              (err) => {
-                console.log(err);
-                this.info = "请检查网络连接";
+              (error) => {
+                let errText
+                if (error.response === undefined) {
+                  errText = "Unable to connect to server";
+                } else {
+                  errText = error.response.status + " " + error.response.data.message;
+                }
+                this.info = errText;
               }
           );
     },
@@ -370,9 +380,14 @@ export default {
                 this.savePostListCache(JSON.stringify(this.post));
                 this.showLoading = false;
               },
-              (err) => {
-                console.log(err);
-                this.info = "请检查网络连接";
+              (error) => {
+                let errText
+                if (error.response === undefined) {
+                  errText = "Unable to connect to server";
+                } else {
+                  errText = error.response.status + " " + error.response.data.message;
+                }
+                this.info = errText;
               }
           );
     },
@@ -395,9 +410,14 @@ export default {
                 let postList = JSON.parse(response.data.message);
                 this.getReadList(postList);
               },
-              (err) => {
-                console.log(err);
-                this.info = "请检查网络连接";
+              (error) => {
+                let errText
+                if (error.response === undefined) {
+                  errText = "Unable to connect to server";
+                } else {
+                  errText = error.response.status + " " + error.response.data.message;
+                }
+                this.info = errText;
               }
           );
     },
@@ -443,9 +463,14 @@ export default {
                 // console.log(newPostCache)
                 this.updateCache();
               },
-              (err) => {
-                console.log(err);
-                this.info = "请检查网络连接";
+              (error) => {
+                let errText
+                if (error.response == undefined) {
+                  errText = "Unable to connect to server";
+                } else {
+                  errText = error.response.status + " " + error.response.data.message;
+                }
+                this.info = errText;
               }
           );
     },

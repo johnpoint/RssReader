@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <span>{{ info }}</span>
     <div class="tablist">
       <label class="tab lefttab" v-if="!addRss"
              @click="addRss = true">{{ $t("feed.add") }}</label>
@@ -7,15 +8,12 @@
       <label class="tab righttab"
       >{{ $t("feed.import") }}</label>
     </div>
-
-
     <div v-if="addRss" id="postinfo">
       <label>
         <input v-model="searchrss"/>
       </label>
       <b-button style="margin: 5px" @click="searchRss()">{{ $t("feed.search") }}</b-button>
       <br>
-      <span>{{ info }}</span>
       <b-container>
         <b-row>
           <b-col v-for="(i, index) in search" :key="index" style="text-align: left">
@@ -120,9 +118,19 @@ export default {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
-      }).then(response => {
-        console.log(response.data)
-      })
+      }).then(
+          (response) => {
+            console.log(response.data)
+          },
+          (error) => {
+            let errText
+            if (error.response === undefined) {
+              errText = "Unable to connect to server";
+            } else {
+              errText = error.response.status + " " + error.response.data.message;
+            }
+            this.info = errText;
+          })
     },
     change: function (index) {
       this.post[index].read = !this.post[index].read;
@@ -135,17 +143,27 @@ export default {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
-      }).then(response => {
-        if (response.data.code === 200) {
-          this.getRss()
-          this.addRss = false
-          this.searchrss = ""
-          this.search = []
-        } else {
-          this.info = response.data.message
-        }
-        this.showLoading = false
-      })
+      }).then(
+          (response) => {
+            if (response.data.code === 200) {
+              this.getRss()
+              this.addRss = false
+              this.searchrss = ""
+              this.search = []
+            } else {
+              this.info = response.data.message
+            }
+            this.showLoading = false
+          },
+          (error) => {
+            let errText
+            if (error.response === undefined) {
+              errText = "Unable to connect to server";
+            } else {
+              errText = error.response.status + " " + error.response.data.message;
+            }
+            this.info = errText;
+          })
     },
     removeRss: function (index) {
       this.showLoading = true
@@ -169,22 +187,32 @@ export default {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
-      }).then(response => {
-        if (response.data.code === 200) {
-          let data = JSON.parse(response.data.message)
-          this.search = []
-          this.search.push({
-            id: data.ID,
-            title: data.Title,
-            link: data.Url,
-            subscriber: data.Subscriber
+      }).then(
+          (response) => {
+            if (response.data.code === 200) {
+              let data = JSON.parse(response.data.message)
+              this.search = []
+              this.search.push({
+                id: data.ID,
+                title: data.Title,
+                link: data.Url,
+                subscriber: data.Subscriber
+              })
+              this.showLoading = false
+            } else {
+              this.info = response.data.message
+              this.showLoading = false
+            }
+          },
+          (error) => {
+            let errText
+            if (error.response === undefined) {
+              errText = "Unable to connect to server";
+            } else {
+              errText = error.response.status + " " + error.response.data.message;
+            }
+            this.info = errText;
           })
-          this.showLoading = false
-        } else {
-          this.info = response.data.message
-          this.showLoading = false
-        }
-      })
     },
     getRss: function () {
       this.info = ""
@@ -193,55 +221,85 @@ export default {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
-      }).then(response => {
-        if (response.data.code !== 200) {
-          this.info = response.data.message
-          return
-        }
-        this.rsslist = JSON.parse(response.data.message);
-        axios.get(config.apiAddress + "/api/post/", {
-          headers: {
-            'Authorization': "Bearer " + this.$store.state.jwt,
-            'Accept': 'application/json'
-          }
-        }).then(response => {
-          if (response.data.code !== 200) {
-            this.info = response.data.message
-            return
-          }
-          this.postList = JSON.parse(response.data.message)
-          axios.get(config.apiAddress + "/api/post/read", {
-            headers: {
-              'Authorization': "Bearer " + this.$store.state.jwt,
-              'Accept': 'application/json'
-            }
-          }).then(response => {
+      }).then(
+          (response) => {
             if (response.data.code !== 200) {
               this.info = response.data.message
               return
             }
-            this.rss = []
-            this.readPost = JSON.parse(response.data.message)
-            this.rsslist.forEach(item => {
-              let unread = 0
-              this.postList.forEach(post => {
-                if (post.Feed === item.ID && this.readPost.indexOf(post.ID) === -1) {
-                  unread++
-                }
-              })
+            this.rsslist = JSON.parse(response.data.message);
+            axios.get(config.apiAddress + "/api/post/", {
+              headers: {
+                'Authorization': "Bearer " + this.$store.state.jwt,
+                'Accept': 'application/json'
+              }
+            }).then(
+                (response) => {
+                  if (response.data.code !== 200) {
+                    this.info = response.data.message
+                    return
+                  }
+                  this.postList = JSON.parse(response.data.message)
+                  axios.get(config.apiAddress + "/api/post/read", {
+                    headers: {
+                      'Authorization': "Bearer " + this.$store.state.jwt,
+                      'Accept': 'application/json'
+                    }
+                  }).then(
+                      (response) => {
+                        if (response.data.code !== 200) {
+                          this.info = response.data.message
+                          return
+                        }
+                        this.rss = []
+                        this.readPost = JSON.parse(response.data.message)
+                        this.rsslist.forEach(item => {
+                          let unread = 0
+                          this.postList.forEach(post => {
+                            if (post.Feed === item.ID && this.readPost.indexOf(post.ID) === -1) {
+                              unread++
+                            }
+                          })
 
-              this.rss.push({
-                id: item.ID,
-                title: item.Title,
-                link: item.Url,
-                unread: unread
-              })
-            })
-            this.saveData()
-            this.showLoading = false
+                          this.rss.push({
+                            id: item.ID,
+                            title: item.Title,
+                            link: item.Url,
+                            unread: unread
+                          })
+                        })
+                        this.saveData()
+                        this.showLoading = false
+                      },
+                      (error) => {
+                        let errText
+                        if (error.response === undefined) {
+                          errText = "Unable to connect to server";
+                        } else {
+                          errText = error.response.status + " " + error.response.data.message;
+                        }
+                        this.info = errText;
+                      })
+                },
+                (error) => {
+                  let errText
+                  if (error.response === undefined) {
+                    errText = "Unable to connect to server";
+                  } else {
+                    errText = error.response.status + " " + error.response.data.message;
+                  }
+                  this.info = errText;
+                })
+          },
+          (error) => {
+            let errText
+            if (error.response === undefined) {
+              errText = "Unable to connect to server";
+            } else {
+              errText = error.response.status + " " + error.response.data.message;
+            }
+            this.info = errText;
           })
-        })
-      })
     }
   },
   data() {

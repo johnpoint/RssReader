@@ -16,7 +16,7 @@ export default {
     HelloWorld
   },
   beforeMount() {
-    if (window.localStorage.getItem("login")=="true") {
+    if (window.localStorage.getItem("login")==="true") {
       this.$store.commit("setStatus", true)
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
     }

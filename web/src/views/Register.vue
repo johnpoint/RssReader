@@ -67,7 +67,7 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
+    onSubmit: function () {
       this.showLoading = true
       this.info = ""
       axios
@@ -76,10 +76,20 @@ export default {
             password: this.form.password
           })
           .then(response => {
-            this.showLoading = false
-            this.info = response.data.message
-            router.push("/login")
-          });
+                this.showLoading = false
+                this.info = response.data.message
+                router.push("/login")
+              },
+              (error) => {
+                let errText
+                if (error.response == undefined) {
+                  errText = "Unable to connect to server";
+                } else {
+                  errText = error.response.status + " " + error.response.data.message;
+                }
+                this.info = errText;
+              }
+          );
     }
   },
   beforeMount() {

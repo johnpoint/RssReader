@@ -74,18 +74,28 @@ export default {
             mail: this.form.email,
             password: this.form.password
           })
-          .then(response => {
-            this.showLoading = false
-            if (response.data.code != 200) {
-              this.info = response.data.message
-            } else {
-              this.$store.commit("setStatus", true);
-              this.$store.commit("setjwt", response.data.message);
-              window.localStorage.setItem("jwt", response.data.message)
-              window.localStorage.setItem("login", true)
-              router.push("/posts");
-            }
-          });
+          .then(
+              (response) => {
+                this.showLoading = false
+                if (response.data.code !== 200) {
+                  this.info = response.data.message
+                } else {
+                  this.$store.commit("setStatus", true);
+                  this.$store.commit("setjwt", response.data.message);
+                  window.localStorage.setItem("jwt", response.data.message)
+                  window.localStorage.setItem("login", true)
+                  router.push("/posts");
+                }
+              },
+              (error) => {
+                let errText
+                if (error.response === undefined) {
+                  errText = "Unable to connect to server";
+                } else {
+                  errText = error.response.status + " " + error.response.data.message;
+                }
+                this.info = errText;
+              });
     }
   }
 };
