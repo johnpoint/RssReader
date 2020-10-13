@@ -158,7 +158,9 @@
         >{{ $t("post.setunread") }}</label
         >
       </div>
-      <post :post="nowshowpost"/>
+      <div class="postbox">
+        <post :post="nowshowpost"/>
+      </div>
     </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
