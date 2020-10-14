@@ -4,10 +4,12 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"rssreader/src/model"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -216,6 +218,7 @@ func GetPostList(c echo2.Context) error {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
 	}
 	sub := u.Sub()
+	getPostNum := c.Param("num")
 	var rep []respPostList
 	for _, i := range sub {
 		f := model.Feed{ID: i.FID}
@@ -239,8 +242,15 @@ func GetPostList(c echo2.Context) error {
 		}
 		return false
 	})
-	if len(rep) >= 50 {
-		rep = rep[:50]
+	getPostNumI, err := strconv.ParseInt(getPostNum, 10, 64)
+	if err != nil {
+		getPostNumI = 50
+	}
+	if getPostNumI > 500 {
+		getPostNumI = 50
+	}
+	if int64(len(rep)) >= getPostNumI {
+		rep = rep[:getPostNumI]
 	}
 	data, _ := json.Marshal(rep)
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(data)})
@@ -292,4 +302,30 @@ func GetFeedList(c echo2.Context) error {
 	}
 	bdata, _ := json.Marshal(data)
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(bdata)})
+}
+
+func ImportOPML(c echo2.Context) error {
+	user := CheckAuth(c)
+	u := model.User{Mail: user.Mail}
+	err := u.Get()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
+	}
+	file, err := c.FormFile("opml")
+	if err != nil {
+		return err
+	}
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+	buf := new(strings.Builder)
+	_, _ = io.Copy(buf, src)
+	// check errors
+	err = u.Import(buf.String())
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }

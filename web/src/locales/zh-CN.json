@@ -15,14 +15,16 @@
   "setting": {
     "CachedArticle": "已缓存文章",
     "exit": "退出",
-    "clearCache":"清除缓存",
+    "clearCache": "清除缓存",
     "info": "统计",
     "hide": "隐藏统计",
     "autodownload": "自动下载",
     "autodownloadset": "下载设置",
     "sync": "同步",
     "lastupdate": "上次同步",
-    "syncsetting": "同步设置"
+    "syncsetting": "同步设置",
+    "postlistnum": "加载文章数量",
+    "save": "保存"
   },
   "post": {
     "update": "更新",
@@ -36,7 +38,7 @@
     "link": "原文链接",
     "prev": "上一页",
     "next": "下一页",
-    "empty":"无未读文章",
+    "empty": "无未读文章",
     "readafter": "稍后阅读"
   },
   "feed": {
@@ -45,7 +47,11 @@
     "cancel": "取消",
     "subscribed": "已订阅",
     "subscriber": "订阅数",
-    "import": "导入 / 导出"
+    "import": "导入",
+    "export": "导出",
+    "clear": "清除",
+    "download": "下载",
+    "upload": "上传"
   },
   "footer": {
     "text": "由 Vue 与 Go 强劲驱动"

@@ -36,6 +36,7 @@ func Run() {
 	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.GET("/", apis.Accessible)
 	f := w.Group("/feed")
+	f.POST("/opml", apis.ImportOPML)                 //导入opml
 	f.GET("/list", apis.GetFeedList)                 //列出已经订阅feed
 	f.POST("/search", apis.SearchFeed)               //搜索feed
 	f.POST("/subscribe/:id", apis.SubscribeFeed)     //订阅feed
@@ -45,6 +46,7 @@ func Run() {
 	p.POST("/read/:id", apis.PostAsRead)       //将文章设置为已读
 	p.POST("/unread/:id", apis.PostAsUnRead)   //将文章设置为未读
 	p.GET("/content/:id", apis.GetPostContent) //获取文章内容
+	p.GET("/:num", apis.GetPostList)           //获取文章列表
 	p.GET("/", apis.GetPostList)               //获取文章列表
 	p.GET("/read", apis.GetReadPostList)       //获取已读文章列表
 

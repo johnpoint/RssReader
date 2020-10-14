@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strconv"
@@ -48,8 +49,11 @@ func (f *Feed) New() error {
 	if err == nil {
 		return errors.New("Feed already exists")
 	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	fp := gofeed.NewParser()
-	feed, err := fp.ParseURL(f.Url)
+	feed, err := fp.ParseURLWithContext(f.Url, ctx)
 	if err != nil {
 		return err
 	}
@@ -77,7 +81,7 @@ func (f *Feed) New() error {
 		return err
 	}
 	tx.Commit()
-	f.Update()
+	_ = f.Update()
 	return nil
 }
 

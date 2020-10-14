@@ -2,11 +2,15 @@
   <div class="home">
     <span>{{ info }}</span>
     <div class="tablist">
-      <label class="tab lefttab" v-if="!addRss"
+      <label class="tab lefttab" v-if="!addRss && !ioport"
              @click="addRss = true">{{ $t("feed.add") }}</label>
-      <label class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false">{{ $t("feed.cancel") }}</label>
+      <label class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false;ioport=false">{{
+          $t("feed.cancel")
+        }}</label>
       <label class="tab righttab"
-      >{{ $t("feed.import") }}</label>
+             v-if="!addRss && !ioport"
+             @click="ioport=!ioport"
+      >{{ $t("feed.import") }} / {{ $t("feed.export") }}</label>
     </div>
     <div v-if="addRss" id="postinfo">
       <label>
@@ -30,8 +34,35 @@
         </b-row>
       </b-container>
     </div>
-    <label v-if="!addRss" style="margin: 5px;font-size: larger">{{ $t("feed.subscribed") }}</label>
-    <div v-if="!addRss" id="list">
+    <div id="ioport" v-if="ioport" style="max-width: 480px;margin: auto">
+      <b-card style="text-align: left">
+        <label>{{ $t("feed.import") }}</label>
+        <b-form-file
+            v-model="opml"
+            :state="Boolean(opml)"
+            placeholder="Choose a file or drop it here..."
+            drop-placeholder="Drop file here..."
+        ></b-form-file>
+        <b-button size="sm" style="float: right;margin: 5px" @click="opml=null" variant="outline-primary">{{
+            $t("feed.clear")
+          }}
+        </b-button>
+        <div class="mt-3">Selected file: {{ opml ? opml.name : '' }}</div>
+        <b-button size="sm" style="margin: 5px" @click="uploadopml()" variant="outline-success">{{
+            $t("feed.upload")
+          }}
+        </b-button>
+      </b-card>
+      <b-card style="text-align: left">
+        <label>{{ $t("feed.export") }}</label><br>
+        <b-button size="sm" style="margin: 5px" variant="outline-primary" disabled>{{
+            $t("feed.download")
+          }}
+        </b-button>
+      </b-card>
+    </div>
+    <label v-if="!addRss && !ioport" style="margin: 5px;font-size: larger">{{ $t("feed.subscribed") }}</label>
+    <div v-if="!addRss && !ioport" id="list">
       <b-container v-for="(i, index) in rss" :key="index" style="text-align: left">
         <b-row class="post">
           <b-col><a
@@ -93,8 +124,13 @@ export default {
   components: {},
   beforeMount() {
     if (window.localStorage.getItem("login") === "true") {
-      this.$store.commit("setStatus", true)
-      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
+      this.$store.commit("setStatus", true);
+      this.$store.commit("setjwt", window.localStorage.getItem("jwt"));
+      if (window.localStorage.getItem("config") !== null) {
+        this.$store.state.config = JSON.parse(window.localStorage.getItem("config"))
+      } else {
+        window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
+      }
     }
     if (!this.$store.state.isLogin) {
       router.push("/login");
@@ -227,8 +263,14 @@ export default {
               this.info = response.data.message
               return
             }
+            let postnum = ""
+            if (this.$store.state.config.postnum === undefined) {
+              postnum = ""
+            } else {
+              postnum = this.$store.state.config.postnum
+            }
             this.rsslist = JSON.parse(response.data.message);
-            axios.get(config.apiAddress + "/api/post/", {
+            axios.get(config.apiAddress + "/api/post/" + postnum, {
               headers: {
                 'Authorization': "Bearer " + this.$store.state.jwt,
                 'Accept': 'application/json'
@@ -300,6 +342,36 @@ export default {
             }
             this.info = errText;
           })
+    },
+    uploadopml: function () {
+      if (this.opml !== null) {
+        var formData = new FormData();
+        formData.append("opml", this.opml);
+        axios.post(config.apiAddress + "/api/feed/opml",
+            formData
+            , {
+              headers: {
+                'Authorization': "Bearer " + this.$store.state.jwt,
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+              }
+            }).then(
+            (response) => {
+              if (response.data.code !== 200) {
+                this.info = response.data.message
+                return
+              }
+            },
+            (error) => {
+              let errText
+              if (error.response === undefined) {
+                errText = "Unable to connect to server";
+              } else {
+                errText = error.response.status + " " + error.response.data.message;
+              }
+              this.info = errText;
+            })
+      }
     }
   },
   data() {
@@ -318,7 +390,9 @@ export default {
       dismissSecs: 10,
       dismissCountDown: 0,
       showDismissibleAlert: false,
-      postList: []
+      postList: [],
+      ioport: false,
+      opml: null
     };
   }
 };

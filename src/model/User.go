@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"fmt"
+	"github.com/gilliek/go-opml/opml"
+	"log"
 )
 
 type User struct {
@@ -10,6 +12,7 @@ type User struct {
 	Mail      string
 	Password  string
 	subscribe []subscribe
+	opml      opml.OPML
 }
 
 type Read struct {
@@ -28,6 +31,39 @@ type subscribe struct {
 	ID  int64 `gorm:"AUTO_INCREMENT"`
 	UID int64
 	FID int64
+}
+
+func (u *User) Import(opmls string) error {
+	doc, err := opml.NewOPML([]byte(opmls))
+	if err != nil {
+		return errors.New("opml parsing error:" + err.Error())
+	}
+	error := 0
+	for _, i := range doc.Body.Outlines {
+		f := Feed{Url: i.XMLURL}
+		err := f.Get()
+		log.Println("import:" + i.XMLURL)
+		if err != nil && err.Error() == "Not Found" {
+			err = nil
+			err := f.New()
+			if err != nil {
+				log.Println("new:" + err.Error() + "/" + i.XMLURL)
+				error = 1
+				continue
+			}
+		}
+		f.Get()
+		err = u.AddSub(f.ID)
+		if err != nil {
+			log.Println("add:" + err.Error() + "/" + i.XMLURL)
+			error = 1
+		}
+		log.Println("imported:" + i.XMLURL)
+	}
+	if error == 0 {
+		return nil
+	}
+	return errors.New("Imported successfully, but something went wrong")
 }
 
 func (u *User) GetSub() error {

@@ -40,7 +40,9 @@ const store = new Vuex.Store({
     state: {
         jwt: "",
         isLogin: false,
-        userInfo: null
+        config: {
+            postnum: null
+        },
     },
     mutations: {
         setjwt(state, jwt) {
@@ -48,9 +50,6 @@ const store = new Vuex.Store({
         },
         setStatus(state, bool) {
             state.isLogin = bool;
-        },
-        setUserInfo(state, data) {
-            state.userInfo = data;
         }
     }
 });

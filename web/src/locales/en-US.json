@@ -15,14 +15,16 @@
   "setting": {
     "CachedArticle": "Cached article",
     "exit": "Exit",
-    "clearCache":"Clear cache",
+    "clearCache": "Clear cache",
     "info": "Analysis",
     "hide": "Hide Analysis",
     "autodownload": "Auto download",
     "autodownloadset": "Download Settings",
     "sync": "Sync",
     "lastupdate": "Last update",
-    "syncsetting": "Sync"
+    "syncsetting": "Sync",
+    "postlistnum": "Number of articles loaded",
+    "save": "Save"
   },
   "post": {
     "update": "Update",
@@ -34,7 +36,7 @@
     "setread": "Set As Read",
     "setunread": "Read after",
     "link": "Link",
-    "empty":"Empty",
+    "empty": "Empty",
     "readafter": "Read after"
   },
   "feed": {
@@ -43,7 +45,11 @@
     "cancel": "Cancel",
     "subscribed": "Subscribed",
     "subscriber": "Subscriber",
-    "import": "import / export"
+    "import": "Import",
+    "export": "Export",
+    "clear": "Clear",
+    "download": "Download",
+    "upload": "Upload"
   },
   "footer": {
     "text": "Powered by Vue and Go"

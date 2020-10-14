@@ -188,6 +188,11 @@ export default {
     if (window.localStorage.getItem("login") === "true") {
       this.$store.commit("setStatus", true);
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"));
+      if (window.localStorage.getItem("config") !== null) {
+        this.$store.state.config = JSON.parse(window.localStorage.getItem("config"))
+      } else {
+        window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
+      }
     }
     if (!this.$store.state.isLogin) {
       router.push("/login");
@@ -396,8 +401,14 @@ export default {
     getPostList: function () {
       // console.log("getPostList")
       this.info = "";
+      let postnum = ""
+      if (this.$store.state.config.postnum === undefined) {
+        postnum = ""
+      } else {
+        postnum = this.$store.state.config.postnum
+      }
       axios
-          .get(config.apiAddress + "/api/post/", {
+          .get(config.apiAddress + "/api/post/" + postnum, {
             headers: {
               Authorization: "Bearer " + this.$store.state.jwt,
               Accept: "application/json",

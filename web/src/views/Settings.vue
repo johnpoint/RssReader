@@ -31,6 +31,15 @@
     </div>-->
     <hr>
     <div class="setting">
+      <span>{{ $t("setting.postlistnum") }}</span>
+      <b-button size="sm" style="float: right;margin: 5px" @click="savepostnum()" variant="outline-primary">{{
+          $t("setting.save")
+        }}
+      </b-button>
+      <b-form-select style="width: 100px;float: right" v-model="loadpostnum" :options="loadpostnums"></b-form-select>
+    </div>
+    <hr>
+    <div class="setting">
       <span>语言 / Language</span>
       <b-button size="sm" style="float: right;margin: 5px" @click="changeLg()" variant="outline-primary">{{
           $i18n.locale == "zh" ? "EN" : "中文"
@@ -74,20 +83,46 @@ export default {
       cache: [],
       cacheAnalysis: [],
       Analysis: false,
-      autodownload: false
+      autodownload: false,
+      loadpostnums: [
+        {value: 50, text: '50'},
+        {value: 75, text: '75'},
+        {value: 100, text: '100'},
+        {value: 125, text: '125'},
+        {value: 150, text: '150'},
+        {value: 200, text: '200'},
+      ],
+      loadpostnum: null,
     };
   },
   beforeMount() {
     if (window.localStorage.getItem("login") === "true") {
       this.$store.commit("setStatus", true);
       this.$store.commit("setjwt", window.localStorage.getItem("jwt"));
+      if (window.localStorage.getItem("config") !== null) {
+        this.$store.state.config = JSON.parse(window.localStorage.getItem("config"))
+      } else {
+        window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
+      }
     }
     if (!this.$store.state.isLogin) {
       router.push("/login");
     }
+    if (this.$store.state.config.postnum !== null) {
+      this.loadpostnum = this.$store.state.config.postnum
+    } else {
+      this.loadpostnum = 50
+      window.localStorage.setItem("config", JSON.stringify(this.$store.state.config))
+    }
     this.getCache()
   },
   methods: {
+    savepostnum: function () {
+      let config = JSON.parse(window.localStorage.getItem("config"))
+      config.postnum = this.loadpostnum
+      window.localStorage.setItem("config", JSON.stringify(config))
+      this.$store.state.config = JSON.parse(window.localStorage.getItem("config"))
+    },
     showAnalysis: function () {
       this.cache = []
       for (let i of this.localpost) {

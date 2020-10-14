@@ -18,8 +18,13 @@ export default {
   components: {},
   beforeMount() {
     if (window.localStorage.getItem("login") === "true") {
-      this.$store.commit("setStatus", true)
-      this.$store.commit("setjwt", window.localStorage.getItem("jwt"))
+      this.$store.commit("setStatus", true);
+      this.$store.commit("setjwt", window.localStorage.getItem("jwt"));
+      if (window.localStorage.getItem("config") !== null) {
+        this.$store.state.config = JSON.parse(window.localStorage.getItem("config"))
+      } else {
+        window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
+      }
     }
     if (this.$store.state.isLogin) {
       router.push("/posts")
