@@ -1,19 +1,19 @@
 <template>
   <div class="home">
-    <img alt="RRRssReader" src="../assets/logo.png" style="width: 256px;height: 256px"/>
-    <h1>Welcome to RssReader</h1>
-    <p>
-      {{ $t("about.text") }}
-    </p>
-    <p style="text-align: center;margin: 25px;"><a href="https://github.com/johnpoint/RssReader">RssReader</a> -
-      {{ $t("footer.text") }}</p>
+    <b-card v-if="Sysposts!==''">
+      <p>公告</p>
+      <p v-html="Sysposts"></p>
+    </b-card>
   </div>
 </template>
 
 <script>
 
+import axios from "axios";
+import config from "@/config";
+
 export default {
-  name: "About",
+  name: "New",
   components: {},
   beforeMount() {
     if (window.localStorage.getItem("login") === "true") {
@@ -25,9 +25,20 @@ export default {
         window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
       }
     }
+    this.getSysPost()
+  },
+  methods: {
+    getSysPost: function () {
+      axios.get(config.apiAddress + "/api/syspost").then((response) => {
+        if (response.data.code === 200) {
+          this.Sysposts = response.data.message
+        }
+      })
+    }
   },
   data() {
     return {
+      Sysposts: "",
     };
   },
 };

@@ -29,6 +29,7 @@ func Run() {
 	} //JsonWebToken 配置
 
 	e.GET("/", apis.Accessible)            //服务端运行验证
+	e.GET("/api/syspost", apis.Post)       //服务器公告
 	e.POST("/api/login", apis.Login)       //登录
 	e.POST("/api/register", apis.Register) //注册
 

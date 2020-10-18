@@ -10,7 +10,8 @@
     "login": "Login",
     "about": "About",
     "settings": "Settings",
-    "register": "Register"
+    "register": "Register",
+    "news": "Notice!"
   },
   "setting": {
     "CachedArticle": "Cached article",

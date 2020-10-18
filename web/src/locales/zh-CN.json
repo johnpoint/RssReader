@@ -10,7 +10,8 @@
     "login": "登录",
     "about": "关于",
     "settings": "设置",
-    "register": "注册"
+    "register": "注册",
+    "news": "新公告 !"
   },
   "setting": {
     "CachedArticle": "已缓存文章",

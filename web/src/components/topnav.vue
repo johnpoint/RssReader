@@ -29,16 +29,23 @@
     >
     <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
     <router-link style="margin: 5px" to="/about">{{ $t("nav.about") }}</router-link>
+    <span style="margin: 5px" v-if="Sysposts!==''"> | </span>
+    <router-link style="margin: 5px" to="/news">{{ $t("nav.news") }}</router-link>
   </div>
 </template
 >
 
 <script>
 
+import axios from "axios";
+import config from "@/config";
+
 export default {
   name: "topnav",
   data() {
-    return {};
+    return {
+      Sysposts: "",
+    };
   },
   beforeMount() {
     if (window.localStorage.getItem("i18n") === undefined) {
@@ -46,7 +53,17 @@ export default {
     } else {
       this.$i18n.locale = window.localStorage.getItem("i18n")
     }
-  }
+    this.getSysPost()
+  },
+  methods: {
+    getSysPost: function () {
+      axios.get(config.apiAddress + "/api/syspost").then((response) => {
+        if (response.data.code === 200) {
+          this.Sysposts = response.data.message
+        }
+      })
+    }
+  },
 };
 </script>
 

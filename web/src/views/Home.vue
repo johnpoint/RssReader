@@ -5,18 +5,12 @@
     <p>
       {{ $t("about.text") }}
     </p>
-    <b-card v-if="Sysposts!==''">
-      <p>公告</p>
-      <p v-html="Sysposts"></p>
-    </b-card>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import router from "@/router";
-import axios from "axios";
-import config from "@/config";
 
 export default {
   name: "Home",
@@ -34,21 +28,6 @@ export default {
     if (this.$store.state.isLogin) {
       router.push("/posts")
     }
-    this.getSysPost()
-  },
-  methods:{
-    getSysPost: function () {
-      axios.get(config.apiAddress + "/api/syspost").then((response) => {
-        if (response.data.code === 200) {
-          this.Sysposts = response.data.message
-        }
-      })
-    }
-  },
-  data() {
-    return {
-      Sysposts: "",
-    };
   },
 };
 </script>
