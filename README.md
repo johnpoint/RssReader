@@ -8,9 +8,6 @@
 
 vue + go 的在线 rss 阅读器
 
-<hr>
-version 0.16
+## Getting Started
 
-## 部署
-
-// TODO
+[Depoly.md](https://github.com/johnpoint/RssReader/blob/master/doc/deploy.md)

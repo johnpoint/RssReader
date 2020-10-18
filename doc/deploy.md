@@ -4,37 +4,15 @@
 
 *TODO*
 
-## Download && Compile
+## Download
 
 ```bash
 git clone https://github.com/johnpoint/RssReader
 ```
 
-### Backend
-
-```bash
-cd RssReader
-bash build.sh
-```
-
-### Web
-
-```bash
-cd web
-yarn
-yarn build
-```
-
-### Databse
-
-#### Mysql
-
-Example:
-```sql
-create database rssreader character set utf8mb4;
-```
-
 ## Configuration
+
+### Backend
 
 Edit `RssReader/dev/config.json`
 
@@ -77,3 +55,47 @@ Example:
 - Debug: (true/false)
 - UpdateTime: Spider sleep time (min) // TODO
 - AllowOrigins: CORS setting
+
+### Web
+
+Edit `RssReader/web/src/config.js`
+
+```javascript
+export default {
+  apiAddress: "http://127.0.0.1:1323"
+};
+```
+- apiAddress: Backend url
+
+## Compile
+
+### Backend
+
+```bash
+cd RssReader
+bash build.sh
+```
+
+### Web
+
+```bash
+cd web
+yarn
+yarn build
+```
+
+### Databse
+
+#### Mysql
+
+Example:
+```sql
+create database rssreader character set utf8mb4;
+```
+
+## Run
+
+```
+cd RssReader/dev
+./main start
+```
