@@ -30,7 +30,7 @@
     <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
     <router-link style="margin: 5px" to="/about">{{ $t("nav.about") }}</router-link>
     <span style="margin: 5px" v-if="Sysposts!==''"> | </span>
-    <router-link style="margin: 5px" to="/news">{{ $t("nav.news") }}</router-link>
+    <router-link v-if="Sysposts!==''" style="margin: 5px" to="/news">{{ $t("nav.news") }}</router-link>
   </div>
 </template
 >
