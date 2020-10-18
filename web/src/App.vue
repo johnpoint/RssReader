@@ -1,21 +1,19 @@
 <template>
   <div id="app">
-    <topnav />
+    <topnav/>
     <div id="main">
-      <router-view />
+      <router-view/>
     </div>
   </div>
 </template>
 
 <script>
 import topnav from "@/components/topnav";
+
 export default {
   components: {
     topnav
   },
-  data() {
-    return {};
-  }
 };
 </script>
 

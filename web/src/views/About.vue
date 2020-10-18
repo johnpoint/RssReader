@@ -5,6 +5,10 @@
     <p>
       {{ $t("about.text") }}
     </p>
+    <b-card v-if="Sysposts!==''">
+      <p>公告</p>
+      <p v-html="Sysposts"></p>
+    </b-card>
     <p style="text-align: center;margin: 25px;"><a href="https://github.com/johnpoint/RssReader">RssReader</a> -
       {{ $t("footer.text") }}</p>
   </div>
@@ -12,11 +16,12 @@
 
 <script>
 // @ is an alias to /src
+import axios from "axios";
+import config from "@/config";
 
 export default {
   name: "About",
-  components: {
-  },
+  components: {},
   beforeMount() {
     if (window.localStorage.getItem("login") === "true") {
       this.$store.commit("setStatus", true);
@@ -27,6 +32,21 @@ export default {
         window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
       }
     }
-  }
+    this.getSysPost()
+  },
+  methods: {
+    getSysPost: function () {
+      axios.get(config.apiAddress + "/api/syspost").then((response) => {
+        if (response.data.code === 200) {
+          this.Sysposts = response.data.message
+        }
+      })
+    }
+  },
+  data() {
+    return {
+      Sysposts: "",
+    };
+  },
 };
 </script>
