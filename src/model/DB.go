@@ -1,10 +1,23 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 	"log"
 )
+
+var db *gorm.DB
+
+func init() {
+	if db == nil {
+		var err error
+		db, err = Initdatabase()
+		if err != nil {
+			log.Println(err.Error())
+		}
+	}
+}
 
 func Initdatabase() (*gorm.DB, error) {
 	conf := Config{}
@@ -13,11 +26,13 @@ func Initdatabase() (*gorm.DB, error) {
 		return nil, err
 	}
 	var db *gorm.DB
-	db, err = gorm.Open("sqlite3", conf.Database)
-	if conf.Debug {
-		db.LogMode(true)
-	} else {
-		db.LogMode(false)
+	switch conf.Database.Type {
+	case "mysql":
+		dsn := conf.Database.User + ":" + conf.Database.Password + "@tcp(" + conf.Database.Address + ")/" + conf.Database.DBname + "?charset=utf8mb4&parseTime=True&loc=Local"
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		break
+	case "sqlite":
+		db, err = gorm.Open(sqlite.Open(conf.Database.DBname), &gorm.Config{})
 	}
 	if err != nil {
 		log.Println(err.Error())

@@ -10,11 +10,19 @@ type Config struct {
 	AllowOrigins []string
 	Port         string
 	Debug        bool
-	Database     string
+	Database     Database
 	Salt         string
 	TLS          bool
 	CERTPath     string
 	KEYPath      string
+}
+
+type Database struct {
+	Type     string
+	Address  string
+	User     string
+	Password string
+	DBname   string
 }
 
 func (c *Config) Load() error {

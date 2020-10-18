@@ -8,8 +8,8 @@ import (
 )
 
 type User struct {
-	ID        int64 `gorm:"AUTO_INCREMENT"`
-	Mail      string
+	ID        int64  `gorm:"autoIncrement"`
+	Mail      string `gorm:"primaryKey"`
 	Password  string
 	subscribe []subscribe
 	opml      opml.OPML
@@ -39,6 +39,7 @@ func (u *User) Import(opmls string) error {
 		return errors.New("opml parsing error:" + err.Error())
 	}
 	error := 0
+	errorItem := ""
 	for _, i := range doc.Body.Outlines {
 		f := Feed{Url: i.XMLURL}
 		err := f.Get()
@@ -48,6 +49,7 @@ func (u *User) Import(opmls string) error {
 			err := f.New()
 			if err != nil {
 				log.Println("new:" + err.Error() + "/" + i.XMLURL)
+				errorItem += i.XMLURL + "\n"
 				error = 1
 				continue
 			}
@@ -63,18 +65,17 @@ func (u *User) Import(opmls string) error {
 	if error == 0 {
 		return nil
 	}
-	return errors.New("Imported successfully, but something went wrong")
+	return errors.New("Imported successfully, but something went wrong:\n" + errorItem)
 }
 
 func (u *User) GetSub() error {
 	if u.ID == 0 {
 		return errors.New("Incomplete parameters")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	_ = db.AutoMigrate(&subscribe{})
 	subscribes := []subscribe{}
 	db.Where(subscribe{UID: u.ID}).Find(&subscribes)
@@ -100,11 +101,10 @@ func (u *User) AddSub(sub int64) error {
 			return errors.New("Already subscribed")
 		}
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -148,11 +148,10 @@ func (u *User) DelSub(sub int64) error {
 	if flag == 0 {
 		return errors.New("Feed does not exist")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -184,11 +183,10 @@ func (u *User) DelSub(sub int64) error {
 }
 
 func (u *User) Get() error {
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	_ = db.AutoMigrate(&User{})
 	Users := []User{}
 	db.Where(User{Mail: u.Mail, ID: u.ID}).Find(&Users)
@@ -210,11 +208,10 @@ func (u *User) New() error {
 	if err == nil {
 		return errors.New("Email has been used")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -227,7 +224,7 @@ func (u *User) New() error {
 	}
 
 	_ = tx.AutoMigrate(&User{})
-	if err := tx.Create(u).Error; err != nil {
+	if err := tx.Create(&u).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -243,11 +240,10 @@ func (u *User) VerPassword(getPassword string) bool {
 }
 
 func (u *User) Save() error {
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -261,7 +257,7 @@ func (u *User) Save() error {
 	}
 	_ = tx.AutoMigrate(&User{})
 	where := User{ID: u.ID}
-	if err := tx.Model(&where).Updates(u).Error; err != nil {
+	if err := tx.Model(&where).Where(where).Updates(u).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -273,11 +269,10 @@ func (u *User) ReadPost() ([]int64, error) {
 	if u.ID == 0 {
 		return nil, errors.New("Incomplete parameters")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return []int64{}, err
+	if db == nil {
+		return []int64{}, errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	_ = db.AutoMigrate(&Read{})
 	reads := []Read{}
 	db.Where(Read{UID: u.ID}).Find(&reads)
@@ -297,11 +292,10 @@ func (u *User) Read(pid int64) error {
 	if err != nil {
 		return err
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -330,11 +324,10 @@ func (u *User) UnRead(pid int64) error {
 	if err != nil {
 		return err
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {

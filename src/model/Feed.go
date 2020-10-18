@@ -11,8 +11,8 @@ import (
 )
 
 type Feed struct {
-	ID    int64
-	Title string
+	ID    int64  `gorm:"autoIncrement"`
+	Title string `gorm:"primaryKey"`
 	Url   string
 	Feed  string
 	Num   int64
@@ -22,11 +22,10 @@ func (f *Feed) Get() error {
 	if f.ID == 0 && f.Url == "" {
 		return errors.New("Url and ID can not be empty")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	_ = db.AutoMigrate(&User{})
 	Feeds := []Feed{}
 	db.Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
@@ -49,7 +48,7 @@ func (f *Feed) New() error {
 	if err == nil {
 		return errors.New("Feed already exists")
 	}
-
+	err = nil
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	fp := gofeed.NewParser()
@@ -59,11 +58,10 @@ func (f *Feed) New() error {
 	}
 	f.Title = feed.Title
 	f.Feed = feed.String()
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -76,7 +74,7 @@ func (f *Feed) New() error {
 	}
 
 	_ = tx.AutoMigrate(&Feed{})
-	if err := tx.Create(f).Error; err != nil {
+	if err := tx.Create(&f).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -92,7 +90,9 @@ func (f *Feed) Update() error {
 	err := f.Get()
 	if err != nil {
 		err := f.New()
-		return err
+		if err != nil {
+			return err
+		}
 	}
 	fp := gofeed.NewParser()
 	feed, err := fp.ParseURL(f.Url)
@@ -147,7 +147,7 @@ func (f *Feed) Update() error {
 		p.Content = i.Content
 		p.Description = i.Description
 		p.Published = strconv.FormatInt(t.Unix(), 10)
-		if errGet != nil && errGet.Error() == "Not Found" {
+		if errGet != nil {
 			p.New()
 		} else {
 			p.save()
@@ -159,11 +159,10 @@ func (f *Feed) Update() error {
 }
 
 func (f *Feed) save() error {
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -172,12 +171,11 @@ func (f *Feed) save() error {
 	}()
 
 	if tx.Error != nil {
-		fmt.Println(tx.Error)
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&Feed{})
 	where := Feed{ID: f.ID}
-	if err := tx.Model(&where).Where(where).Update(f).Error; err != nil {
+	if err := tx.Model(&where).Where(where).Updates(f).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -186,11 +184,10 @@ func (f *Feed) save() error {
 }
 
 func (f *Feed) Post() []Post {
-	db, err := Initdatabase()
-	if err != nil {
+	if db == nil {
 		return []Post{}
 	}
-	defer db.Close()
+	// defer db.Close()
 	_ = db.AutoMigrate(&Post{})
 	Posts := []Post{}
 	db.Where(Post{FID: f.ID}).Find(&Posts)
@@ -204,11 +201,10 @@ func (f *Feed) Detele() error {
 	if f.ID == 0 {
 		return errors.New("ID can not be empty")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
