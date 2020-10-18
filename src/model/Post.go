@@ -5,11 +5,11 @@ import (
 )
 
 type Post struct {
-	ID          int64 `gorm:"AUTO_INCREMENT"`
+	ID          int64 `gorm:"autoIncrement"`
 	FID         int64
 	Title       string
 	Content     string
-	Url         string
+	Url         string `gorm:"primaryKey"`
 	Description string
 	Published   string
 }
@@ -18,11 +18,10 @@ func (p *Post) Get() error {
 	if p.FID == 0 && p.ID == 0 && p.Url == "" {
 		return errors.New("Incomplete parameters")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	_ = db.AutoMigrate(&Post{})
 	Posts := []Post{}
 	db.Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
@@ -47,11 +46,10 @@ func (p *Post) New() error {
 	if err == nil {
 		return errors.New("Post already exist")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -64,7 +62,7 @@ func (p *Post) New() error {
 	}
 
 	_ = tx.AutoMigrate(&Post{})
-	if err := tx.Create(p).Error; err != nil {
+	if err := tx.Create(&p).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -76,11 +74,10 @@ func (p *Post) Delete() error {
 	if p.ID == 0 {
 		return errors.New("Incomplete parameters")
 	}
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -100,11 +97,10 @@ func (p *Post) Delete() error {
 }
 
 func (p *Post) save() error {
-	db, err := Initdatabase()
-	if err != nil {
-		return err
+	if db == nil {
+		return errors.New("Database connection failed")
 	}
-	defer db.Close()
+	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -117,7 +113,7 @@ func (p *Post) save() error {
 	}
 	_ = tx.AutoMigrate(&Post{})
 	where := Post{ID: p.ID}
-	if err := tx.Model(&where).Where(where).Update(p).Error; err != nil {
+	if err := tx.Model(&where).Where(where).Updates(p).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
