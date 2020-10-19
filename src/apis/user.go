@@ -20,12 +20,12 @@ func Login(c echo2.Context) error {
 	conf := model.Config{}
 	err := conf.Load()
 	if err != nil {
-		return err
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
-		return err
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	user := u
 	err = u.Get()
@@ -56,12 +56,12 @@ func Register(c echo2.Context) error {
 	conf := model.Config{}
 	err := conf.Load()
 	if err != nil {
-		return err
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
-		return err
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	if u.Mail == "" || u.Password == "" {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "Password or mail can not be blank"})
@@ -71,6 +71,37 @@ func Register(c echo2.Context) error {
 	md5Password := fmt.Sprintf("%x", has)
 	u.Password = md5Password
 	err = u.New()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
+}
+
+func ResetPassword(c echo2.Context) error {
+	user := CheckAuth(c)
+	conf := model.Config{}
+	err := conf.Load()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	salt := conf.Salt
+	u := model.User{Mail: user.Mail}
+	err = u.Get()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
+	}
+	type resetPassword struct {
+		Password string
+	}
+	p := resetPassword{}
+	if err := c.Bind(&p); err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	data := []byte(u.Mail + salt + p.Password)
+	has := md5.Sum(data)
+	md5Password := fmt.Sprintf("%x", has)
+	u.Password = md5Password
+	err = u.Save()
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
@@ -116,7 +147,7 @@ func FeedAsRead(c echo2.Context) error {
 	for _, i := range p {
 		err := u.Read(i.ID)
 		if err != nil {
-			return err
+			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 		}
 	}
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
@@ -147,7 +178,7 @@ type respFeed struct {
 func SearchFeed(c echo2.Context) error {
 	f := model.Feed{}
 	if err := c.Bind(&f); err != nil {
-		return err
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	err := f.Get()
 	if err != nil {
@@ -191,7 +222,7 @@ func UnSubscribeFeed(c echo2.Context) error {
 	for _, i := range p {
 		err := u.UnRead(i.ID)
 		if err != nil {
-			return err
+			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 		}
 	}
 	err = u.DelSub(fid)
@@ -296,7 +327,7 @@ func GetFeedList(c echo2.Context) error {
 		f.ID = i.FID
 		err := f.Get()
 		if err != nil {
-			return err
+			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 		}
 		data = append(data, respFeed{ID: i.FID, Title: f.Title, Url: f.Url})
 	}
@@ -313,11 +344,11 @@ func ImportOPML(c echo2.Context) error {
 	}
 	file, err := c.FormFile("opml")
 	if err != nil {
-		return err
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	src, err := file.Open()
 	if err != nil {
-		return err
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	defer src.Close()
 	buf := new(strings.Builder)

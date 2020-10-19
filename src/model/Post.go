@@ -58,11 +58,15 @@ func (p *Post) New() error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 
 	_ = tx.AutoMigrate(&Post{})
 	if err := tx.Create(&p).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -85,10 +89,14 @@ func (p *Post) Delete() error {
 		}
 	}()
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&Post{})
 	if err := tx.Where(Post{ID: p.ID}).Delete(Post{}).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -109,11 +117,15 @@ func (p *Post) save() error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&Post{})
 	where := Post{ID: p.ID}
 	if err := tx.Model(&where).Where(where).Updates(p).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}

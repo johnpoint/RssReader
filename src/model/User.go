@@ -1,8 +1,8 @@
 package model
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/gilliek/go-opml/opml"
 	"log"
 )
@@ -21,25 +21,27 @@ type Read struct {
 	UID int64
 }
 
-/*type Star struct {
-	ID  int64 `gorm:"AUTO_INCREMENT"`
-	PID int64
-	UID int64
-}*/
-
 type subscribe struct {
 	ID  int64 `gorm:"AUTO_INCREMENT"`
 	UID int64
 	FID int64
 }
 
+func (u *User) Export() error {
+	return nil
+}
+
 func (u *User) Import(opmls string) error {
+	type errItem struct {
+		Url  string
+		Info string
+	}
 	doc, err := opml.NewOPML([]byte(opmls))
 	if err != nil {
 		return errors.New("opml parsing error:" + err.Error())
 	}
 	error := 0
-	errorItem := ""
+	errorItem := []errItem{}
 	for _, i := range doc.Body.Outlines {
 		f := Feed{Url: i.XMLURL}
 		err := f.Get()
@@ -49,15 +51,16 @@ func (u *User) Import(opmls string) error {
 			err := f.New()
 			if err != nil {
 				log.Println("new:" + err.Error() + "/" + i.XMLURL)
-				errorItem += i.XMLURL + "\n"
+				errorItem = append(errorItem, errItem{Url: i.XMLURL, Info: err.Error()})
 				error = 1
 				continue
 			}
 		}
 		f.Get()
+		err = nil
 		err = u.AddSub(f.ID)
 		if err != nil {
-			log.Println("add:" + err.Error() + "/" + i.XMLURL)
+			errorItem = append(errorItem, errItem{Url: i.XMLURL, Info: err.Error()})
 			error = 1
 		}
 		log.Println("imported:" + i.XMLURL)
@@ -65,7 +68,8 @@ func (u *User) Import(opmls string) error {
 	if error == 0 {
 		return nil
 	}
-	return errors.New("Imported successfully, but something went wrong:\n" + errorItem)
+	jsonMsg, _ := json.Marshal(errorItem)
+	return errors.New("Imported successfully, but something went wrong:\n" + string(jsonMsg))
 }
 
 func (u *User) GetSub() error {
@@ -75,7 +79,6 @@ func (u *User) GetSub() error {
 	if db == nil {
 		return errors.New("Database connection failed")
 	}
-	// defer db.Close()
 	_ = db.AutoMigrate(&subscribe{})
 	subscribes := []subscribe{}
 	db.Where(subscribe{UID: u.ID}).Find(&subscribes)
@@ -113,6 +116,8 @@ func (u *User) AddSub(sub int64) error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 
@@ -120,6 +125,8 @@ func (u *User) AddSub(sub int64) error {
 	subscribe := subscribe{UID: u.ID, FID: sub}
 	if err := tx.Create(&subscribe).Error; err != nil {
 		tx.Rollback()
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		return err
 	}
 	tx.Commit()
@@ -159,10 +166,14 @@ func (u *User) DelSub(sub int64) error {
 		}
 	}()
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&subscribe{})
 	if err := tx.Where(subscribe{FID: sub, UID: u.ID}).Delete(subscribe{}).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -220,11 +231,15 @@ func (u *User) New() error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 
 	_ = tx.AutoMigrate(&User{})
 	if err := tx.Create(&u).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -252,12 +267,15 @@ func (u *User) Save() error {
 	}()
 
 	if tx.Error != nil {
-		fmt.Println(tx.Error)
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&User{})
 	where := User{ID: u.ID}
 	if err := tx.Model(&where).Where(where).Updates(u).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -304,10 +322,14 @@ func (u *User) Read(pid int64) error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&Read{})
 	if err := tx.Create(&Read{UID: u.ID, PID: pid}).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -336,11 +358,15 @@ func (u *User) UnRead(pid int64) error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 
 	_ = tx.AutoMigrate(&Read{})
 	if err := tx.Where(Read{UID: u.ID, PID: pid}).Delete(Read{}).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}

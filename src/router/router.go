@@ -50,6 +50,8 @@ func Run() {
 	p.GET("/:num", apis.GetPostList)           //获取文章列表
 	p.GET("/", apis.GetPostList)               //获取文章列表
 	p.GET("/read", apis.GetReadPostList)       //获取已读文章列表
+	u := w.Group("/user")
+	u.POST("/password", apis.ResetPassword) //重设密码
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.Port, conf.CERTPath, conf.KEYPath))

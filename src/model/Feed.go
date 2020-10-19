@@ -3,7 +3,6 @@ package model
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -70,11 +69,15 @@ func (f *Feed) New() error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 
 	_ = tx.AutoMigrate(&Feed{})
 	if err := tx.Create(&f).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -171,11 +174,15 @@ func (f *Feed) save() error {
 	}()
 
 	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&Feed{})
 	where := Feed{ID: f.ID}
 	if err := tx.Model(&where).Where(where).Updates(f).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
@@ -213,12 +220,15 @@ func (f *Feed) Detele() error {
 	}()
 
 	if tx.Error != nil {
-		fmt.Println(tx.Error)
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
 		return tx.Error
 	}
 	_ = tx.AutoMigrate(&Feed{})
 	where := Feed{ID: f.ID}
 	if err := tx.Where(where).Delete(f).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
 		tx.Rollback()
 		return err
 	}
