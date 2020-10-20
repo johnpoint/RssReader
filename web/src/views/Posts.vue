@@ -93,17 +93,6 @@
             (showRead && showUnread)
           "
         >
-          <!--<b-icon-box-seam
-              style="margin-right: 10px;"
-              v-if="cachePostList.indexOf(String(post[index].id))!==-1"
-          >saved
-          </b-icon-box-seam>
-          <b-icon-download
-              style="margin-right: 10px;"
-              v-else
-              @click="getPostContent(post[index].id)"
-          >save
-          </b-icon-download>-->
           <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
           >{{ i.Source }} >>
           </a>
@@ -117,12 +106,6 @@
               class="postlisttitle"
           >{{ i.Title }}
           </a>
-          <!--<b-icon-clock-history
-              class="readbtn"
-              style="float: right; margin: 5px;"
-              v-if="!i.readafter"
-              @click="readAfter(getPostContent(post[index].ID));nowshowpost=loadingShowPost">
-          </b-icon-clock-history>-->
           <b-icon-check-square-fill
               class="readbtn"
               style="float: right; margin: 5px; color: #42b983"
@@ -230,25 +213,6 @@ export default {
       // console.log("change")
       this.post[index].read ? this.unread(this.post[index].ID) : this.read(this.post[index].ID);
       this.post[index].read = !this.post[index].read;
-    },
-    readAfter: function (data) {
-      // console.log("readAfter")
-      if (data.read !== true) {
-        let j = 0;
-        for (let i of this.post) {
-          if (i.ID === data.ID) {
-            this.change(j)
-            break
-          }
-          j++;
-        }
-      }
-      let now = JSON.parse(window.localStorage.getItem("post" + data.ID))
-      now.readafter = true
-      now.time = Date.parse(new Date())
-      window.localStorage.setItem("post" + data.ID, JSON.stringify(now))
-      this.showPost = false
-      this.updateCache()
     },
     read: function (id) {
       // console.log("read")
@@ -408,59 +372,6 @@ export default {
               (error) => {
                 let errText
                 if (error.response === undefined) {
-                  errText = "Unable to connect to server";
-                } else {
-                  errText = error.response.status + " " + error.response.data.message;
-                }
-                this.info = errText;
-              }
-          );
-    },
-    getPostContent: function (id) {
-      // console.log("getPostContent")
-      if (window.localStorage.getItem("post" + id) !== null) {
-        this.nowshowpost = JSON.parse(window.localStorage.getItem(
-            "post" + id
-        ));
-        this.showLoading = false;
-        return;
-      }
-      this.info = "";
-      this.showLoading = true;
-      axios
-          .get(config.apiAddress + "/api/post/content/" + id, {
-            headers: {
-              Authorization: "Bearer " + this.$store.state.jwt,
-              Accept: "application/json",
-            },
-          })
-          .then(
-              (response) => {
-                if (response.data.code !== 200) {
-                  this.info = response.data.message;
-                  return;
-                }
-                let newPostCache = JSON.parse(response.data.message)
-                for (let i of this.post) {
-                  if (i.ID === newPostCache.ID) {
-                    newPostCache.Source = i.Source
-                    newPostCache.read = i.read
-                    break
-                  }
-                }
-                newPostCache.readafter = false
-                window.localStorage.setItem(
-                    "post" + id,
-                    JSON.stringify(newPostCache)
-                );
-                this.showLoading = false;
-                this.nowshowpost = newPostCache
-                // console.log(newPostCache)
-                this.updateCache();
-              },
-              (error) => {
-                let errText
-                if (error.response == undefined) {
                   errText = "Unable to connect to server";
                 } else {
                   errText = error.response.status + " " + error.response.data.message;
