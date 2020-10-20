@@ -11,7 +11,7 @@
     "about": "About",
     "settings": "Settings",
     "register": "Register",
-    "news": "Notice!"
+    "news": "Notice"
   },
   "setting": {
     "CachedArticle": "Cached article",
@@ -25,7 +25,11 @@
     "lastupdate": "Last update",
     "syncsetting": "Sync",
     "postlistnum": "Number of articles loaded",
-    "save": "Save"
+    "save": "Save",
+    "password": "Password",
+    "edit": "Edit",
+    "hidepassword": "Hide",
+    "showpassword": "Show"
   },
   "post": {
     "update": "Update",
