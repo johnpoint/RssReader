@@ -69,7 +69,7 @@
               style="font-size: large"
               @click="
               setTop();
-              nowshowpost=cachePostData[index]
+              toPost(cachePostData[index].ID)
             "
               class="postlisttitle"
           >{{ i.Title }}
@@ -160,8 +160,7 @@ import router from "@/router";
 
 export default {
   name: "Overview",
-  components: {
-  },
+  components: {},
   beforeMount() {
     // check power
     if (window.localStorage.getItem("login") === "true") {

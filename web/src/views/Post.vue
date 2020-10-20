@@ -7,7 +7,7 @@
       >{{ $t("post.back") }}</label
       >
       <label
-          @click="readAfter(nowshowpost);"
+          @click="readAfter(nowshowpost);$router.push('/posts')"
           class="tab righttab"
       >{{ $t("post.setunread") }}</label
       >
@@ -92,16 +92,6 @@ export default {
     },
     readAfter: function (data) {
       // console.log("readAfter")
-      if (data.read !== true) {
-        let j = 0;
-        for (let i of this.post) {
-          if (i.ID === data.ID) {
-            this.change(j)
-            break
-          }
-          j++;
-        }
-      }
       let now = JSON.parse(window.localStorage.getItem("post" + data.ID))
       now.readafter = true
       now.time = Date.parse(new Date())
@@ -113,9 +103,7 @@ export default {
       this.$router.push("/posts")
     },
     getPostContent: function () {
-      console.log("getPostContent")
       let id = this.$route.params.id
-      console.log(id)
       if (window.localStorage.getItem("post" + id) !== null) {
         this.nowshowpost = JSON.parse(window.localStorage.getItem(
             "post" + id
