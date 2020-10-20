@@ -20,11 +20,11 @@ const routes = [
         name: "News",
         component: () => import("../views/News.vue")
     },
-    /*{
+    {
         path: "/post/:id",
         name: "Post",
-        component: () => import("../views/Posts.vue")
-    },*/
+        component: () => import("../views/Post.vue")
+    },
     {
         path: "/settings",
         name: "Settings",

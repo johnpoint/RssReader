@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <span>{{ info }}</span>
-    <div v-if="!showPost" id="list">
+    <div id="list">
       <div class="tablist">
         <label @click="getPostList()" class="tab lefttab">{{
             $t("post.update")
@@ -69,7 +69,6 @@
               style="font-size: large"
               @click="
               setTop();
-              showPost = true;
               nowshowpost=cachePostData[index]
             "
               class="postlisttitle"
@@ -112,9 +111,8 @@
               style="font-size: large"
               @click="
               setTop();
-              showPost = true;
-              getPostContent(post[index].ID);
               !post[index].read?change(index):'';
+              toPost(post[index].ID);
           "
               class="postlisttitle"
           >{{ i.Title }}
@@ -145,28 +143,11 @@
         </div>
       </div>
     </div>
-    <div v-if="showPost" id="postinfo">
-      <div class="tablist">
-        <label
-            class="tab lefttab"
-            @click="showPost=false;nowshowpost=loadingShowPost"
-        >{{ $t("post.back") }}</label
-        >
-        <label
-            @click="readAfter(nowshowpost);nowshowpost=loadingShowPost"
-            class="tab righttab"
-        >{{ $t("post.setunread") }}</label
-        >
-      </div>
-      <div class="postbox">
-        <post :post="nowshowpost"/>
-      </div>
-    </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>
     <span
-        v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length===0)) && !showLoading && !showPost"
+        v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length===0)) && !showLoading"
         class="empty">{{ $t("post.empty") }}</span>
     <span v-else class="empty" style="color:rgba(0,0,0,0)">1</span>
   </div>
@@ -176,12 +157,10 @@
 import axios from "axios";
 import config from "@/config";
 import router from "@/router";
-import post from "@/components/Post"
 
 export default {
   name: "Overview",
   components: {
-    post
   },
   beforeMount() {
     // check power
@@ -202,6 +181,7 @@ export default {
       window.localStorage.setItem("posts", JSON.stringify([]));
     }
     this.post = JSON.parse(window.localStorage.getItem("posts"));
+    this.$store.state.postList = JSON.parse(window.localStorage.getItem("posts"));
     // something
     this.getPostList();
     this.updateCache();
@@ -243,6 +223,9 @@ export default {
     backTop: function () {
       // console.log("backTop")
       document.documentElement.scrollTop = this.top;
+    },
+    toPost: function (id) {
+      this.$router.push("/post/" + id)
     },
     change: function (index) {
       // console.log("change")
@@ -491,7 +474,6 @@ export default {
   data() {
     return {
       post: [],//文章列表
-      showPost: false,// tab控制开关
       showRead: false,// tab控制开关
       showUnread: true,// tab控制开关
       readPost: [], // 已阅读文章列表
@@ -503,12 +485,7 @@ export default {
       cachePostData: [],// 缓存文章数据
       readafter: [],// 稍后阅读列表
       empty: false,// 判断文章列表是否为空
-      nowshowpost: {
-        Title: "Loading Title",
-        Url: "/",
-        Source: "Loading",
-        Description: "Loading"
-      },// 显示的文章
+      nowshowpost: null,// 显示的文章
       loadingShowPost: {
         Title: "Loading Title",
         Url: "/",
