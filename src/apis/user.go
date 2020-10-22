@@ -376,7 +376,7 @@ func ExportOPML(c echo.Context) error {
 		Version: "2.0",
 		Head: opml.Head{
 			Title:       "OPML Export From Rssreader",
-			DateCreated: time.RFC1123Z,
+			DateCreated: time.Now().Format(time.RFC1123Z),
 			Docs:        "http://www.opml.org/spec2",
 		},
 		Body: opml.Body{
