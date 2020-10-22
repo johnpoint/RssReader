@@ -13,7 +13,7 @@
 <script>
 export default {
   name: "Post",
-  props: ['post'],
+  props: ['post', 'nextpost'],
 }
 </script>
 

@@ -55,7 +55,7 @@
       </b-card>
       <b-card style="text-align: left">
         <label>{{ $t("feed.export") }}</label><br>
-        <b-button size="sm" style="margin: 5px" variant="outline-primary" disabled>{{
+        <b-button size="sm" @click="exportopml()" style="margin: 5px" variant="outline-primary">{{
             $t("feed.download")
           }}
         </b-button>
@@ -343,11 +343,37 @@ export default {
             this.info = errText;
           })
     },
+    exportopml: function () {
+      axios.get(config.apiAddress + "/api/user/opml", {
+        headers: {
+          'Authorization': "Bearer " + this.$store.state.jwt,
+          'Accept': 'application/json',
+        }
+      }).then(
+          (response) => {
+            if (response.data.code !== 200) {
+              this.info = response.data.message;
+              return
+            }
+            var pom = document.createElement('a');
+            pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(response.data.message));
+            pom.setAttribute('download', "export.xml");
+
+            if (document.createEvent) {
+              var event = document.createEvent('MouseEvents');
+              event.initEvent('click', true, true);
+              pom.dispatchEvent(event);
+            } else {
+              pom.click();
+            }
+          }
+      )
+    },
     uploadopml: function () {
       if (this.opml !== null) {
         var formData = new FormData();
         formData.append("opml", this.opml);
-        axios.post(config.apiAddress + "/api/feed/opml",
+        axios.post(config.apiAddress + "/api/user/opml",
             formData
             , {
               headers: {

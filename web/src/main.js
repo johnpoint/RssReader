@@ -51,6 +51,9 @@ const store = new Vuex.Store({
         },
         setStatus(state, bool) {
             state.isLogin = bool;
+        },
+        setPostList(state, data) {
+            state.postList = data
         }
     }
 });

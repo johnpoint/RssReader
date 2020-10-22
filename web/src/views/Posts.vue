@@ -163,7 +163,7 @@ export default {
       window.localStorage.setItem("posts", JSON.stringify([]));
     }
     this.post = JSON.parse(window.localStorage.getItem("posts"));
-    this.$store.state.postList = JSON.parse(window.localStorage.getItem("posts"));
+    this.$store.commit("setPostList",JSON.parse(window.localStorage.getItem("posts")))
     // something
     this.getPostList();
     this.updateCache();
@@ -294,6 +294,7 @@ export default {
     savePostListCache: function (data) {
       // console.log("savePostListCache")
       window.localStorage.setItem("posts", data);
+      this.$store.commit("setPostList",JSON.parse(window.localStorage.getItem("posts")))
     },
     getReadList: function (postList) {
       // console.log("getReadList")

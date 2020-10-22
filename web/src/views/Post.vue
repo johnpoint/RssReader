@@ -13,7 +13,7 @@
       >
     </div>
     <div class="postbox">
-      <post v-if="nowshowpost!==null" :post="nowshowpost"/>
+      <post v-if="nowshowpost!==null" :post="nowshowpost" :nextpost="nextpost"/>
     </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
@@ -36,12 +36,7 @@ export default {
   data() {
     return {
       nowshowpost: null,// 显示的文章
-      loadingShowPost: {
-        Title: "Loading Title",
-        Url: "/",
-        Source: "Loading",
-        Description: "Loading"
-      },
+      nextpost: null,
       showLoading: false,
     }
   },
@@ -63,8 +58,17 @@ export default {
       window.localStorage.setItem("posts", JSON.stringify([]));
     }
     this.post = JSON.parse(window.localStorage.getItem("posts"));
-    this.$store.state.postList = JSON.parse(window.localStorage.getItem("posts"));
+    this.$store.commit("setPostList", JSON.parse(window.localStorage.getItem("posts")))
     this.getPostContent();
+    var status = 0;
+    for (let i of this.$store.state.postList) {
+      if (i.ID === this.nowshowpost.ID) {
+        status = 1
+      }
+      if (status === 1 && i.read === false) {
+        this.nextpost = i;
+      }
+    }
   },
   methods: {
     updateCache: function () {

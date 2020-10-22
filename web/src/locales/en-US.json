@@ -42,7 +42,8 @@
     "setunread": "Read after",
     "link": "Link",
     "empty": "Empty",
-    "readafter": "Read after"
+    "readafter": "Read after",
+    "next": "Next Article"
   },
   "feed": {
     "search": "Search",
