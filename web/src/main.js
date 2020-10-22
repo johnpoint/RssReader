@@ -55,6 +55,9 @@ const store = new Vuex.Store({
     }
 });
 
+console.log("Powered by Rssreader v0.20\n" +
+    "https://github.com/johnpoint/RssReader")
+
 new Vue({
     router,
     i18n,
