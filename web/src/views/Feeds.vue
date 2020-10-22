@@ -344,6 +344,7 @@ export default {
           })
     },
     exportopml: function () {
+      this.showLoading = true;
       axios.get(config.apiAddress + "/api/user/opml", {
         headers: {
           'Authorization': "Bearer " + this.$store.state.jwt,
@@ -366,8 +367,18 @@ export default {
             } else {
               pom.click();
             }
-          }
-      )
+            this.showLoading = false;
+          },
+          (error) => {
+            let errText
+            if (error.response === undefined) {
+              errText = "Unable to connect to server";
+            } else {
+              errText = error.response.status + " " + error.response.data.message;
+            }
+            this.info = errText;
+            this.showLoading = false;
+          })
     },
     uploadopml: function () {
       if (this.opml !== null) {
@@ -399,7 +410,8 @@ export default {
             })
       }
     }
-  },
+  }
+  ,
   data() {
     return {
       rss: [],
@@ -421,5 +433,6 @@ export default {
       opml: null
     };
   }
-};
+}
+;
 </script>
