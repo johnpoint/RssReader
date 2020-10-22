@@ -13,7 +13,10 @@ func Run() {
 		spider.Spider()
 	}()
 	conf := model.Config{}
-	conf.Load()
+	err := conf.Load()
+	if err != nil {
+		panic("Fatal error! Configuration file failed to load")
+	}
 	e := echo.New()
 	e.Debug = conf.Debug
 	e.HideBanner = true
@@ -36,13 +39,14 @@ func Run() {
 	w := e.Group("/api")
 	w.Use(middleware.JWTWithConfig(jwtConfig))
 	w.GET("/", apis.Accessible)
+
 	f := w.Group("/feed")
-	f.POST("/opml", apis.ImportOPML)                 //导入opml
 	f.GET("/list", apis.GetFeedList)                 //列出已经订阅feed
 	f.POST("/search", apis.SearchFeed)               //搜索feed
 	f.POST("/subscribe/:id", apis.SubscribeFeed)     //订阅feed
 	f.POST("/unsubscribe/:id", apis.UnSubscribeFeed) //退订feed
 	f.POST("/read/:id", apis.FeedAsRead)             //将该feed标为已读
+
 	p := w.Group("/post")
 	p.POST("/read/:id", apis.PostAsRead)       //将文章设置为已读
 	p.POST("/unread/:id", apis.PostAsUnRead)   //将文章设置为未读
@@ -50,8 +54,11 @@ func Run() {
 	p.GET("/:num", apis.GetPostList)           //获取文章列表
 	p.GET("/", apis.GetPostList)               //获取文章列表
 	p.GET("/read", apis.GetReadPostList)       //获取已读文章列表
+
 	u := w.Group("/user")
 	u.POST("/password", apis.ResetPassword) //重设密码
+	u.GET("/opml", apis.ExportOPML)         //导出opml
+	u.POST("/opml", apis.ImportOPML)        //导入opml
 
 	if conf.TLS {
 		e.Logger.Fatal(e.StartTLS(":"+conf.Port, conf.CERTPath, conf.KEYPath))

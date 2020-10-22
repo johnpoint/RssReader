@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
-	simplejson "github.com/bitly/go-simplejson"
+	"github.com/bitly/go-simplejson"
 	"github.com/labstack/echo/v4"
 	"io"
 	"log"
@@ -17,10 +17,15 @@ import (
 	"testing"
 )
 
+var database = model.Database{
+	Type:   "sqlite",
+	DBname: "testDB.db",
+}
+
 var config = model.Config{
 	Debug:    false,
 	TLS:      false,
-	Database: "testDB.db",
+	Database: database,
 	Salt:     "test",
 	Port:     "1323",
 }

@@ -6,16 +6,16 @@ import (
 	"os"
 	"rssreader/src/model"
 
-	echo2 "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
 )
 
 const VERSION = "0.20"
 
-func Accessible(c echo2.Context) error {
+func Accessible(c echo.Context) error {
 	return c.HTML(http.StatusOK, "<h1>RssReader api</h1>(´・ω・`) 运行正常<br><hr>Ver: "+VERSION)
 }
 
-func Post(c echo2.Context) error {
+func Post(c echo.Context) error {
 	file, err := os.Open("syspost")
 	if err != nil {
 		log.Println(err)

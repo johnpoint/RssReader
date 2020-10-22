@@ -3,8 +3,11 @@ package apis
 import (
 	"crypto/md5"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"github.com/gilliek/go-opml/opml"
 	"io"
+	"log"
 	"net/http"
 	"rssreader/src/model"
 	"sort"
@@ -13,10 +16,10 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	echo2 "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
 )
 
-func Login(c echo2.Context) error {
+func Login(c echo.Context) error {
 	conf := model.Config{}
 	err := conf.Load()
 	if err != nil {
@@ -52,7 +55,7 @@ func Login(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: t})
 }
 
-func Register(c echo2.Context) error {
+func Register(c echo.Context) error {
 	conf := model.Config{}
 	err := conf.Load()
 	if err != nil {
@@ -77,7 +80,7 @@ func Register(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
 
-func ResetPassword(c echo2.Context) error {
+func ResetPassword(c echo.Context) error {
 	user := CheckAuth(c)
 	conf := model.Config{}
 	err := conf.Load()
@@ -108,13 +111,13 @@ func ResetPassword(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
 
-func CheckAuth(c echo2.Context) *model.JwtCustomClaims {
+func CheckAuth(c echo.Context) *model.JwtCustomClaims {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(*model.JwtCustomClaims)
 	return claims
 }
 
-func PostAsRead(c echo2.Context) error {
+func PostAsRead(c echo.Context) error {
 	pid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
@@ -129,7 +132,7 @@ func PostAsRead(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
 
-func FeedAsRead(c echo2.Context) error {
+func FeedAsRead(c echo.Context) error {
 	fid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
@@ -153,7 +156,7 @@ func FeedAsRead(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
 
-func PostAsUnRead(c echo2.Context) error {
+func PostAsUnRead(c echo.Context) error {
 	pid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
@@ -175,7 +178,7 @@ type respFeed struct {
 	Subscriber int64
 }
 
-func SearchFeed(c echo2.Context) error {
+func SearchFeed(c echo.Context) error {
 	f := model.Feed{}
 	if err := c.Bind(&f); err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
@@ -193,7 +196,7 @@ func SearchFeed(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(t)})
 }
 
-func SubscribeFeed(c echo2.Context) error {
+func SubscribeFeed(c echo.Context) error {
 	fid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
@@ -208,7 +211,7 @@ func SubscribeFeed(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
 
-func UnSubscribeFeed(c echo2.Context) error {
+func UnSubscribeFeed(c echo.Context) error {
 	fid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
@@ -241,7 +244,7 @@ type respPostList struct {
 	Time      string
 }
 
-func GetPostList(c echo2.Context) error {
+func GetPostList(c echo.Context) error {
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
 	err := u.Get()
@@ -287,7 +290,7 @@ func GetPostList(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(data)})
 }
 
-func GetReadPostList(c echo2.Context) error {
+func GetReadPostList(c echo.Context) error {
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
 	err := u.Get()
@@ -299,7 +302,7 @@ func GetReadPostList(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(data)})
 }
 
-func GetPostContent(c echo2.Context) error {
+func GetPostContent(c echo.Context) error {
 	pid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	p := model.Post{ID: pid}
 	err := p.Get()
@@ -313,7 +316,7 @@ func GetPostContent(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(b)})
 }
 
-func GetFeedList(c echo2.Context) error {
+func GetFeedList(c echo.Context) error {
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
 	err := u.Get()
@@ -335,7 +338,7 @@ func GetFeedList(c echo2.Context) error {
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(bdata)})
 }
 
-func ImportOPML(c echo2.Context) error {
+func ImportOPML(c echo.Context) error {
 	user := CheckAuth(c)
 	u := model.User{Mail: user.Mail}
 	err := u.Get()
@@ -359,4 +362,39 @@ func ImportOPML(c echo2.Context) error {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
+}
+
+func ExportOPML(c echo.Context) error {
+	user := CheckAuth(c)
+	u := model.User{Mail: user.Mail}
+	err := u.Get()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "User does not exist"})
+	}
+	sub := u.Sub()
+	userOPML := opml.OPML{
+		Version: "2.0",
+		Head: opml.Head{
+			Title:       "OPML Export From Rssreader",
+			DateCreated: time.RFC1123Z,
+			Docs:        "http://www.opml.org/spec2",
+		},
+		Body: opml.Body{
+			Outlines: []opml.Outline{},
+		},
+	}
+	for _, i := range sub {
+		f := model.Feed{ID: i.FID}
+		err := f.Get()
+		if err != nil {
+			log.Println("feed not found")
+			continue
+		}
+		userOPML.Body.Outlines = append(userOPML.Body.Outlines, opml.Outline{Type: "rss", Text: f.Title, XMLURL: f.Url})
+	}
+	userxml, err := xml.Marshal(userOPML)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, model.Response{Code: 0, Message: "Internal Server Error"})
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(userxml)})
 }
