@@ -131,6 +131,8 @@ export default {
       } else {
         window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
       }
+    } else {
+      this.$store.commit("setStatus", false);
     }
     if (!this.$store.state.isLogin) {
       router.push("/login");
@@ -139,43 +141,44 @@ export default {
     this.getRss()
   },
   methods: {
-    saveData: function () {
+    "saveData": function () {
       window.localStorage.setItem("feeds", JSON.stringify(this.rss))
     },
-    getData: function () {
+    "getData": function () {
       if (window.localStorage.getItem("feeds") === null) {
         window.localStorage.setItem("feeds", JSON.stringify([]))
       }
       this.rss = JSON.parse(window.localStorage.getItem("feeds"))
     },
-    readFeed: function (index) {
+    "readFeed": function (index) {
       axios.post(config.apiAddress + "/api/feed/read/" + this.rss[index].id, null, {
-        headers: {
+        "headers": {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
       }).then(
-          (response) => {
-            console.log(response.data)
-          },
           (error) => {
             let errText
             if (error.response === undefined) {
               errText = "Unable to connect to server";
             } else {
+              if (error.response.status === 401) {
+                window.localStorage.setItem("login", false)
+                router.push("/login")
+              }
               errText = error.response.status + " " + error.response.data.message;
             }
             this.info = errText;
           })
     },
-    change: function (index) {
+    "change": function (index) {
       this.post[index].read = !this.post[index].read;
     },
-    addSub: function (index) {
+    "addSub": function (index) {
       this.info = ""
       this.showLoading = true
       axios.post(config.apiAddress + "/api/feed/subscribe/" + this.search[index].id, null, {
-        headers: {
+        "headers": {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
@@ -196,15 +199,19 @@ export default {
             if (error.response === undefined) {
               errText = "Unable to connect to server";
             } else {
+              if (error.response.status === 401) {
+                window.localStorage.setItem("login", false)
+                router.push("/login")
+              }
               errText = error.response.status + " " + error.response.data.message;
             }
             this.info = errText;
           })
     },
-    removeRss: function (index) {
+    "removeRss": function (index) {
       this.showLoading = true
       axios.post(config.apiAddress + "/api/feed/unsubscribe/" + this.rss[index].id, null, {
-        headers: {
+        "headers": {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
@@ -213,13 +220,13 @@ export default {
       })
       this.showLoading = false
     },
-    searchRss: function () {
+    "searchRss": function () {
       this.showLoading = true
       this.info = ""
       axios.post(config.apiAddress + "/api/feed/search", {
-        Url: this.searchrss
+        "Url": this.searchrss
       }, {
-        headers: {
+        "headers": {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
@@ -229,10 +236,10 @@ export default {
               let data = JSON.parse(response.data.message)
               this.search = []
               this.search.push({
-                id: data.ID,
-                title: data.Title,
-                link: data.Url,
-                subscriber: data.Subscriber
+                "id": data.ID,
+                "title": data.Title,
+                "link": data.Url,
+                "subscriber": data.Subscriber
               })
               this.showLoading = false
             } else {
@@ -245,15 +252,19 @@ export default {
             if (error.response === undefined) {
               errText = "Unable to connect to server";
             } else {
+              if (error.response.status === 401) {
+                window.localStorage.setItem("login", false)
+                router.push("/login")
+              }
               errText = error.response.status + " " + error.response.data.message;
             }
             this.info = errText;
           })
     },
-    getRss: function () {
+    "getRss": function () {
       this.info = ""
       axios.get(config.apiAddress + "/api/feed/list", {
-        headers: {
+        "headers": {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json'
         }
@@ -271,7 +282,7 @@ export default {
             }
             this.rsslist = JSON.parse(response.data.message);
             axios.get(config.apiAddress + "/api/post/" + postnum, {
-              headers: {
+              "headers": {
                 'Authorization': "Bearer " + this.$store.state.jwt,
                 'Accept': 'application/json'
               }
@@ -283,7 +294,7 @@ export default {
                   }
                   this.postList = JSON.parse(response.data.message)
                   axios.get(config.apiAddress + "/api/post/read", {
-                    headers: {
+                    "headers": {
                       'Authorization': "Bearer " + this.$store.state.jwt,
                       'Accept': 'application/json'
                     }
@@ -304,10 +315,10 @@ export default {
                           })
 
                           this.rss.push({
-                            id: item.ID,
-                            title: item.Title,
-                            link: item.Url,
-                            unread: unread
+                            "id": item.ID,
+                            "title": item.Title,
+                            "link": item.Url,
+                            "unread": unread
                           })
                         })
                         this.saveData()
@@ -318,6 +329,10 @@ export default {
                         if (error.response === undefined) {
                           errText = "Unable to connect to server";
                         } else {
+                          if (error.response.status === 401) {
+                            window.localStorage.setItem("login", false)
+                            router.push("/login")
+                          }
                           errText = error.response.status + " " + error.response.data.message;
                         }
                         this.info = errText;
@@ -328,6 +343,10 @@ export default {
                   if (error.response === undefined) {
                     errText = "Unable to connect to server";
                   } else {
+                    if (error.response.status === 401) {
+                      window.localStorage.setItem("login", false)
+                      router.push("/login")
+                    }
                     errText = error.response.status + " " + error.response.data.message;
                   }
                   this.info = errText;
@@ -338,15 +357,19 @@ export default {
             if (error.response === undefined) {
               errText = "Unable to connect to server";
             } else {
+              if (error.response.status === 401) {
+                window.localStorage.setItem("login", false)
+                router.push("/login")
+              }
               errText = error.response.status + " " + error.response.data.message;
             }
             this.info = errText;
           })
     },
-    exportopml: function () {
+    "exportopml": function () {
       this.showLoading = true;
       axios.get(config.apiAddress + "/api/user/opml", {
-        headers: {
+        "headers": {
           'Authorization': "Bearer " + this.$store.state.jwt,
           'Accept': 'application/json',
         }
@@ -374,20 +397,23 @@ export default {
             if (error.response === undefined) {
               errText = "Unable to connect to server";
             } else {
+              if (error.response.status === 401) {
+                window.localStorage.setItem("login", false)
+                router.push("/login")
+              }
               errText = error.response.status + " " + error.response.data.message;
             }
             this.info = errText;
-            this.showLoading = false;
           })
     },
-    uploadopml: function () {
+    "uploadopml": function () {
       if (this.opml !== null) {
         var formData = new FormData();
         formData.append("opml", this.opml);
         axios.post(config.apiAddress + "/api/user/opml",
             formData
             , {
-              headers: {
+              "headers": {
                 'Authorization': "Bearer " + this.$store.state.jwt,
                 'Accept': 'application/json',
                 'Content-Type': 'multipart/form-data'
@@ -404,6 +430,10 @@ export default {
               if (error.response === undefined) {
                 errText = "Unable to connect to server";
               } else {
+                if (error.response.status === 401) {
+                  window.localStorage.setItem("login", false)
+                  router.push("/login")
+                }
                 errText = error.response.status + " " + error.response.data.message;
               }
               this.info = errText;

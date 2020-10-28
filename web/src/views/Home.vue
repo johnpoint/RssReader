@@ -24,6 +24,8 @@ export default {
       } else {
         window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
       }
+    } else {
+      this.$store.commit("setStatus", false);
     }
     if (this.$store.state.isLogin) {
       router.push("/posts")

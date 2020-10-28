@@ -105,6 +105,8 @@ export default {
         window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
       }
       router.push("/posts")
+    } else {
+      this.$store.commit("setStatus", false);
     }
   }
 };

@@ -50,6 +50,8 @@ export default {
       } else {
         window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
       }
+    } else {
+      this.$store.commit("setStatus", false);
     }
     if (!this.$store.state.isLogin) {
       router.push("/login");
@@ -150,9 +152,13 @@ export default {
               },
               (error) => {
                 let errText
-                if (error.response == undefined) {
+                if (error.response === undefined) {
                   errText = "Unable to connect to server";
                 } else {
+                  if (error.response.status === 401) {
+                    window.localStorage.setItem("login", false)
+                    router.push("/login")
+                  }
                   errText = error.response.status + " " + error.response.data.message;
                 }
                 this.info = errText;

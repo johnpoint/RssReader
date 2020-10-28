@@ -154,6 +154,8 @@ export default {
       } else {
         window.localStorage.setItem("config", JSON.stringify({"postnum": 50}))
       }
+    } else {
+      this.$store.commit("setStatus", false);
     }
     if (!this.$store.state.isLogin) {
       router.push("/login");
@@ -163,7 +165,7 @@ export default {
       window.localStorage.setItem("posts", JSON.stringify([]));
     }
     this.post = JSON.parse(window.localStorage.getItem("posts"));
-    this.$store.commit("setPostList",JSON.parse(window.localStorage.getItem("posts")))
+    this.$store.commit("setPostList", JSON.parse(window.localStorage.getItem("posts")))
     // something
     this.getPostList();
     this.updateCache();
@@ -248,6 +250,10 @@ export default {
                 if (error.response === undefined) {
                   errText = "Unable to connect to server";
                 } else {
+                  if (error.response.status === 401) {
+                    window.localStorage.setItem("login", false)
+                    router.push("/login")
+                  }
                   errText = error.response.status + " " + error.response.data.message;
                 }
                 this.info = errText;
@@ -285,6 +291,10 @@ export default {
                 if (error.response === undefined) {
                   errText = "Unable to connect to server";
                 } else {
+                  if (error.response.status === 401) {
+                    window.localStorage.setItem("login", false)
+                    router.push("/login")
+                  }
                   errText = error.response.status + " " + error.response.data.message;
                 }
                 this.info = errText;
@@ -294,7 +304,7 @@ export default {
     savePostListCache: function (data) {
       // console.log("savePostListCache")
       window.localStorage.setItem("posts", data);
-      this.$store.commit("setPostList",JSON.parse(window.localStorage.getItem("posts")))
+      this.$store.commit("setPostList", JSON.parse(window.localStorage.getItem("posts")))
     },
     getReadList: function (postList) {
       // console.log("getReadList")
@@ -339,6 +349,10 @@ export default {
                 if (error.response === undefined) {
                   errText = "Unable to connect to server";
                 } else {
+                  if (error.response.status === 401) {
+                    window.localStorage.setItem("login", false)
+                    router.push("/login")
+                  }
                   errText = error.response.status + " " + error.response.data.message;
                 }
                 this.info = errText;
@@ -375,6 +389,10 @@ export default {
                 if (error.response === undefined) {
                   errText = "Unable to connect to server";
                 } else {
+                  if (error.response.status === 401) {
+                    window.localStorage.setItem("login", false)
+                    router.push("/login")
+                  }
                   errText = error.response.status + " " + error.response.data.message;
                 }
                 this.info = errText;
