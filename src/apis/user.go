@@ -146,7 +146,7 @@ func FeedAsRead(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	p := f.Post()
+	p := f.Post(-1)
 	for _, i := range p {
 		err := u.Read(i.ID)
 		if err != nil {
@@ -221,7 +221,7 @@ func UnSubscribeFeed(c echo.Context) error {
 	}
 	f := model.Feed{}
 	f.ID = fid
-	p := f.Post()
+	p := f.Post(-1)
 	for _, i := range p {
 		err := u.UnRead(i.ID)
 		if err != nil {
@@ -253,29 +253,6 @@ func GetPostList(c echo.Context) error {
 	}
 	sub := u.Sub()
 	getPostNum := c.Param("num")
-	var rep []respPostList
-	for _, i := range sub {
-		f := model.Feed{ID: i.FID}
-		f.Get()
-		post := f.Post()
-		for _, j := range post {
-			item := respPostList{
-				ID:        j.ID,
-				Feed:      j.FID,
-				FeedTitle: f.Title,
-				Link:      j.Url,
-				Title:     j.Title,
-				Time:      j.Published,
-			}
-			rep = append(rep, item)
-		}
-	}
-	sort.Slice(rep, func(i, j int) bool {
-		if rep[i].Time > rep[j].Time {
-			return true
-		}
-		return false
-	})
 	getPostNumI, err := strconv.ParseInt(getPostNum, 10, 64)
 	if err != nil {
 		getPostNumI = 50
@@ -283,11 +260,40 @@ func GetPostList(c echo.Context) error {
 	if getPostNumI > 500 {
 		getPostNumI = 50
 	}
-	if int64(len(rep)) >= getPostNumI {
-		rep = rep[:getPostNumI]
+	var rep []respPostList
+	feedids := []int64{}
+	for _, i := range sub {
+		feedids = append(feedids, i.FID)
 	}
+	p := model.Post{}
+	items := p.FeedPost(feedids, int(getPostNumI))
+	for _, i := range items {
+		f := model.Feed{ID: i.FID}
+		f.Get()
+		item := respPostList{
+			ID:        i.ID,
+			Feed:      i.FID,
+			FeedTitle: f.Title,
+			Link:      i.Url,
+			Title:     i.Title,
+			Time:      i.Published,
+		}
+		rep = append(rep, item)
+	}
+	sort.Slice(rep, func(i, j int) bool {
+		if rep[i].Time > rep[j].Time {
+			return true
+		}
+		return false
+	})
 	data, _ := json.Marshal(rep)
-	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(data)})
+	respdata := ""
+	if string(data) == "null" {
+		respdata = "[]"
+	} else {
+		respdata = string(data)
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: respdata})
 }
 
 func GetReadPostList(c echo.Context) error {

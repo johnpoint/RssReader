@@ -190,14 +190,14 @@ func (f *Feed) save() error {
 	return nil
 }
 
-func (f *Feed) Post() []Post {
+func (f *Feed) Post(limt int) []Post {
 	if db == nil {
 		return []Post{}
 	}
 	// defer db.Close()
 	_ = db.AutoMigrate(&Post{})
 	Posts := []Post{}
-	db.Where(Post{FID: f.ID}).Find(&Posts)
+	db.Where(Post{FID: f.ID}).Find(&Posts).Order("published").Limit(limt)
 	return Posts
 }
 
@@ -233,7 +233,7 @@ func (f *Feed) Detele() error {
 		return err
 	}
 	tx.Commit()
-	p := f.Post()
+	p := f.Post(-1)
 	for _, i := range p {
 		_ = i.Delete()
 	}

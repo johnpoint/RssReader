@@ -180,7 +180,7 @@ func (u *User) DelSub(sub int64) error {
 	tx.Commit()
 	f := Feed{ID: sub}
 	_ = f.Get()
-	p := f.Post()
+	p := f.Post(-1)
 	for _, i := range p {
 		_ = u.UnRead(i.ID)
 	}

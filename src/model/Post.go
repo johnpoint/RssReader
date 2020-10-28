@@ -6,7 +6,7 @@ import (
 
 type Post struct {
 	ID          int64 `gorm:"autoIncrement"`
-	FID         int64
+	FID         int64 `gorm:"primaryKey"`
 	Title       string
 	Content     string
 	Url         string `gorm:"primaryKey"`
@@ -36,6 +36,20 @@ func (p *Post) Get() error {
 	p.Title = Posts[0].Title
 	p.Url = Posts[0].Url
 	return nil
+}
+
+func (p *Post) FeedPost(where []int64, limit int) []Post {
+	if db == nil {
+		return []Post{}
+	}
+	// defer db.Close()
+	_ = db.AutoMigrate(&Post{})
+	Posts := []Post{}
+	db.Where(map[string]interface{}{"f_id": where}).Order("published desc").Limit(limit).Find(&Posts)
+	if len(Posts) == 0 {
+		return []Post{}
+	}
+	return Posts
 }
 
 func (p *Post) New() error {
