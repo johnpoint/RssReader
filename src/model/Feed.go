@@ -10,11 +10,12 @@ import (
 )
 
 type Feed struct {
-	ID    int64  `gorm:"autoIncrement"`
-	Title string `gorm:"primaryKey"`
-	Url   string
-	Feed  string
-	Num   int64
+	ID     int64 `gorm:"autoIncrement"`
+	Title  string
+	Url    string `gorm:"primaryKey"`
+	Feed   string
+	Num    int64
+	Status int64 `gorm:"default:1"` // 0 OK   10 ERROR
 }
 
 func (f *Feed) Get() error {
@@ -159,6 +160,14 @@ func (f *Feed) Update() error {
 	f.Feed = feed.String()
 	err = f.save()
 	return err
+}
+
+func (f *Feed) Save() error {
+	err := f.save()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (f *Feed) save() error {

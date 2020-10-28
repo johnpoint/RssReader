@@ -6,7 +6,7 @@ import (
 
 type Post struct {
 	ID          int64 `gorm:"autoIncrement"`
-	FID         int64 `gorm:"primaryKey"`
+	FID         int64
 	Title       string
 	Content     string
 	Url         string `gorm:"primaryKey"`
@@ -137,7 +137,7 @@ func (p *Post) save() error {
 	}
 	_ = tx.AutoMigrate(&Post{})
 	where := Post{ID: p.ID}
-	if err := tx.Model(&where).Where(where).Updates(p).Error; err != nil {
+	if err := tx.Model(&where).Where(where).Updates(&p).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
 		tx.Rollback()

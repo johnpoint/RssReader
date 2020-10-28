@@ -27,9 +27,10 @@ func Run() {
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.PATCH},
 	})) //CORS配置
 	jwtConfig := middleware.JWTConfig{
-		Claims:     &model.JwtCustomClaims{},
-		SigningKey: []byte(conf.Salt),
-	} //JsonWebToken 配置
+		Claims:       &model.JwtCustomClaims{},
+		SigningKey:   []byte(conf.Salt),
+		ErrorHandler: apis.Jwterror,
+	} //JsonWebToken 配置 //JsonWebToken 配置
 
 	e.GET("/", apis.Accessible)            //服务端运行验证
 	e.GET("/api/syspost", apis.Post)       //服务器公告
