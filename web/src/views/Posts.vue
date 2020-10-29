@@ -8,8 +8,7 @@
           }}</label>
         <label
             @click="
-          top = 0;
-          backTop();
+          backToTop(5)
           "
             class="tab righttab"
         >{{ $t("post.totop") }}</label
@@ -68,7 +67,6 @@
           <a
               style="font-size: large"
               @click="
-              setTop();
               toPost(cachePostData[index].ID)
             "
               class="postlisttitle"
@@ -99,7 +97,6 @@
           <a
               style="font-size: large"
               @click="
-              setTop();
               !post[index].read?change(index):'';
               toPost(post[index].ID);
           "
@@ -199,14 +196,23 @@ export default {
         return -(m["time"] - n["time"])
       })
     },
-    setTop: function () {
-      // console.log("setTop")
-      this.top = document.documentElement.scrollTop;
-      document.documentElement.scrollTop = 0;
-    },
-    backTop: function () {
-      // console.log("backTop")
-      document.documentElement.scrollTop = this.top;
+    backToTop: function (rate) {
+      var doc = document.body.scrollTop ? document.body : document.documentElement;
+      var scrollTop = doc.scrollTop;
+
+      var top = function () {
+        scrollTop = scrollTop + (0 - scrollTop) / (rate || 2);
+
+        // 临界判断，终止动画
+        if (scrollTop <= 1) {
+          doc.scrollTop = 0;
+          return;
+        }
+        doc.scrollTop = scrollTop;
+        // 动画gogogo!
+        requestAnimationFrame(top);
+      };
+      top();
     },
     toPost: function (id) {
       this.$router.push("/post/" + id)
@@ -409,18 +415,11 @@ export default {
       showLoading: true,// 加载图标显示开关
       info: "",// 提示信息
       unreadpost: "-",// 未读文章计数
-      top: 0,// 页面所处高度
       cachePostList: [],// 缓存文章key
       cachePostData: [],// 缓存文章数据
       readafter: [],// 稍后阅读列表
       empty: false,// 判断文章列表是否为空
       nowshowpost: null,// 显示的文章
-      loadingShowPost: {
-        Title: "Loading Title",
-        Url: "/",
-        Source: "Loading",
-        Description: "Loading"
-      },
     };
   },
 };

@@ -55,7 +55,9 @@
     "export": "Export",
     "clear": "Clear",
     "download": "Download",
-    "upload": "Upload"
+    "upload": "Upload",
+    "getstop": "There may be a problem with the source data acquisition, the crawling has been stopped",
+    "geterror": "There may be a problem with the source data acquisition, and the crawl frequency has been reduced"
   },
   "footer": {
     "text": "Powered by Vue and Go"

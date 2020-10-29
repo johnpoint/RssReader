@@ -26,7 +26,7 @@ func getFeed() []model.Feed {
 func getUpdate() {
 	var t int64 = 0
 	for true {
-		if t == 101 {
+		if t == 1025 {
 			t = 0
 		}
 		t++
@@ -39,7 +39,7 @@ func getUpdate() {
 				log.Println(i.Status, " ", i.Title)
 				if err != nil {
 					log.Print(err.Error())
-					if i.Status == 64 {
+					if i.Status == 1024 {
 						i.Status = -1
 					} else {
 						if i.Status == 0 {

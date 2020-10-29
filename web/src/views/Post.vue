@@ -62,15 +62,6 @@ export default {
     this.post = JSON.parse(window.localStorage.getItem("posts"));
     this.$store.commit("setPostList", JSON.parse(window.localStorage.getItem("posts")))
     this.getPostContent();
-    var status = 0;
-    for (let i of this.$store.state.postList) {
-      if (i.ID === this.nowshowpost.ID) {
-        status = 1
-      }
-      if (status === 1 && i.read === false) {
-        this.nextpost = i;
-      }
-    }
   },
   methods: {
     updateCache: function () {
@@ -82,7 +73,7 @@ export default {
         if (i.indexOf("post") !== -1 && i.indexOf("posts") === -1) {
           this.cachePostList.push(i.replace("post", ""))
           let data = JSON.parse(window.localStorage.getItem(i))
-          data.id = parseInt(i.replace("post", ""))
+          data.ID = parseInt(i.replace("post", ""))
           this.cachePostData.push(data)
         }
       }

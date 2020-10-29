@@ -32,11 +32,7 @@ func (f *Feed) Get() error {
 	if len(Feeds) == 0 {
 		return errors.New("Not Found")
 	}
-	f.ID = Feeds[0].ID
-	f.Title = Feeds[0].Title
-	f.Url = Feeds[0].Url
-	f.Feed = Feeds[0].Feed
-	f.Num = Feeds[0].Num
+	*f = Feeds[0]
 	return nil
 }
 
