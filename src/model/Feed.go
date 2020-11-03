@@ -15,7 +15,7 @@ type Feed struct {
 	Url    string `gorm:"primaryKey"`
 	Feed   string
 	Num    int64
-	Status int64 `gorm:"default:1"` // 0 OK   10 ERROR
+	Status int64 `gorm:"default:0"` // 0 OK   10 ERROR
 }
 
 func (f *Feed) Get() error {
