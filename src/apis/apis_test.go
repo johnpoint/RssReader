@@ -83,7 +83,7 @@ func TestCheckAuth(t *testing.T) {
 	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := CheckAuth(tt.args.c); !reflect.DeepEqual(got, tt.want) {
+			if got, _ := CheckAuth(tt.args.c); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CheckAuth() = %v, want %v", got, tt.want)
 			}
 		})
@@ -105,26 +105,6 @@ func TestFeedAsRead(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := FeedAsRead(tt.args.c); (err != nil) != tt.wantErr {
 				t.Errorf("FeedAsRead() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestFeedTodo(t *testing.T) {
-	type args struct {
-		c echo.Context
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := FeedTodo(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("FeedTodo() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

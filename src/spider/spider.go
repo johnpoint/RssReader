@@ -45,10 +45,22 @@ func getUpdate() {
 						if i.Status == 0 {
 							i.Status = 1
 						}
-						i.Status *= 2
+						if i.Status%2 != 0 {
+							i.Status--
+						} else {
+							i.Status *= 2
+						}
 					}
-					i.Save()
+				} else {
+					if i.Status != 1 {
+						if i.Status%2 != 0 {
+							i.Status++
+						} else {
+							i.Status /= 2
+						}
+					}
 				}
+				i.Save()
 			}
 		}
 		log.Println("=== Update Finish ===")

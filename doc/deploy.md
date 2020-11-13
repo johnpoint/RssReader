@@ -84,6 +84,14 @@ yarn
 yarn build
 ```
 
+#### Nginx Url rewrite
+
+```
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
 ### Databse
 
 #### Mysql
