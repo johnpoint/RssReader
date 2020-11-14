@@ -43,7 +43,6 @@ func (l *Log) New() error {
 		return tx.Error
 	}
 
-	_ = tx.AutoMigrate(&Log{})
 	if err := tx.Create(&l).Error; err != nil {
 		tx.Rollback()
 		return err

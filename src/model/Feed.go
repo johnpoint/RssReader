@@ -26,7 +26,6 @@ func (f *Feed) Get() error {
 		return errors.New("Database connection failed")
 	}
 	// defer db.Close()
-	_ = db.AutoMigrate(&User{})
 	Feeds := []Feed{}
 	db.Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
 	if len(Feeds) == 0 {
@@ -71,7 +70,6 @@ func (f *Feed) New() error {
 		return tx.Error
 	}
 
-	_ = tx.AutoMigrate(&Feed{})
 	if err := tx.Create(&f).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
@@ -183,7 +181,6 @@ func (f *Feed) save() error {
 		_ = l.New()
 		return tx.Error
 	}
-	_ = tx.AutoMigrate(&Feed{})
 	where := Feed{ID: f.ID}
 	if err := tx.Model(&where).Where(where).Updates(f).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
@@ -200,7 +197,6 @@ func (f *Feed) Post(limt int) []Post {
 		return []Post{}
 	}
 	// defer db.Close()
-	_ = db.AutoMigrate(&Post{})
 	Posts := []Post{}
 	db.Where(Post{FID: f.ID}).Find(&Posts).Order("published").Limit(limt)
 	return Posts
@@ -229,7 +225,6 @@ func (f *Feed) Detele() error {
 		_ = l.New()
 		return tx.Error
 	}
-	_ = tx.AutoMigrate(&Feed{})
 	where := Feed{ID: f.ID}
 	if err := tx.Where(where).Delete(f).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}

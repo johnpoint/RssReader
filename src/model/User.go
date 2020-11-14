@@ -79,7 +79,6 @@ func (u *User) GetSub() error {
 	if db == nil {
 		return errors.New("Database connection failed")
 	}
-	_ = db.AutoMigrate(&subscribe{})
 	subscribes := []subscribe{}
 	db.Where(subscribe{UID: u.ID}).Find(&subscribes)
 	u.subscribe = subscribes
@@ -121,7 +120,6 @@ func (u *User) AddSub(sub int64) error {
 		return tx.Error
 	}
 
-	_ = tx.AutoMigrate(&subscribe{})
 	subscribe := subscribe{UID: u.ID, FID: sub}
 	if err := tx.Create(&subscribe).Error; err != nil {
 		tx.Rollback()
@@ -170,7 +168,6 @@ func (u *User) DelSub(sub int64) error {
 		_ = l.New()
 		return tx.Error
 	}
-	_ = tx.AutoMigrate(&subscribe{})
 	if err := tx.Where(subscribe{FID: sub, UID: u.ID}).Delete(subscribe{}).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
@@ -198,7 +195,6 @@ func (u *User) Get() error {
 		return errors.New("Database connection failed")
 	}
 	// defer db.Close()
-	_ = db.AutoMigrate(&User{})
 	Users := []User{}
 	db.Where(User{Mail: u.Mail, ID: u.ID}).Find(&Users)
 	if len(Users) == 0 {
@@ -236,7 +232,6 @@ func (u *User) New() error {
 		return tx.Error
 	}
 
-	_ = tx.AutoMigrate(&User{})
 	if err := tx.Create(&u).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
@@ -271,7 +266,6 @@ func (u *User) Save() error {
 		_ = l.New()
 		return tx.Error
 	}
-	_ = tx.AutoMigrate(&User{})
 	where := User{ID: u.ID}
 	if err := tx.Model(&where).Where(where).Updates(u).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
@@ -291,7 +285,6 @@ func (u *User) ReadPost() ([]int64, error) {
 		return []int64{}, errors.New("Database connection failed")
 	}
 	// defer db.Close()
-	_ = db.AutoMigrate(&Read{})
 	reads := []Read{}
 	db.Where(Read{UID: u.ID}).Find(&reads)
 	readList := []int64{}
@@ -326,7 +319,6 @@ func (u *User) Read(pid int64) error {
 		_ = l.New()
 		return tx.Error
 	}
-	_ = tx.AutoMigrate(&Read{})
 	if err := tx.Create(&Read{UID: u.ID, PID: pid}).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
@@ -363,7 +355,6 @@ func (u *User) UnRead(pid int64) error {
 		return tx.Error
 	}
 
-	_ = tx.AutoMigrate(&Read{})
 	if err := tx.Where(Read{UID: u.ID, PID: pid}).Delete(Read{}).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
