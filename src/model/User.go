@@ -8,8 +8,8 @@ import (
 )
 
 type User struct {
-	ID        int64  `gorm:"autoIncrement"`
-	Mail      string `gorm:"primaryKey"`
+	ID        int64 `gorm:"autoIncrement"`
+	Mail      string
 	Password  string
 	subscribe []subscribe
 	opml      opml.OPML

@@ -12,7 +12,7 @@ import (
 type Feed struct {
 	ID     int64 `gorm:"autoIncrement"`
 	Title  string
-	Url    string `gorm:"primaryKey"`
+	Url    string
 	Feed   string
 	Num    int64
 	Status int64 `gorm:"default:0"` // 0 OK   10 ERROR

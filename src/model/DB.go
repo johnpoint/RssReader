@@ -13,7 +13,10 @@ func init() {
 	if db == nil {
 		var err error
 		db, err = Initdatabase()
-		db.AutoMigrate(&Feed{}, &User{}, &Post{}, &Read{}, &subscribe{})
+		if err != nil {
+			log.Println(err.Error())
+		}
+		err = db.AutoMigrate(&Feed{}, &User{}, &Post{}, &Read{}, &subscribe{})
 		if err != nil {
 			log.Println(err.Error())
 		}

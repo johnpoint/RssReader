@@ -9,7 +9,7 @@ type Post struct {
 	FID         int64
 	Title       string
 	Content     string
-	Url         string `gorm:"primaryKey"`
+	Url         string
 	Description string
 	Published   string
 }
