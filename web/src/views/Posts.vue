@@ -56,72 +56,76 @@
         "
       >{{ $t("post.readafter") }}</label
       >
-      <div v-for="(i,index) in cachePostData" :key="i.title" style="text-align: left">
-        <div
-            class="post"
-            v-if="!showRead&&!showUnread&&i.readafter===true"
-        >
-          <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
-          >{{ i.Source }} >>
-          </a>
-          <a
-              style="font-size: large"
-              @click="
+      <transition-group name="flip-list" tag="div">
+        <div v-for="(i,index) in cachePostData" :key="index" style="text-align: left">
+          <div
+              class="post"
+              v-if="!showRead&&!showUnread&&i.readafter===true"
+          >
+            <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
+            >{{ i.Source }} >>
+            </a>
+            <a
+                style="font-size: large"
+                @click="
               toPost(cachePostData[index].ID)
             "
-              class="postlisttitle"
-          >{{ i.Title }}
-          </a>
-          <b-icon-trash
-              class="readbtn"
-              style="float: right; margin: 5px;"
-              @click="removeCache(index)"
-          >saved
-          </b-icon-trash>
+                class="postlisttitle"
+            >{{ i.Title }}
+            </a>
+            <b-icon-trash
+                class="readbtn"
+                style="float: right; margin: 5px;"
+                @click="removeCache(index)"
+            >saved
+            </b-icon-trash>
+          </div>
         </div>
-      </div>
+      </transition-group>
 
-      <div v-for="(i, index) in post" :key="index" style="text-align: left">
-        <div
-            class="post"
-            :class="i.read ? 'read' : 'unread'"
-            v-if="
+      <transition-group name="flip-list" tag="div">
+        <div v-for="(i, index) in post" :key="index" style="text-align: left">
+          <div
+              class="post"
+              :class="i.read ? 'read' : 'unread'"
+              v-if="
             (showRead && i.read && !showUnread) ||
             (showUnread && !i.read) ||
             (showRead && showUnread)
           "
-        >
-          <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
-          >{{ i.Source }} >>
-          </a>
-          <a
-              style="font-size: large"
-              @click="
+          >
+            <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
+            >{{ i.Source }} >>
+            </a>
+            <a
+                style="font-size: large"
+                @click="
               !post[index].read?change(index):'';
               toPost(post[index].ID);
           "
-              class="postlisttitle"
-          >{{ i.Title }}
-          </a>
-          <b-icon-check-square-fill
-              class="readbtn"
-              style="float: right; margin: 5px; color: #42b983"
-              v-if="i.read"
-              @click="change(index);"
-          >read
-          </b-icon-check-square-fill>
-          <b-icon-check-square
-              class="readbtn"
-              style="float: right; margin: 5px"
-              v-else
-              @click="change(index)"
-          >unread
-          </b-icon-check-square>
-          <a class="postdate">
-            {{ i.date }}
-          </a>
+                class="postlisttitle"
+            >{{ i.Title }}
+            </a>
+            <b-icon-check-square-fill
+                class="readbtn"
+                style="float: right; margin: 5px; color: #42b983"
+                v-if="i.read"
+                @click="change(index);"
+            >read
+            </b-icon-check-square-fill>
+            <b-icon-check-square
+                class="readbtn"
+                style="float: right; margin: 5px"
+                v-else
+                @click="change(index)"
+            >unread
+            </b-icon-check-square>
+            <a class="postdate">
+              {{ i.date }}
+            </a>
+          </div>
         </div>
-      </div>
+      </transition-group>
     </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>

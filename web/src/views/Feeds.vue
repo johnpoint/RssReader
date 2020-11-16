@@ -71,8 +71,10 @@
           </a>
             <a style="font-size: large;color: rgba(0, 0, 0, 0.7)">{{ i.title }} </a>
             <span style="font-size: small">{{ i.link }} </span>
-            <b-icon-exclamation-circle v-if="i.status>0" v-b-tooltip.hover :title='$t("feed.geterror")' style="color: red"></b-icon-exclamation-circle>
-            <b-icon-exclamation-circle v-if="i.status===-1" v-b-tooltip.hover :title='$t("feed.getstop")' style="color: red"></b-icon-exclamation-circle>
+            <b-icon-exclamation-circle v-if="i.status>0" v-b-tooltip.hover :title='$t("feed.geterror")'
+                                       style="color: red"></b-icon-exclamation-circle>
+            <b-icon-exclamation-circle v-if="i.status===-1" v-b-tooltip.hover :title='$t("feed.getstop")'
+                                       style="color: red"></b-icon-exclamation-circle>
           </b-col>
           <b-col cols="3">
             <b-icon-check-square-fill
@@ -96,7 +98,7 @@
             <b-icon-check
                 v-if="delRss && delRssIndex === index"
                 style="margin: 5px"
-                @click="removeRss(index)"
+                @click="removeRss(index);delRss = false"
             ></b-icon-check>
             <b-icon-trash
                 v-else
