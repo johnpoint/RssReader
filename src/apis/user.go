@@ -161,15 +161,17 @@ func GetPostList(c echo.Context) error {
 		getPostNumI = 50
 	}
 	var rep []respPostList
-	feedids := []int64{}
+	var feedID []int64
 	for _, i := range sub {
-		feedids = append(feedids, i.FID)
+		feedID = append(feedID, i.FID)
 	}
 	p := model.Post{}
-	items := p.FeedPost(feedids, int(getPostNumI))
+	items := p.FeedPost(feedID, int(getPostNumI))
 	for _, i := range items {
 		f := model.Feed{ID: i.FID}
-		f.Get()
+		if err := f.Get(); err != nil {
+			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+		}
 		item := respPostList{
 			ID:        i.ID,
 			Feed:      i.FID,
@@ -187,13 +189,13 @@ func GetPostList(c echo.Context) error {
 		return false
 	})
 	data, _ := json.Marshal(rep)
-	respdata := ""
+	respData := ""
 	if string(data) == "null" {
-		respdata = "[]"
+		respData = "[]"
 	} else {
-		respdata = string(data)
+		respData = string(data)
 	}
-	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: respdata})
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: respData})
 }
 
 func GetReadPostList(c echo.Context) error {
@@ -270,9 +272,9 @@ func ExportOPML(c echo.Context) error {
 		}
 		userOPML.Body.Outlines = append(userOPML.Body.Outlines, opml.Outline{Type: "rss", Text: f.Title, XMLURL: f.Url})
 	}
-	userxml, err := xml.Marshal(userOPML)
+	userXml, err := xml.Marshal(userOPML)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, model.Response{Code: 0, Message: "Internal Server Error"})
 	}
-	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(userxml)})
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(userXml)})
 }

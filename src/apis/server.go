@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-const VERSION = "0.27"
+const VERSION = "0.30"
 
 func Accessible(c echo.Context) error {
 	return c.HTML(http.StatusOK, "<h1>RssReader api</h1>(´・ω・`) 运行正常<br><hr>Ver: "+VERSION)
@@ -23,13 +23,13 @@ func Post(c echo.Context) error {
 	}
 
 	defer file.Close()
-	fileinfo, err := file.Stat()
+	fileInfo, err := file.Stat()
 	if err != nil {
 		log.Println(err)
 		return c.JSON(http.StatusInternalServerError, model.Response{Code: 0, Message: err.Error()})
 	}
 
-	fileSize := fileinfo.Size()
+	fileSize := fileInfo.Size()
 	buffer := make([]byte, fileSize)
 
 	_, err = file.Read(buffer)

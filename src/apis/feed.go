@@ -24,14 +24,14 @@ func GetFeedList(c echo.Context) error {
 		}
 		data = append(data, respFeed{ID: i.FID, Title: f.Title, Url: f.Url, Status: f.Status})
 	}
-	bdata, _ := json.Marshal(data)
-	respdata := ""
-	if string(bdata) == "null" {
-		respdata = "[]"
+	returnData, _ := json.Marshal(data)
+	returnDataStr := ""
+	if string(returnData) == "null" {
+		returnDataStr = "[]"
 	} else {
-		respdata = string(bdata)
+		returnDataStr = string(returnData)
 	}
-	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: respdata})
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: returnDataStr})
 }
 
 func SearchFeed(c echo.Context) error {

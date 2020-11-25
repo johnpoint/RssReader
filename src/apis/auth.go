@@ -78,11 +78,11 @@ func CheckAuth(c echo.Context) (model.User, error) {
 	u := model.User{Mail: claims.Mail}
 	err := u.Get()
 	if err != nil {
-		return model.User{}, errors.New("User does not exist")
+		return model.User{}, errors.New("user does not exist")
 	}
 	return u, nil
 }
 
-func Jwterror(error) error {
+func JwtError(error) error {
 	return echo.NewHTTPError(http.StatusUnauthorized, model.Response{Code: 0, Message: "invalid or expired jwt"})
 }

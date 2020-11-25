@@ -15,21 +15,22 @@ type Feed struct {
 	Url    string
 	Feed   string
 	Num    int64
-	Status int64 `gorm:"default:0"` // 0 OK   10 ERROR
+	Status int64  `gorm:"default:0"` // 0 OK   10 ERROR
+	Posts  []Post `gorm:"foreignKey:FID;constraint:OnDelete:CASCADE;"`
 }
 
 func (f *Feed) Get() error {
 	if f.ID == 0 && f.Url == "" {
-		return errors.New("Url and ID can not be empty")
+		return errors.New("url and ID can not be empty")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	Feeds := []Feed{}
+	var Feeds []Feed
 	db.Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
 	if len(Feeds) == 0 {
-		return errors.New("Not Found")
+		return errors.New("not Found")
 	}
 	*f = Feeds[0]
 	return nil
@@ -37,11 +38,11 @@ func (f *Feed) Get() error {
 
 func (f *Feed) New() error {
 	if f.Url == "" {
-		return errors.New("Url can not be empty")
+		return errors.New("url can not be empty")
 	}
 	err := f.Get()
 	if err == nil {
-		return errors.New("Feed already exists")
+		return errors.New("feed already exists")
 	}
 	err = nil
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -54,7 +55,7 @@ func (f *Feed) New() error {
 	f.Title = feed.Title
 	f.Feed = feed.String()
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -83,7 +84,7 @@ func (f *Feed) New() error {
 
 func (f *Feed) Update() error {
 	if f.Url == "" && f.ID == 0 {
-		return errors.New("Url and ID can not be empty")
+		return errors.New("url and ID can not be empty")
 	}
 	err := f.Get()
 	if err != nil {
@@ -140,15 +141,23 @@ func (f *Feed) Update() error {
 			err = nil
 			t, err = time.Parse(time.RFC3339Nano, i.Published)
 		}
+		if err != nil {
+			err = nil
+			t = time.Now()
+		}
 		p.FID = f.ID
 		p.Title = i.Title
 		p.Content = i.Content
 		p.Description = i.Description
 		p.Published = strconv.FormatInt(t.Unix(), 10)
 		if errGet != nil {
-			p.New()
+			if err := p.New(); err != nil {
+				continue
+			}
 		} else {
-			p.save()
+			if err := p.save(); err != nil {
+				continue
+			}
 		}
 	}
 	f.Feed = feed.String()
@@ -166,9 +175,8 @@ func (f *Feed) Save() error {
 
 func (f *Feed) save() error {
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
-	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -192,27 +200,25 @@ func (f *Feed) save() error {
 	return nil
 }
 
-func (f *Feed) Post(limt int) []Post {
+func (f *Feed) Post(limit int) []Post {
 	if db == nil {
 		return []Post{}
 	}
-	// defer db.Close()
-	Posts := []Post{}
-	db.Where(Post{FID: f.ID}).Find(&Posts).Order("published").Limit(limt)
+	var Posts []Post
+	db.Where(Post{FID: f.ID}).Find(&Posts).Order("published").Limit(limit)
 	return Posts
 }
 
-func (f *Feed) Detele() error {
-	if f.Num != -1 {
-		return errors.New("Feed can not be delete")
+func (f *Feed) Delete() error {
+	if f.Num != 0 {
+		return errors.New("feed can not be delete")
 	}
 	if f.ID == 0 {
 		return errors.New("ID can not be empty")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
-	// defer db.Close()
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -225,17 +231,12 @@ func (f *Feed) Detele() error {
 		_ = l.New()
 		return tx.Error
 	}
-	where := Feed{ID: f.ID}
-	if err := tx.Where(where).Delete(f).Error; err != nil {
+	if err := tx.Delete(f).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
 		tx.Rollback()
 		return err
 	}
 	tx.Commit()
-	p := f.Post(-1)
-	for _, i := range p {
-		_ = i.Delete()
-	}
 	return nil
 }

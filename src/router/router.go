@@ -29,7 +29,7 @@ func Run() {
 	jwtConfig := middleware.JWTConfig{
 		Claims:       &model.JwtCustomClaims{},
 		SigningKey:   []byte(conf.Salt),
-		ErrorHandler: apis.Jwterror,
+		ErrorHandler: apis.JwtError,
 	} //JsonWebToken 配置 //JsonWebToken 配置
 
 	e.GET("/", apis.Accessible)            //服务端运行验证

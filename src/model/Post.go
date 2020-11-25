@@ -12,20 +12,21 @@ type Post struct {
 	Url         string
 	Description string
 	Published   string
+	Reads       []Read `gorm:"foreignKey:PID;constraint:OnDelete:CASCADE;"`
 }
 
 func (p *Post) Get() error {
 	if p.FID == 0 && p.ID == 0 && p.Url == "" {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	Posts := []Post{}
+	var Posts []Post
 	db.Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
 	if len(Posts) == 0 {
-		return errors.New("Not Found")
+		return errors.New("not Found")
 	}
 	p.Content = Posts[0].Content
 	p.ID = Posts[0].ID
@@ -42,7 +43,7 @@ func (p *Post) FeedPost(where []int64, limit int) []Post {
 		return []Post{}
 	}
 	// defer db.Close()
-	Posts := []Post{}
+	var Posts []Post
 	db.Where(map[string]interface{}{"f_id": where}).Order("published desc").Limit(limit).Find(&Posts)
 	if len(Posts) == 0 {
 		return []Post{}
@@ -52,14 +53,14 @@ func (p *Post) FeedPost(where []int64, limit int) []Post {
 
 func (p *Post) New() error {
 	if p.FID == 0 || p.Url == "" || p.Title == "" || p.Published == "" {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	err := p.Get()
 	if err == nil {
-		return errors.New("Post already exist")
+		return errors.New("post already exist")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -87,10 +88,10 @@ func (p *Post) New() error {
 
 func (p *Post) Delete() error {
 	if p.ID == 0 {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -116,7 +117,7 @@ func (p *Post) Delete() error {
 
 func (p *Post) save() error {
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()

@@ -25,7 +25,7 @@ func (l *Log) New() error {
 		if err != nil {
 			log.Println("Error report could not be saved")
 			log.Println(l.Message)
-			return errors.New("Error report could not be saved")
+			return errors.New("error report could not be saved")
 		}
 		logdata, _ := json.Marshal(l)
 		_, _ = io.WriteString(fp, string(logdata))

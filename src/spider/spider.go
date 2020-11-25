@@ -13,12 +13,12 @@ func Spider() {
 }
 
 func getFeed() []model.Feed {
-	db, err := model.Initdatabase()
+	db, err := model.InitDatabase()
 	if err != nil {
 		return []model.Feed{}
 	}
 	_ = db.AutoMigrate(&model.Feed{})
-	feeds := []model.Feed{}
+	var feeds []model.Feed
 	db.Find(&feeds)
 	return feeds
 }
@@ -60,7 +60,7 @@ func getUpdate() {
 						}
 					}
 				}
-				i.Save()
+				_ = i.Save()
 			}
 		}
 		log.Println("=== Update Finish ===")

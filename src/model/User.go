@@ -8,11 +8,13 @@ import (
 )
 
 type User struct {
-	ID        int64 `gorm:"autoIncrement"`
-	Mail      string
-	Password  string
-	subscribe []subscribe
-	opml      opml.OPML
+	ID         int64 `gorm:"autoIncrement"`
+	Mail       string
+	Password   string
+	subscribe  []subscribe
+	opml       opml.OPML
+	Reads      []Read      `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
+	subscribes []subscribe `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
 }
 
 type Read struct {
@@ -31,17 +33,17 @@ func (u *User) Export() error {
 	return nil
 }
 
-func (u *User) Import(opmls string) error {
+func (u *User) Import(opmlStr string) error {
 	type errItem struct {
 		Url  string
 		Info string
 	}
-	doc, err := opml.NewOPML([]byte(opmls))
+	doc, err := opml.NewOPML([]byte(opmlStr))
 	if err != nil {
 		return errors.New("opml parsing error:" + err.Error())
 	}
-	error := 0
-	errorItem := []errItem{}
+	e := 0
+	var errorItem []errItem
 	for _, i := range doc.Body.Outlines {
 		f := Feed{Url: i.XMLURL}
 		err := f.Get()
@@ -52,20 +54,20 @@ func (u *User) Import(opmls string) error {
 			if err != nil {
 				log.Println("new:" + err.Error() + "/" + i.XMLURL)
 				errorItem = append(errorItem, errItem{Url: i.XMLURL, Info: err.Error()})
-				error = 1
+				e = 1
 				continue
 			}
 		}
-		f.Get()
+		_ = f.Get()
 		err = nil
 		err = u.AddSub(f.ID)
 		if err != nil {
 			errorItem = append(errorItem, errItem{Url: i.XMLURL, Info: err.Error()})
-			error = 1
+			e = 1
 		}
 		log.Println("imported:" + i.XMLURL)
 	}
-	if error == 0 {
+	if e == 0 {
 		return nil
 	}
 	jsonMsg, _ := json.Marshal(errorItem)
@@ -74,12 +76,12 @@ func (u *User) Import(opmls string) error {
 
 func (u *User) GetSub() error {
 	if u.ID == 0 {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
-	subscribes := []subscribe{}
+	var subscribes []subscribe
 	db.Where(subscribe{UID: u.ID}).Find(&subscribes)
 	u.subscribe = subscribes
 	return nil
@@ -91,7 +93,7 @@ func (u *User) Sub() []subscribe {
 
 func (u *User) AddSub(sub int64) error {
 	if u.ID == 0 {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	err := u.GetSub()
 	if err != nil {
@@ -100,11 +102,11 @@ func (u *User) AddSub(sub int64) error {
 	subs := u.Sub()
 	for _, i := range subs {
 		if i.FID == sub {
-			return errors.New("Already subscribed")
+			return errors.New("already subscribed")
 		}
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -137,7 +139,7 @@ func (u *User) AddSub(sub int64) error {
 
 func (u *User) DelSub(sub int64) error {
 	if u.ID == 0 {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	err := u.GetSub()
 	if err != nil {
@@ -151,10 +153,10 @@ func (u *User) DelSub(sub int64) error {
 		}
 	}
 	if flag == 0 {
-		return errors.New("Feed does not exist")
+		return errors.New("feed does not exist")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -183,7 +185,9 @@ func (u *User) DelSub(sub int64) error {
 	}
 	f.Num = f.Num - 1
 	if f.Num <= 0 {
-		_ = f.Detele()
+		if err := f.Delete(); err != nil {
+			log.Println(err)
+		}
 	} else {
 		_ = f.save()
 	}
@@ -192,31 +196,33 @@ func (u *User) DelSub(sub int64) error {
 
 func (u *User) Get() error {
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	Users := []User{}
+	var Users []User
 	db.Where(User{Mail: u.Mail, ID: u.ID}).Find(&Users)
 	if len(Users) == 0 {
-		return errors.New("Not Found")
+		return errors.New("not Found")
 	}
 	u.ID = Users[0].ID
 	u.Password = Users[0].Password
 	u.Mail = Users[0].Mail
-	u.GetSub()
+	if err := u.GetSub(); err != nil {
+		return err
+	}
 	return nil
 }
 
 func (u *User) New() error {
 	if u.Mail == "" || u.Password == "" {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	err := u.Get()
 	if err == nil {
-		return errors.New("Email has been used")
+		return errors.New("email has been used")
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -251,7 +257,7 @@ func (u *User) VerPassword(getPassword string) bool {
 
 func (u *User) Save() error {
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -279,15 +285,15 @@ func (u *User) Save() error {
 
 func (u *User) ReadPost() ([]int64, error) {
 	if u.ID == 0 {
-		return nil, errors.New("Incomplete parameters")
+		return nil, errors.New("incomplete parameters")
 	}
 	if db == nil {
-		return []int64{}, errors.New("Database connection failed")
+		return []int64{}, errors.New("database connection failed")
 	}
 	// defer db.Close()
-	reads := []Read{}
+	var reads []Read
 	db.Where(Read{UID: u.ID}).Find(&reads)
-	readList := []int64{}
+	var readList []int64
 	for _, i := range reads {
 		readList = append(readList, i.PID)
 	}
@@ -296,7 +302,7 @@ func (u *User) ReadPost() ([]int64, error) {
 
 func (u *User) Read(pid int64) error {
 	if pid == 0 {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	p := Post{ID: pid}
 	err := p.Get()
@@ -304,7 +310,7 @@ func (u *User) Read(pid int64) error {
 		return err
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()
@@ -331,7 +337,7 @@ func (u *User) Read(pid int64) error {
 
 func (u *User) UnRead(pid int64) error {
 	if pid == 0 {
-		return errors.New("Incomplete parameters")
+		return errors.New("incomplete parameters")
 	}
 	p := Post{ID: pid}
 	err := p.Get()
@@ -339,7 +345,7 @@ func (u *User) UnRead(pid int64) error {
 		return err
 	}
 	if db == nil {
-		return errors.New("Database connection failed")
+		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := db.Begin()

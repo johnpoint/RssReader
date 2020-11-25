@@ -12,18 +12,18 @@ var db *gorm.DB
 func init() {
 	if db == nil {
 		var err error
-		db, err = Initdatabase()
+		db, err = InitDatabase()
 		if err != nil {
 			log.Println(err.Error())
-		}
-		err = db.AutoMigrate(&Feed{}, &User{}, &Post{}, &Read{}, &subscribe{})
-		if err != nil {
-			log.Println(err.Error())
+		} else {
+			if err := db.AutoMigrate(&Feed{}, &Post{}, &User{}, &Read{}, &subscribe{}, Log{}); err != nil {
+				panic(err)
+			}
 		}
 	}
 }
 
-func Initdatabase() (*gorm.DB, error) {
+func InitDatabase() (*gorm.DB, error) {
 	conf := Config{}
 	err := conf.Load()
 	if err != nil {
