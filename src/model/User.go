@@ -11,10 +11,10 @@ type User struct {
 	ID         int64 `gorm:"autoIncrement"`
 	Mail       string
 	Password   string
-	subscribe  []subscribe
 	opml       opml.OPML
 	Reads      []Read      `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
 	subscribes []subscribe `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
+	ReadNum    int64
 }
 
 type Read struct {
@@ -83,12 +83,12 @@ func (u *User) GetSub() error {
 	}
 	var subscribes []subscribe
 	db.Where(subscribe{UID: u.ID}).Find(&subscribes)
-	u.subscribe = subscribes
+	u.subscribes = subscribes
 	return nil
 }
 
 func (u *User) Sub() []subscribe {
-	return u.subscribe
+	return u.subscribes
 }
 
 func (u *User) AddSub(sub int64) error {

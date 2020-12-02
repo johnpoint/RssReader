@@ -205,7 +205,13 @@ func GetReadPostList(c echo.Context) error {
 	}
 	list, _ := u.ReadPost()
 	data, _ := json.Marshal(list)
-	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(data)})
+	respData := ""
+	if string(data) == "null" {
+		respData = "[]"
+	} else {
+		respData = string(data)
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: respData})
 }
 
 func GetPostContent(c echo.Context) error {

@@ -2,6 +2,8 @@ package model
 
 import (
 	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"strconv"
 	"time"
@@ -15,7 +17,8 @@ type Feed struct {
 	Url    string
 	Feed   string
 	Num    int64
-	Status int64  `gorm:"default:0"` // 0 OK   10 ERROR
+	Status int64 `gorm:"default:0"` // 0 OK   10 ERROR
+	Md5    string
 	Posts  []Post `gorm:"foreignKey:FID;constraint:OnDelete:CASCADE;"`
 }
 
@@ -54,6 +57,8 @@ func (f *Feed) New() error {
 	}
 	f.Title = feed.Title
 	f.Feed = feed.String()
+	r := md5.Sum([]byte(f.Feed))
+	f.Md5 = hex.EncodeToString(r[:])
 	if db == nil {
 		return errors.New("database connection failed")
 	}
@@ -103,6 +108,11 @@ func (f *Feed) Update() error {
 	if err != nil {
 		return err
 	}
+	r := md5.Sum([]byte(feed.String()))
+	if f.Md5 == hex.EncodeToString(r[:]) {
+		return nil
+	}
+	f.Md5 = hex.EncodeToString(r[:])
 	for _, i := range feed.Items {
 		p := Post{}
 		p.Url = i.Link
