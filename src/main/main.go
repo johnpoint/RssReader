@@ -12,6 +12,9 @@ func main() {
 		case "start":
 			router.Run()
 			break
+		case "test":
+			fmt.Println("OK")
+			return
 		default:
 			fmt.Println("参数错误")
 		}

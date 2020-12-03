@@ -21,3 +21,4 @@ jobs:
       - run: |
           cd src/main
           go build
+          ./main test
