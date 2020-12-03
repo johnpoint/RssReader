@@ -1,4 +1,4 @@
-name: RssReader_Web_Auto_BUild
+name: RssReader_Web_Auto_Build
 
 on:
   push:
