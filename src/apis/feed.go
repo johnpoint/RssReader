@@ -18,7 +18,7 @@ func GetFeedList(c echo.Context) error {
 	for _, i := range sub {
 		f := model.Feed{}
 		f.ID = i.FID
-		err := f.Get()
+		err := f.Get([]string{"id", "title", "url", "status"})
 		if err != nil {
 			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 		}
@@ -39,7 +39,7 @@ func SearchFeed(c echo.Context) error {
 	if err := c.Bind(&f); err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	err := f.Get()
+	err := f.Get([]string{"id", "title", "url", "num"})
 	if err != nil {
 		err := f.New()
 		if err != nil {

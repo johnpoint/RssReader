@@ -22,7 +22,7 @@ type Feed struct {
 	Posts  []Post `gorm:"foreignKey:FID;constraint:OnDelete:CASCADE;"`
 }
 
-func (f *Feed) Get() error {
+func (f *Feed) Get(selects []string) error {
 	if f.ID == 0 && f.Url == "" {
 		return errors.New("url and ID can not be empty")
 	}
@@ -31,7 +31,11 @@ func (f *Feed) Get() error {
 	}
 	// defer db.Close()
 	var Feeds []Feed
-	db.Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
+	if selects == nil {
+		db.Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
+	} else {
+		db.Select(selects).Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
+	}
 	if len(Feeds) == 0 {
 		return errors.New("not Found")
 	}
@@ -43,7 +47,7 @@ func (f *Feed) New() error {
 	if f.Url == "" {
 		return errors.New("url can not be empty")
 	}
-	err := f.Get()
+	err := f.Get([]string{"id"})
 	if err == nil {
 		return errors.New("feed already exists")
 	}
@@ -91,7 +95,7 @@ func (f *Feed) Update() error {
 	if f.Url == "" && f.ID == 0 {
 		return errors.New("url and ID can not be empty")
 	}
-	err := f.Get()
+	err := f.Get([]string{"id", "url", "md5"})
 	if err != nil {
 		err := f.New()
 		if err != nil {

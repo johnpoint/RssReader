@@ -46,7 +46,7 @@ func (u *User) Import(opmlStr string) error {
 	var errorItem []errItem
 	for _, i := range doc.Body.Outlines {
 		f := Feed{Url: i.XMLURL}
-		err := f.Get()
+		err := f.Get([]string{"id", "url"})
 		log.Println("import:" + i.XMLURL)
 		if err != nil && err.Error() == "Not Found" {
 			err = nil
@@ -58,7 +58,7 @@ func (u *User) Import(opmlStr string) error {
 				continue
 			}
 		}
-		_ = f.Get()
+		_ = f.Get([]string{"id"})
 		err = nil
 		err = u.AddSub(f.ID)
 		if err != nil {
@@ -131,7 +131,7 @@ func (u *User) AddSub(sub int64) error {
 	}
 	tx.Commit()
 	f := Feed{ID: sub}
-	_ = f.Get()
+	_ = f.Get([]string{"num"})
 	f.Num = f.Num + 1
 	_ = f.save()
 	return nil
@@ -178,7 +178,7 @@ func (u *User) DelSub(sub int64) error {
 	}
 	tx.Commit()
 	f := Feed{ID: sub}
-	_ = f.Get()
+	_ = f.Get([]string{"id"})
 	p := f.Post(-1)
 	for _, i := range p {
 		_ = u.UnRead(i.ID)

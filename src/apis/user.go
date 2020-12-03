@@ -84,7 +84,7 @@ func FeedAsRead(c echo.Context) error {
 	}
 	f := model.Feed{}
 	f.ID = fid
-	err = f.Get()
+	err = f.Get([]string{"id"})
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
@@ -169,7 +169,7 @@ func GetPostList(c echo.Context) error {
 	items := p.FeedPost(feedID, int(getPostNumI))
 	for _, i := range items {
 		f := model.Feed{ID: i.FID}
-		if err := f.Get(); err != nil {
+		if err := f.Get([]string{"id", "title", "url"}); err != nil {
 			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 		}
 		item := respPostList{
@@ -271,7 +271,7 @@ func ExportOPML(c echo.Context) error {
 	}
 	for _, i := range sub {
 		f := model.Feed{ID: i.FID}
-		err := f.Get()
+		err := f.Get([]string{"id", "title", "url"})
 		if err != nil {
 			log.Println("feed not found")
 			continue
