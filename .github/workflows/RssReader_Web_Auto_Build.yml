@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        node_version: [ 14.x,15.x ]
+        node_version: [ 14.x,13.x ]
 
     steps:
       - name: Checkout
@@ -23,12 +23,8 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
 
-      - name: Install dependencies
+      - name: Install dependencies and Build
         run: |
           cd web
           npm install
-
-      - name: Build
-        run: |
-          cd web
-          npm build
+          npm run build
