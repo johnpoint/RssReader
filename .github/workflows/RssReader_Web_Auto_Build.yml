@@ -25,6 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd web
           npm install
 
       - name: Build
