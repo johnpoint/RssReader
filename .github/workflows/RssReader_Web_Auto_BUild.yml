@@ -3,7 +3,7 @@ name: RssReader_Web_Auto_BUild
 on:
   push:
     branches:
-      - source
+      - master
 
 jobs:
   build:
