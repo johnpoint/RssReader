@@ -2,9 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/johnpoint/RssReader/master/web/src/assets/logo.png" width="256px" height="256px"/>
 
-![](https://github.com/johnpoint/RssReader/workflows/RssReader_Auto_Build_Test/badge.svg)
-![](https://github.com/johnpoint/RssReader/workflows/RssReader_Web_Auto_Build/badge.svg)
-<hr />
+## ![](https://github.com/johnpoint/RssReader/workflows/RssReader_Auto_Build_Test/badge.svg) ![](https://github.com/johnpoint/RssReader/workflows/RssReader_Web_Auto_Build/badge.svg)
 
 **本项目处于频繁更新状态，并不建议时常更新，可能会有导致运行异常的破坏性更新**
 
