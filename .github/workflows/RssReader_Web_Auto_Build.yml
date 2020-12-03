@@ -30,4 +30,5 @@ jobs:
 
       - name: Build
         run: |
+          cd web
           npm build
