@@ -305,7 +305,7 @@ func (u *User) Read(pid int64) error {
 		return errors.New("incomplete parameters")
 	}
 	p := Post{ID: pid}
-	err := p.Get()
+	err := p.Get([]string{"id"})
 	if err != nil {
 		return err
 	}
@@ -340,7 +340,7 @@ func (u *User) UnRead(pid int64) error {
 		return errors.New("incomplete parameters")
 	}
 	p := Post{ID: pid}
-	err := p.Get()
+	err := p.Get([]string{"id"})
 	if err != nil {
 		return err
 	}

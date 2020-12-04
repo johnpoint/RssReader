@@ -217,7 +217,7 @@ func GetReadPostList(c echo.Context) error {
 func GetPostContent(c echo.Context) error {
 	pid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 	p := model.Post{ID: pid}
-	err := p.Get()
+	err := p.Get(nil)
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}

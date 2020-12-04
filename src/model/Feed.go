@@ -120,7 +120,10 @@ func (f *Feed) Update() error {
 	for _, i := range feed.Items {
 		p := Post{}
 		p.Url = i.Link
-		errGet := p.Get()
+		errGet := p.Get([]string{"id"})
+		if errGet == nil {
+			continue
+		}
 		/*
 				RFC822      = "02 Jan 06 15:04 MST"
 			    RFC822Z     = "02 Jan 06 15:04 -0700" // RFC822 with numeric zone
@@ -164,14 +167,8 @@ func (f *Feed) Update() error {
 		p.Content = i.Content
 		p.Description = i.Description
 		p.Published = strconv.FormatInt(t.Unix(), 10)
-		if errGet != nil {
-			if err := p.New(); err != nil {
-				continue
-			}
-		} else {
-			if err := p.save(); err != nil {
-				continue
-			}
+		if err := p.New(); err != nil {
+			continue
 		}
 	}
 	f.Feed = feed.String()

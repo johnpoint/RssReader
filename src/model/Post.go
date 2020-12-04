@@ -15,7 +15,7 @@ type Post struct {
 	Reads       []Read `gorm:"foreignKey:PID;constraint:OnDelete:CASCADE;"`
 }
 
-func (p *Post) Get() error {
+func (p *Post) Get(selects []string) error {
 	if p.FID == 0 && p.ID == 0 && p.Url == "" {
 		return errors.New("incomplete parameters")
 	}
@@ -24,17 +24,16 @@ func (p *Post) Get() error {
 	}
 	// defer db.Close()
 	var Posts []Post
-	db.Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
+	if selects == nil {
+		db.Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
+	} else {
+		db.Select(selects).Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
+	}
+
 	if len(Posts) == 0 {
 		return errors.New("not Found")
 	}
-	p.Content = Posts[0].Content
-	p.ID = Posts[0].ID
-	p.FID = Posts[0].FID
-	p.Published = Posts[0].Published
-	p.Description = Posts[0].Description
-	p.Title = Posts[0].Title
-	p.Url = Posts[0].Url
+	*p = Posts[0]
 	return nil
 }
 
@@ -55,7 +54,7 @@ func (p *Post) New() error {
 	if p.FID == 0 || p.Url == "" || p.Title == "" || p.Published == "" {
 		return errors.New("incomplete parameters")
 	}
-	err := p.Get()
+	err := p.Get([]string{"id"})
 	if err == nil {
 		return errors.New("post already exist")
 	}
