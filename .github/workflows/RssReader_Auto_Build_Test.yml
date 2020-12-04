@@ -20,6 +20,7 @@ jobs:
           go-version: ${{ matrix.go }}
 
       - name: Build
+      - uses: actions/checkout@v2
       - run: |
           cd src/main
           go build
