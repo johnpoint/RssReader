@@ -18,6 +18,8 @@ jobs:
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go }}
+
+      - name: Build
       - run: |
           cd src/main
           go build
