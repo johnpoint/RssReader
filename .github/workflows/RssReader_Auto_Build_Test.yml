@@ -2,8 +2,8 @@ name: RssReader_Auto_Build_Test
 
 on:
   push:
-    branches:
-      - master
+    paths:
+      - 'src/**'
 
 jobs:
   build:
