@@ -95,7 +95,7 @@ func (f *Feed) Update() error {
 	if f.Url == "" && f.ID == 0 {
 		return errors.New("url and ID can not be empty")
 	}
-	err := f.Get([]string{"id", "url", "md5"})
+	err := f.Get([]string{"id", "url", "md5", "title"})
 	if err != nil {
 		err := f.New()
 		if err != nil {
