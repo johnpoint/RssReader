@@ -48,7 +48,7 @@ func (u *User) Import(opmlStr string) error {
 		f := Feed{Url: i.XMLURL}
 		err := f.Get([]string{"id", "url"})
 		log.Println("import:" + i.XMLURL)
-		if err != nil && err.Error() == "Not Found" {
+		if err != nil && err.Error() == "not Found" {
 			err = nil
 			err := f.New()
 			if err != nil {
