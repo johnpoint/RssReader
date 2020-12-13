@@ -19,21 +19,18 @@ type User struct {
 }
 
 type Read struct {
-	ID  int64 `gorm:"AUTO_INCREMENT"`
-	PID int64
-	UID int64
+	PID int64 `gorm:"primaryKey"`
+	UID int64 `gorm:"primaryKey"`
 }
 
 type ReadAfter struct {
-	ID  int64
-	UID int64
-	PID int64
+	UID int64 `gorm:"primaryKey"`
+	PID int64 `gorm:"primaryKey"`
 }
 
 type subscribe struct {
-	ID  int64 `gorm:"AUTO_INCREMENT"`
-	UID int64
-	FID int64
+	UID int64 `gorm:"primaryKey"`
+	FID int64 `gorm:"primaryKey"`
 }
 
 func (u *User) Export() error {
@@ -208,6 +205,23 @@ func (u *User) Get() error {
 	u.ID = Users[0].ID
 	u.Password = Users[0].Password
 	u.Mail = Users[0].Mail
+	return nil
+}
+
+func (u *User) GetReadAfter() (error, []ReadAfter) {
+	if db == nil {
+		return errors.New("database connection failed"), nil
+	}
+	var ReadAfters []ReadAfter
+	db.Where(ReadAfter{UID: u.ID}).Find(&ReadAfters)
+	return nil, ReadAfters
+}
+
+func (u *User) AddReadAfter() error {
+	return nil
+}
+
+func (u *User) RemoveReadAfter() error {
 	return nil
 }
 
