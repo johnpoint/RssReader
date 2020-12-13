@@ -19,18 +19,18 @@ type User struct {
 }
 
 type Read struct {
-	PID int64 `gorm:"primaryKey"`
-	UID int64 `gorm:"primaryKey"`
+	PID int64
+	UID int64
 }
 
 type ReadAfter struct {
-	UID int64 `gorm:"primaryKey"`
-	PID int64 `gorm:"primaryKey"`
+	UID int64
+	PID int64
 }
 
 type subscribe struct {
-	UID int64 `gorm:"primaryKey"`
-	FID int64 `gorm:"primaryKey"`
+	UID int64
+	FID int64
 }
 
 func (u *User) Export() error {
