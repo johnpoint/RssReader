@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <span>{{ info }}</span><br />
+    <span>{{ info }}</span><br v-if="info" />
     <div class="tablist">
       <label class="tab lefttab" v-if="!addRss && !ioport"
              @click="addRss = true">{{ $t("feed.add") }}</label>

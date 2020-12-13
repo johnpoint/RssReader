@@ -217,11 +217,54 @@ func (u *User) GetReadAfter() (error, []ReadAfter) {
 	return nil, ReadAfters
 }
 
-func (u *User) AddReadAfter() error {
+func (u *User) AddReadAfter(pid int64) error {
+	if db == nil {
+		return errors.New("database connection failed")
+	}
+	// defer db.Close()
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
+		return tx.Error
+	}
+
+	readAfter := ReadAfter{UID: u.ID, PID: pid}
+	if err := tx.Create(&readAfter).Error; err != nil {
+		tx.Rollback()
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
+		return err
+	}
+	tx.Commit()
 	return nil
 }
 
-func (u *User) RemoveReadAfter() error {
+func (u *User) RemoveReadAfter(pid int64) error {
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if tx.Error != nil {
+		l := Log{Type: "DB", Level: 1, Message: tx.Error.Error()}
+		_ = l.New()
+		return tx.Error
+	}
+	if err := tx.Where(ReadAfter{PID: pid, UID: u.ID}).Delete(ReadAfter{}).Error; err != nil {
+		l := Log{Type: "DB", Level: 1, Message: err.Error()}
+		_ = l.New()
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
 	return nil
 }
 

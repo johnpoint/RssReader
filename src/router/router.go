@@ -52,6 +52,7 @@ func Run() {
 	p := w.Group("/post")
 	p.POST("/read/:id", apis.PostAsRead)       //将文章设置为已读
 	p.POST("/unread/:id", apis.PostAsUnRead)   //将文章设置为未读
+	p.POST("/readafter/", apis.GetReadAfter)   //将文章设置为未读
 	p.GET("/content/:id", apis.GetPostContent) //获取文章内容
 	p.GET("/:num", apis.GetPostList)           //获取文章列表
 	p.GET("/", apis.GetPostList)               //获取文章列表

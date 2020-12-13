@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"rssreader/src/model"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -53,4 +54,60 @@ func SearchFeed(c echo.Context) error {
 	}
 	t, _ := json.Marshal(respFeed{ID: f.ID, Title: f.Title, Url: f.Url, Subscriber: f.Num})
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: string(t)})
+}
+func SubscribeFeed(c echo.Context) error {
+	fid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	u, err := CheckAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	err = u.Subscribe(fid)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
+}
+
+func UnSubscribeFeed(c echo.Context) error {
+	fid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	u, err := CheckAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	f := model.Feed{}
+	f.ID = fid
+	p := f.Post(-1)
+	for _, i := range p {
+		err := u.UnRead(i.ID)
+		if err != nil {
+			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+		}
+	}
+	err = u.Unsubscribe(fid)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
+}
+
+func FeedAsRead(c echo.Context) error {
+	fid, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	u, err := CheckAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	f := model.Feed{}
+	f.ID = fid
+	err = f.Get([]string{"id"})
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	p := f.Post(-1)
+	for _, i := range p {
+		err := u.Read(i.ID)
+		if err != nil {
+			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+		}
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }
