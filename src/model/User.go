@@ -13,6 +13,7 @@ type User struct {
 	Password   string
 	opml       opml.OPML
 	Reads      []Read      `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
+	ReadAfter  []ReadAfter `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
 	subscribes []subscribe `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
 	ReadNum    int64
 }
@@ -21,6 +22,12 @@ type Read struct {
 	ID  int64 `gorm:"AUTO_INCREMENT"`
 	PID int64
 	UID int64
+}
+
+type ReadAfter struct {
+	ID  int64
+	UID int64
+	PID int64
 }
 
 type subscribe struct {
@@ -60,7 +67,7 @@ func (u *User) Import(opmlStr string) error {
 		}
 		_ = f.Get([]string{"id"})
 		err = nil
-		err = u.AddSub(f.ID)
+		err = u.Subscribe(f.ID)
 		if err != nil {
 			errorItem = append(errorItem, errItem{Url: i.XMLURL, Info: err.Error()})
 			e = 1
@@ -74,32 +81,27 @@ func (u *User) Import(opmlStr string) error {
 	return errors.New("Imported successfully, but something went wrong:\n" + string(jsonMsg))
 }
 
-func (u *User) GetSub() error {
+func (u *User) Subscribes() (error, []subscribe) {
 	if u.ID == 0 {
-		return errors.New("incomplete parameters")
+		return errors.New("incomplete parameters"), []subscribe{}
 	}
 	if db == nil {
-		return errors.New("database connection failed")
+		return errors.New("database connection failed"), []subscribe{}
 	}
 	var subscribes []subscribe
 	db.Where(subscribe{UID: u.ID}).Find(&subscribes)
 	u.subscribes = subscribes
-	return nil
+	return nil, u.subscribes
 }
 
-func (u *User) Sub() []subscribe {
-	return u.subscribes
-}
-
-func (u *User) AddSub(sub int64) error {
+func (u *User) Subscribe(sub int64) error {
 	if u.ID == 0 {
 		return errors.New("incomplete parameters")
 	}
-	err := u.GetSub()
+	err, subs := u.Subscribes()
 	if err != nil {
 		return err
 	}
-	subs := u.Sub()
 	for _, i := range subs {
 		if i.FID == sub {
 			return errors.New("already subscribed")
@@ -137,15 +139,14 @@ func (u *User) AddSub(sub int64) error {
 	return nil
 }
 
-func (u *User) DelSub(sub int64) error {
+func (u *User) Unsubscribe(sub int64) error {
 	if u.ID == 0 {
 		return errors.New("incomplete parameters")
 	}
-	err := u.GetSub()
+	err, subs := u.Subscribes()
 	if err != nil {
 		return err
 	}
-	subs := u.Sub()
 	flag := 0
 	for _, i := range subs {
 		if i.FID == sub {
@@ -207,9 +208,6 @@ func (u *User) Get() error {
 	u.ID = Users[0].ID
 	u.Password = Users[0].Password
 	u.Mail = Users[0].Mail
-	if err := u.GetSub(); err != nil {
-		return err
-	}
 	return nil
 }
 

@@ -117,7 +117,7 @@ func SubscribeFeed(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	err = u.AddSub(fid)
+	err = u.Subscribe(fid)
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
@@ -139,7 +139,7 @@ func UnSubscribeFeed(c echo.Context) error {
 			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 		}
 	}
-	err = u.DelSub(fid)
+	err = u.Unsubscribe(fid)
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
@@ -151,7 +151,10 @@ func GetPostList(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	sub := u.Sub()
+	err, sub := u.Subscribes()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
 	getPostNum := c.Param("num")
 	getPostNumI, err := strconv.ParseInt(getPostNum, 10, 64)
 	if err != nil {
@@ -257,7 +260,10 @@ func ExportOPML(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	sub := u.Sub()
+	err, sub := u.Subscribes()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
 	userOPML := opml.OPML{
 		Version: "2.0",
 		Head: opml.Head{

@@ -13,7 +13,10 @@ func GetFeedList(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	sub := u.Sub()
+	err, sub := u.Subscribes()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
 	var data []respFeed
 	for _, i := range sub {
 		f := model.Feed{}
