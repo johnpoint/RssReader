@@ -101,7 +101,9 @@ div.lefttab > hr {
   z-index: 999;
   background: white;
   width: 100%;
-  box-shadow: 0 0 7px 0px black;
+  /*box-shadow: 0 0 7px 0px black;*/
+  border-bottom: solid;
+  border-bottom-width: 1px;
 }
 
 .post {
@@ -265,7 +267,9 @@ div#list {
     bottom: 0px;
     width: 100%;
     height: 50px;
-    box-shadow: 0 0 12px black;
+    /*box-shadow: 0 0 12px black;*/
+    border-top: solid;
+    border-top-width: 1px;
     z-index: 999;
     background-color: white;
   }
@@ -334,10 +338,9 @@ div#list {
 /* From:https://github.com/SukkaW/hexo-theme-suka/blob/6af736cbd75174baf9519017ce3e7bb9bb8d70d8/src/css/style.css */
 
 html *::-webkit-scrollbar {
-  width: 6px;
-  height: 4px;
-  background: transparent;
-
+  width: 8px;
+  height: 6px;
+  background: black;
 }
 
 @media (min-width: 1024px) {
@@ -345,6 +348,10 @@ html *::-webkit-scrollbar {
     width: 8px;
     height: 6px;
   }
+}
+
+html *::-webkit-scrollbar-thumb {
+  background: rgb(135, 135, 135);
 }
 
 /* Scrollbar CSS end */
