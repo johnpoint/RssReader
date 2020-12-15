@@ -13,7 +13,6 @@ jobs:
         go: [ '1.14', '1.13', '1.12' ]
     name: Go ${{ matrix.go }} build
     steps:
-      - uses: actions/checkout@v2
       - name: Unit Test
       uses: actions/setup-go@v1
         with:
