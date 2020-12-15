@@ -10,17 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: [ '1.14', '1.13', '1.12' ]
+        go: [ '1.14', '1.13' ]
     name: Go ${{ matrix.go }} build
     steps:
-      - uses: actions/checkout@v2
-      - name: Build and Test
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Go ${{ matrix.go }}
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go }}
-      - run: |
+
+      - name: Unit Test
+        run: |
           cd src/apis
           go test
-          cd ../main
+
+      - name: Build
+        run: |
+          cd src/main
           go build
-          ./main test
