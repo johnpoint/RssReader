@@ -82,11 +82,6 @@ func TestCheckAuth(t *testing.T) {
 			},
 		}
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		jwtS, err := token.SignedString([]byte(config.Salt))
-		if err != nil {
-			panic("jwtS error")
-		}
-		req.Header.Add(echo.HeaderAuthorization, "Bearer "+jwtS)
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
 		c.Set("user", token)
