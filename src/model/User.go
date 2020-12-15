@@ -15,12 +15,18 @@ type User struct {
 	Reads      []Read      `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
 	ReadAfter  []ReadAfter `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
 	subscribes []subscribe `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
+	Status     Status      `gorm:"foreignKey:UID;constraint:OnDelete:CASCADE;"`
 	ReadNum    int64
 }
 
 type Read struct {
 	PID int64 `gorm:"primaryKey"`
 	UID int64 `gorm:"primaryKey"`
+}
+
+type Status struct {
+	UID    int64 `gorm:"primaryKey"`
+	Status int64
 }
 
 type ReadAfter struct {
@@ -82,11 +88,11 @@ func (u *User) Subscribes() (error, []subscribe) {
 	if u.ID == 0 {
 		return errors.New("incomplete parameters"), []subscribe{}
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed"), []subscribe{}
 	}
 	var subscribes []subscribe
-	db.Where(subscribe{UID: u.ID}).Find(&subscribes)
+	Db.Where(subscribe{UID: u.ID}).Find(&subscribes)
 	u.subscribes = subscribes
 	return nil, u.subscribes
 }
@@ -104,11 +110,11 @@ func (u *User) Subscribe(sub int64) error {
 			return errors.New("already subscribed")
 		}
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -153,11 +159,11 @@ func (u *User) Unsubscribe(sub int64) error {
 	if flag == 0 {
 		return errors.New("feed does not exist")
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -193,12 +199,12 @@ func (u *User) Unsubscribe(sub int64) error {
 }
 
 func (u *User) Get() error {
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	var Users []User
-	db.Where(User{Mail: u.Mail, ID: u.ID}).Find(&Users)
+	Db.Where(User{Mail: u.Mail, ID: u.ID}).Find(&Users)
 	if len(Users) == 0 {
 		return errors.New("not Found")
 	}
@@ -209,20 +215,20 @@ func (u *User) Get() error {
 }
 
 func (u *User) GetReadAfter() (error, []ReadAfter) {
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed"), nil
 	}
 	var ReadAfters []ReadAfter
-	db.Where(ReadAfter{UID: u.ID}).Find(&ReadAfters)
+	Db.Where(ReadAfter{UID: u.ID}).Find(&ReadAfters)
 	return nil, ReadAfters
 }
 
 func (u *User) AddReadAfter(pid int64) error {
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -247,7 +253,7 @@ func (u *User) AddReadAfter(pid int64) error {
 }
 
 func (u *User) RemoveReadAfter(pid int64) error {
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -276,11 +282,11 @@ func (u *User) New() error {
 	if err == nil {
 		return errors.New("email has been used")
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -311,11 +317,11 @@ func (u *User) VerPassword(getPassword string) bool {
 }
 
 func (u *User) Save() error {
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -342,12 +348,12 @@ func (u *User) ReadPost() ([]int64, error) {
 	if u.ID == 0 {
 		return nil, errors.New("incomplete parameters")
 	}
-	if db == nil {
+	if Db == nil {
 		return []int64{}, errors.New("database connection failed")
 	}
 	// defer db.Close()
 	var reads []Read
-	db.Where(Read{UID: u.ID}).Find(&reads)
+	Db.Where(Read{UID: u.ID}).Find(&reads)
 	var readList []int64
 	for _, i := range reads {
 		readList = append(readList, i.PID)
@@ -364,11 +370,11 @@ func (u *User) Read(pid int64) error {
 	if err != nil {
 		return err
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -399,11 +405,11 @@ func (u *User) UnRead(pid int64) error {
 	if err != nil {
 		return err
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()

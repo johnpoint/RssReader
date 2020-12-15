@@ -2,7 +2,7 @@ package model
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"os"
 )
 
@@ -25,14 +25,15 @@ type Database struct {
 	DBname   string
 }
 
-func (c *Config) Load() error {
-	_, err := os.Stat("config.json") //os.Stat获取文件信息
+func (c *Config) Load(config string) error {
+	_, err := os.Stat(config) //os.Stat获取文件信息
 	if err != nil {
 		if !os.IsExist(err) {
-			return errors.New("config not found")
+			fmt.Println("The configuration file does not exist")
+			os.Exit(1)
 		}
 	}
-	file, _ := os.Open("config.json")
+	file, _ := os.Open(config)
 	defer file.Close()
 	decoder := json.NewDecoder(file)
 	conf := Config{}

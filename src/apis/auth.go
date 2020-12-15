@@ -13,7 +13,8 @@ import (
 
 func Login(c echo.Context) error {
 	conf := model.Config{}
-	err := conf.Load()
+	cc := c.(*model.SysContext)
+	err := conf.Load(cc.Config)
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
@@ -49,7 +50,8 @@ func Login(c echo.Context) error {
 
 func Register(c echo.Context) error {
 	conf := model.Config{}
-	err := conf.Load()
+	cc := c.(*model.SysContext)
+	err := conf.Load(cc.Config)
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}

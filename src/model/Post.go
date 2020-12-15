@@ -19,15 +19,15 @@ func (p *Post) Get(selects []string) error {
 	if p.FID == 0 && p.ID == 0 && p.Url == "" {
 		return errors.New("incomplete parameters")
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	var Posts []Post
 	if selects == nil {
-		db.Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
+		Db.Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
 	} else {
-		db.Select(selects).Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
+		Db.Select(selects).Where(Post{ID: p.ID, FID: p.FID, Url: p.Url}).Find(&Posts)
 	}
 
 	if len(Posts) == 0 {
@@ -38,12 +38,12 @@ func (p *Post) Get(selects []string) error {
 }
 
 func (p *Post) FeedPost(where []int64, limit int) []Post {
-	if db == nil {
+	if Db == nil {
 		return []Post{}
 	}
 	// defer db.Close()
 	var Posts []Post
-	db.Where(map[string]interface{}{"f_id": where}).Order("published desc").Limit(limit).Find(&Posts)
+	Db.Where(map[string]interface{}{"f_id": where}).Order("published desc").Limit(limit).Find(&Posts)
 	if len(Posts) == 0 {
 		return []Post{}
 	}
@@ -58,11 +58,11 @@ func (p *Post) New() error {
 	if err == nil {
 		return errors.New("post already exist")
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -89,11 +89,11 @@ func (p *Post) Delete() error {
 	if p.ID == 0 {
 		return errors.New("incomplete parameters")
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -115,11 +115,11 @@ func (p *Post) Delete() error {
 }
 
 func (p *Post) save() error {
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()

@@ -10,25 +10,25 @@ import (
 	"time"
 )
 
-var db *gorm.DB
+var Db *gorm.DB
 
-func init() {
-	if db == nil {
+func Init(config string) {
+	if Db == nil {
 		var err error
-		db, err = InitDatabase()
+		Db, err = initDatabase(config)
 		if err != nil {
 			log.Println(err.Error())
 		} else {
-			if err := db.AutoMigrate(&Feed{}, &Post{}, &User{}, &Read{}, &subscribe{}, Log{}); err != nil {
+			if err := Db.AutoMigrate(&Feed{}, &Post{}, &User{}, &Read{}, &subscribe{}, Log{}); err != nil {
 				panic(err)
 			}
 		}
 	}
 }
 
-func InitDatabase() (*gorm.DB, error) {
+func initDatabase(config string) (*gorm.DB, error) {
 	conf := Config{}
-	err := conf.Load()
+	err := conf.Load(config)
 	if err != nil {
 		return nil, err
 	}

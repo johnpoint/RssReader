@@ -8,12 +8,13 @@ import (
 	"rssreader/src/spider"
 )
 
-func Run() {
+func Run(config string) {
+	model.Init(config)
 	go func() {
 		spider.Spider()
 	}()
 	conf := model.Config{}
-	err := conf.Load()
+	err := conf.Load(config)
 	if err != nil {
 		panic("Fatal error! Configuration file failed to load")
 	}
@@ -30,7 +31,13 @@ func Run() {
 		Claims:       &model.JwtCustomClaims{},
 		SigningKey:   []byte(conf.Salt),
 		ErrorHandler: apis.JwtError,
-	} //JsonWebToken 配置 //JsonWebToken 配置
+	} //JsonWebToken 配置
+	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			cc := &model.SysContext{Context: c, Config: config}
+			return next(cc)
+		}
+	}) //自定义 Context 配置
 
 	e.GET("/", apis.Accessible)      //服务端运行验证
 	e.GET("/api/syspost", apis.Post) //服务器公告

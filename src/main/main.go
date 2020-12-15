@@ -7,10 +7,15 @@ import (
 )
 
 func main() {
-	if len(os.Args) == 2 {
+	if len(os.Args) >= 2 {
 		switch os.Args[1] {
 		case "start":
-			router.Run()
+			if len(os.Args) == 2 {
+				router.Run("config.json")
+			}
+			if len(os.Args) == 3 {
+				router.Run(os.Args[2])
+			}
 			break
 		case "test":
 			fmt.Println("OK")

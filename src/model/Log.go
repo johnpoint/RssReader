@@ -19,7 +19,7 @@ type Log struct {
 }
 
 func (l *Log) New() error {
-	if db == nil {
+	if Db == nil {
 		file := strconv.FormatInt(time.Now().Unix(), 10) + ".log"
 		fp, err := os.Create("log/" + file)
 		if err != nil {
@@ -32,7 +32,7 @@ func (l *Log) New() error {
 		log.Println("The error report cannot be saved to the database, but it has been saved to a file: " + file)
 		return errors.New("The error report cannot be saved to the database, but it has been saved to a file: " + file)
 	}
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()

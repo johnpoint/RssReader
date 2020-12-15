@@ -13,13 +13,8 @@ func Spider() {
 }
 
 func getFeed() []model.Feed {
-	db, err := model.InitDatabase()
-	if err != nil {
-		return []model.Feed{}
-	}
-	_ = db.AutoMigrate(&model.Feed{})
 	var feeds []model.Feed
-	db.Find(&feeds)
+	model.Db.Find(&feeds)
 	return feeds
 }
 

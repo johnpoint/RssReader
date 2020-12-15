@@ -26,15 +26,15 @@ func (f *Feed) Get(selects []string) error {
 	if f.ID == 0 && f.Url == "" {
 		return errors.New("url and ID can not be empty")
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	var Feeds []Feed
 	if selects == nil {
-		db.Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
+		Db.Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
 	} else {
-		db.Select(selects).Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
+		Db.Select(selects).Where(Feed{Url: f.Url, ID: f.ID}).Find(&Feeds)
 	}
 	if len(Feeds) == 0 {
 		return errors.New("not Found")
@@ -63,11 +63,11 @@ func (f *Feed) New() error {
 	f.Feed = feed.String()
 	r := md5.Sum([]byte(f.Feed))
 	f.Md5 = hex.EncodeToString(r[:])
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
 	// defer db.Close()
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -104,11 +104,6 @@ func (f *Feed) Update() error {
 	}
 	fp := gofeed.NewParser()
 	feed, err := fp.ParseURL(f.Url)
-	if err != nil {
-		return err
-	}
-	conf := Config{}
-	err = conf.Load()
 	if err != nil {
 		return err
 	}
@@ -185,10 +180,10 @@ func (f *Feed) Save() error {
 }
 
 func (f *Feed) save() error {
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
@@ -212,11 +207,11 @@ func (f *Feed) save() error {
 }
 
 func (f *Feed) Post(limit int) []Post {
-	if db == nil {
+	if Db == nil {
 		return []Post{}
 	}
 	var Posts []Post
-	db.Where(Post{FID: f.ID}).Find(&Posts).Order("published").Limit(limit)
+	Db.Where(Post{FID: f.ID}).Find(&Posts).Order("published").Limit(limit)
 	return Posts
 }
 
@@ -227,10 +222,10 @@ func (f *Feed) Delete() error {
 	if f.ID == 0 {
 		return errors.New("ID can not be empty")
 	}
-	if db == nil {
+	if Db == nil {
 		return errors.New("database connection failed")
 	}
-	tx := db.Begin()
+	tx := Db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()

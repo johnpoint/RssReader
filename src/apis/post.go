@@ -121,5 +121,37 @@ func GetReadPostList(c echo.Context) error {
 }
 
 func GetReadAfter(c echo.Context) error {
-	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
+	type respRA struct {
+		ID     int64
+		Title  string
+		Source string
+	}
+	u, err := CheckAuth(c)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	err, ra := u.GetReadAfter()
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
+	}
+	var r []respRA
+	for _, i := range ra {
+		p := model.Post{ID: i.PID}
+		if err := p.Get([]string{"f_id", "title"}); err != nil {
+			continue
+		}
+		f := model.Feed{ID: p.FID}
+		if err := f.Get([]string{"title"}); err != nil {
+			continue
+		}
+		r = append(r, respRA{ID: p.ID, Title: p.Title, Source: f.Title})
+	}
+	data, _ := json.Marshal(r)
+	respData := ""
+	if string(data) == "null" {
+		respData = "[]"
+	} else {
+		respData = string(data)
+	}
+	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: respData})
 }
