@@ -100,6 +100,31 @@ func TestCheckAuth(t *testing.T) {
 	}
 }
 
+func TestRegister(t *testing.T) {
+	type args struct {
+		c echo.Context
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		file, _ := os.Create("config.json")
+		defer file.Close()
+		databy, _ := json.Marshal(config)
+		_, _ = io.WriteString(file, string(databy))
+		model.Init("config.json")
+		t.Run(tt.name, func(t *testing.T) {
+			if err := Register(tt.args.c); (err != nil) != tt.wantErr {
+				t.Errorf("Register() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
 func TestExportOPML(t *testing.T) {
 	type args struct {
 		c echo.Context
@@ -116,6 +141,8 @@ func TestExportOPML(t *testing.T) {
 			if err := ExportOPML(tt.args.c); (err != nil) != tt.wantErr {
 				t.Errorf("ExportOPML() error = %v, wantErr %v", err, tt.wantErr)
 			}
+			_ = os.Remove("testDB.db")
+			_ = os.Remove("config.json")
 		})
 	}
 }
@@ -355,26 +382,6 @@ func TestPostAsUnRead(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := PostAsUnRead(tt.args.c); (err != nil) != tt.wantErr {
 				t.Errorf("PostAsUnRead() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestRegister(t *testing.T) {
-	type args struct {
-		c echo.Context
-	}
-	tests := []struct {
-		name    string
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := Register(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("Register() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

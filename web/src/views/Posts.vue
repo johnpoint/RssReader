@@ -171,6 +171,11 @@ export default {
     this.getPostList();
     this.updateCache();
   },
+  beforeRouteLeave(to, from, next) {
+    //console.log(to);
+    //console.log(from);
+    next();
+  },
   methods: {
     removeCache: function (index) {
       // console.log("removeCache")
@@ -372,14 +377,14 @@ export default {
     getPostList: function () {
       // console.log("getPostList")
       this.info = "";
-      let postnum = ""
+      let postNum = ""
       if (this.$store.state.config.postnum === undefined) {
-        postnum = ""
+        postNum = ""
       } else {
-        postnum = this.$store.state.config.postnum
+        postNum = this.$store.state.config.postnum
       }
       axios
-          .get(config.apiAddress + "/api/post/" + postnum, {
+          .get(config.apiAddress + "/api/post/" + postNum, {
             headers: {
               Authorization: "Bearer " + this.$store.state.jwt,
               Accept: "application/json",
@@ -398,6 +403,7 @@ export default {
                 let errText
                 if (error.response === undefined) {
                   errText = "Unable to connect to server";
+                  this.showLoading = false;
                 } else {
                   if (error.response.status === 401) {
                     window.localStorage.setItem("login", false)

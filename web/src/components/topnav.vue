@@ -23,8 +23,8 @@
     </router-link
     >
     <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>
-    <router-link style="margin: 5px" v-if="this.$store.state.isLogin" to="/settings"
-    >{{ $t("nav.settings") }}
+    <router-link style="margin: 5px" v-if="this.$store.state.isLogin" to="/account"
+    >{{ $t("nav.account") }}
     </router-link
     >
     <span style="margin: 5px" v-if="this.$store.state.isLogin"> | </span>

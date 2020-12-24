@@ -11,7 +11,8 @@
     "about": "About",
     "settings": "Settings",
     "register": "Register",
-    "news": "Notice"
+    "news": "Notice",
+    "account": "Account"
   },
   "setting": {
     "CachedArticle": "Cached article",

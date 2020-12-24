@@ -11,7 +11,8 @@
     "about": "关于",
     "settings": "设置",
     "register": "注册",
-    "news": "公告"
+    "news": "公告",
+    "account": "帐号"
   },
   "setting": {
     "CachedArticle": "已缓存文章",

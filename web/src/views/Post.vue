@@ -14,6 +14,15 @@
     </div>
     <div class="postbox">
       <post v-if="nowshowpost!==null" :post="nowshowpost" :nextpost="nextpost"/>
+      <b-card v-else class="postcontext" style="margin: 15px">
+        <b-skeleton animation="wave" type="h1" height="40px"></b-skeleton>
+        <br/>
+        <b-skeleton animation="wave" width="47%"></b-skeleton>
+        <b-skeleton animation="wave" width="85%"></b-skeleton>
+        <b-skeleton animation="wave" width="85%"></b-skeleton>
+        <b-skeleton animation="wave" width="55%"></b-skeleton>
+        <b-skeleton animation="wave" width="70%"></b-skeleton>
+      </b-card>
     </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
@@ -61,7 +70,14 @@ export default {
     }
     this.post = JSON.parse(window.localStorage.getItem("posts"));
     this.$store.commit("setPostList", JSON.parse(window.localStorage.getItem("posts")))
+  },
+  mounted() {
     this.getPostContent();
+  },
+  beforeRouteLeave(to, from, next) {
+    //console.log(to);
+    //console.log(from);
+    next();
   },
   methods: {
     updateCache: function () {
