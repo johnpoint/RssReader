@@ -2,18 +2,21 @@
   <div class="home">
     <span>{{ info }}</span>
     <div id="list">
-      <div class="tablist">
-        <label @click="getPostList()" class="tab lefttab">{{
-            $t("post.update")
-          }}</label>
-        <label
-            @click="
+      <b-container class="tablist" fluid="true">
+        <b-row>
+          <b-col lg="0" @click="getPostList()" class="tab lefttab">{{
+              $t("post.update")
+            }}
+          </b-col>
+          <b-col lg="0"
+                 @click="
           backToTop(5)
-          "
-            class="tab righttab"
-        >{{ $t("post.totop") }}</label
-        >
-      </div>
+          " class="tab righttab">{{ $t("post.totop") }}
+          </b-col>
+        </b-row>
+
+
+      </b-container>
 
       <label
           class="tab"

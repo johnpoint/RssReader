@@ -1,17 +1,19 @@
 <template>
   <div class="home">
     <span>{{ info }}</span><br v-if="info" />
-    <div class="tablist">
-      <label class="tab lefttab" v-if="!addRss && !ioport"
-             @click="addRss = true">{{ $t("feed.add") }}</label>
-      <label class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false;ioport=false">{{
-          $t("feed.cancel")
-        }}</label>
-      <label class="tab righttab"
-             v-if="!addRss && !ioport"
-             @click="ioport=!ioport"
-      >{{ $t("feed.import") }} / {{ $t("feed.export") }}</label>
-    </div>
+    <b-container class="tablist" fluid="true">
+      <b-row>
+        <b-col lg="0" class="tab lefttab" v-if="!addRss && !ioport"
+               @click="addRss = true">{{ $t("feed.add") }}</b-col>
+        <b-col lg="0" class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false;ioport=false">{{
+            $t("feed.cancel")
+          }}</b-col>
+        <b-col lg="0" class="tab righttab"
+               v-if="!addRss && !ioport"
+               @click="ioport=!ioport"
+        >{{ $t("feed.import") }} / {{ $t("feed.export") }}</b-col>
+      </b-row>
+    </b-container>
     <div v-if="addRss" id="postinfo">
       <label>
         <input v-model="searchrss"/>

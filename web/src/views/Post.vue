@@ -1,28 +1,42 @@
 <template>
   <div id="postinfo">
-    <div class="tablist">
-      <label
-          @click="back"
-          class="tab lefttab"
-      >{{ $t("post.back") }}</label
-      >
-      <label
-          @click="readAfter(nowshowpost);$router.push('/posts')"
-          class="tab righttab"
-      >{{ $t("post.setunread") }}</label
-      >
-    </div>
+    <b-container class="tablist" fluid="true">
+      <b-row>
+        <b-col
+            lg="0"
+            @click="back"
+            class="tab lefttab"
+        >{{ $t("post.back") }}
+        </b-col
+        >
+        <b-col
+            lg="0"
+            @click="readAfter(nowshowpost);$router.push('/posts')"
+            class="tab righttab"
+        >{{ $t("post.setunread") }}
+        </b-col
+        >
+      </b-row>
+    </b-container>
     <div class="postbox">
-      <post v-if="nowshowpost!==null" :post="nowshowpost" :nextpost="nextpost"/>
-      <b-card v-else class="postcontext" style="margin: 15px">
-        <b-skeleton animation="wave" type="h1" height="40px"></b-skeleton>
-        <br/>
-        <b-skeleton animation="wave" width="47%"></b-skeleton>
-        <b-skeleton animation="wave" width="85%"></b-skeleton>
-        <b-skeleton animation="wave" width="85%"></b-skeleton>
-        <b-skeleton animation="wave" width="55%"></b-skeleton>
-        <b-skeleton animation="wave" width="70%"></b-skeleton>
-      </b-card>
+      <b-skeleton-wrapper>
+        <post v-if="nowshowpost!==null" :post="nowshowpost" :nextpost="nextpost"/>
+
+        <center v-else>
+          <b-skeleton style="text-align: center" type="h1" class="title" width="50%"></b-skeleton>
+          <br/>
+          <b-skeleton style="a" width="30%"></b-skeleton>
+          <b-card class="postcontext" style="margin: 15px">
+            <b-skeleton width="85%"></b-skeleton>
+            <b-skeleton width="55%"></b-skeleton>
+            <b-skeleton width="70%"></b-skeleton>
+            <b-skeleton width="85%"></b-skeleton>
+            <b-skeleton width="55%"></b-skeleton>
+            <b-skeleton width="70%"></b-skeleton>
+          </b-card>
+        </center>
+      </b-skeleton-wrapper>
+
     </div>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
