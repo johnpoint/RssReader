@@ -125,7 +125,7 @@
               </a>
             </b-col>
             <b-col cols="0">
-              <a style="font-size: small; color: rgba(0, 0, 0, 0.7);margin: 8px"
+              <a class="postdate" style="font-size: small; color: rgba(0, 0, 0, 0.7);margin: 8px"
               >{{ i.Source }}
               </a>
             </b-col>
