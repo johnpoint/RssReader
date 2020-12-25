@@ -75,7 +75,7 @@
             </a>
             <b-icon-trash
                 class="readbtn"
-                style="float: right; margin: 5px;"
+                style="text-align: right; margin: 5px;"
                 @click="removeCache(index)"
             >saved
             </b-icon-trash>
@@ -94,28 +94,27 @@
             (showRead && showUnread)
           "
           >
-            <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
-            >{{ i.Source }} >>
+            <a style="font-size: small; color: rgba(0, 0, 0, 0.7);float: right;margin: 8px"
+            >{{ i.Source }}
             </a>
             <a
-                style="font-size: large"
+                style="font-size: large;height: 22px"
                 @click="
               !post[index].read?change(index):'';
-              toPost(post[index].ID);
-          "
+              toPost(post[index].ID);"
                 class="postlisttitle"
             >{{ i.Title }}
             </a>
             <b-icon-check-square-fill
                 class="readbtn"
-                style="float: right; margin: 5px; color: #42b983"
+                style="float: left; margin: 7px; color: #42b983"
                 v-if="i.read"
                 @click="change(index);"
             >read
             </b-icon-check-square-fill>
             <b-icon-check-square
                 class="readbtn"
-                style="float: right; margin: 5px"
+                style="float: left; margin: 7px"
                 v-else
                 @click="change(index)"
             >unread
