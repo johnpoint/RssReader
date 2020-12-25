@@ -1,17 +1,20 @@
 <template>
   <div class="home">
-    <span>{{ info }}</span><br v-if="info" />
+    <span>{{ info }}</span><br v-if="info"/>
     <b-container class="tablist" fluid="true">
       <b-row>
         <b-col lg="0" class="tab lefttab" v-if="!addRss && !ioport"
-               @click="addRss = true">{{ $t("feed.add") }}</b-col>
+               @click="addRss = true">{{ $t("feed.add") }}
+        </b-col>
         <b-col lg="0" class="tab lefttab" v-else style="margin: 5px;" @click="addRss = false;ioport=false">{{
             $t("feed.cancel")
-          }}</b-col>
+          }}
+        </b-col>
         <b-col lg="0" class="tab righttab"
                v-if="!addRss && !ioport"
                @click="ioport=!ioport"
-        >{{ $t("feed.import") }} / {{ $t("feed.export") }}</b-col>
+        >{{ $t("feed.import") }} / {{ $t("feed.export") }}
+        </b-col>
       </b-row>
     </b-container>
     <div v-if="addRss" id="postinfo">
@@ -67,18 +70,22 @@
     <div v-if="!addRss && !ioport" id="list">
       <b-container v-for="(i, index) in rss" :key="index" style="text-align: left">
         <b-row class="post">
-          <b-col><a
+          <b-col cols="0"><a
               style="font-size: small;color: rgba(0,0,0,.7);margin: 5px"
           >{{ i.unread }}
-          </a>
-            <a style="font-size: large;color: rgba(0, 0, 0, 0.7)">{{ i.title }} </a>
-            <span style="font-size: small">{{ i.link }} </span>
+          </a></b-col>
+          <b-col col="11">
+            <a style="font-size: large;color: rgba(0, 0, 0, 0.7)">{{ i.title }} </a><span
+              style="font-size: small">{{ i.link }} </span>
+          </b-col>
+          <b-col col="1">
+
             <b-icon-exclamation-circle v-if="i.status>0" v-b-tooltip.hover :title='$t("feed.geterror")'
                                        style="color: red"></b-icon-exclamation-circle>
             <b-icon-exclamation-circle v-if="i.status===-1" v-b-tooltip.hover :title='$t("feed.getstop")'
                                        style="color: red"></b-icon-exclamation-circle>
           </b-col>
-          <b-col cols="2">
+          <b-col cols="1">
             <b-icon-check-square-fill
                 style="color: rgb(69,123,48);margin: 5px"
                 v-if="i.unread === 0"

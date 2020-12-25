@@ -78,7 +78,7 @@
             </a>
             <b-icon-trash
                 class="readbtn"
-                style="text-align: right; margin: 5px;"
+                style="float:right;text-align: right; margin: 5px;"
                 @click="removeCache(index)"
             >saved
             </b-icon-trash>
