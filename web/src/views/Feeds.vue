@@ -85,7 +85,7 @@
             <b-icon-exclamation-circle v-if="i.status===-1" v-b-tooltip.hover :title='$t("feed.getstop")'
                                        style="color: red"></b-icon-exclamation-circle>
           </b-col>
-          <b-col cols="1">
+          <b-col col="1" align="end">
             <b-icon-check-square-fill
                 style="color: rgb(69,123,48);margin: 5px"
                 v-if="i.unread === 0"
