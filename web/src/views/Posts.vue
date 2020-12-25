@@ -84,8 +84,8 @@
       </transition-group>
 
       <transition-group name="flip-list" tag="div">
-        <div v-for="(i, index) in post" :key="index" style="text-align: left">
-          <div
+        <b-container v-for="(i, index) in post" :key="index" style="text-align: left">
+          <b-row
               class="post"
               :class="i.read ? 'read' : 'unread'"
               v-if="
@@ -94,36 +94,43 @@
             (showRead && showUnread)
           "
           >
-            <a style="font-size: small; color: rgba(0, 0, 0, 0.7);float: right;margin: 8px"
-            >{{ i.Source }}
-            </a>
-            <a
-                style="font-size: large;height: 22px"
-                @click="
+            <b-col cols="0">
+              <b-icon-check-square-fill
+                  class="readbtn"
+                  style="margin-top: 10px;color: #42b983"
+                  v-if="i.read"
+                  @click="change(index);"
+              >read
+              </b-icon-check-square-fill>
+              <b-icon-check-square
+                  class="readbtn"
+                  style="margin-top: 10px;"
+                  v-else
+                  @click="change(index)"
+              >unread
+              </b-icon-check-square>
+            </b-col>
+            <b-col>
+              <a
+                  style="font-size: large;height: 22px"
+                  @click="
               !post[index].read?change(index):'';
               toPost(post[index].ID);"
-                class="postlisttitle"
-            >{{ i.Title }}
-            </a>
-            <b-icon-check-square-fill
-                class="readbtn"
-                style="float: left; margin: 7px; color: #42b983"
-                v-if="i.read"
-                @click="change(index);"
-            >read
-            </b-icon-check-square-fill>
-            <b-icon-check-square
-                class="readbtn"
-                style="float: left; margin: 7px"
-                v-else
-                @click="change(index)"
-            >unread
-            </b-icon-check-square>
-            <a class="postdate">
-              {{ i.date }}
-            </a>
-          </div>
-        </div>
+                  class="postlisttitle"
+              >{{ i.Title }}
+              </a>
+
+              <a class="postdate">
+                {{ i.date }}
+              </a>
+            </b-col>
+            <b-col cols="0">
+              <a style="font-size: small; color: rgba(0, 0, 0, 0.7);margin: 8px"
+              >{{ i.Source }}
+              </a>
+            </b-col>
+          </b-row>
+        </b-container>
       </transition-group>
     </div>
     <div v-if="showLoading">
