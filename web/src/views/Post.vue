@@ -26,14 +26,21 @@
           <b-skeleton style="text-align: center" type="h1" class="title" width="50%"></b-skeleton>
           <br/>
           <b-skeleton style="a" width="30%"></b-skeleton>
-          <b-card class="postcontext" style="margin: 15px">
+          <div class="postcontext" style="margin: 15px">
             <b-skeleton width="85%"></b-skeleton>
             <b-skeleton width="55%"></b-skeleton>
             <b-skeleton width="70%"></b-skeleton>
             <b-skeleton width="85%"></b-skeleton>
             <b-skeleton width="55%"></b-skeleton>
             <b-skeleton width="70%"></b-skeleton>
-          </b-card>
+            <b-skeleton width="55%"></b-skeleton>
+            <b-skeleton width="70%"></b-skeleton>
+            <b-skeleton width="85%"></b-skeleton>
+            <b-skeleton width="55%"></b-skeleton>
+            <b-skeleton width="70%"></b-skeleton>
+            <b-skeleton width="55%"></b-skeleton>
+            <b-skeleton width="70%"></b-skeleton>
+          </div>
         </center>
       </b-skeleton-wrapper>
 

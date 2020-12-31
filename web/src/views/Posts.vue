@@ -60,30 +60,34 @@
       >{{ $t("post.readafter") }}</label
       >
       <transition-group name="flip-list" tag="div">
-        <div v-for="(i,index) in cachePostData" :key="index" style="text-align: left">
-          <div
+        <b-container v-for="(i,index) in cachePostData" :key="index" style="text-align: left">
+          <b-row
               class="post"
-              v-if="!showRead&&!showUnread&&i.readafter===true"
+              v-if="!showRead &&!showUnread&&i.readafter===true"
           >
-            <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
-            >{{ i.Source }} >>
-            </a>
-            <a
-                style="font-size: large"
-                @click="
+            <b-col>
+              <a style="font-size: small; color: rgba(0, 0, 0, 0.7)"
+              >{{ i.Source }} >>
+              </a>
+              <a
+                  style="font-size: large"
+                  @click="
               toPost(cachePostData[index].ID)
             "
-                class="postlisttitle"
-            >{{ i.Title }}
-            </a>
+                  class="postlisttitle"
+              >{{ i.Title }}
+              </a>
+            </b-col>
+            <b-col cols="1" align="end">
             <b-icon-trash
                 class="readbtn"
                 style="float:right;text-align: right; margin: 5px;"
                 @click="removeCache(index)"
             >saved
             </b-icon-trash>
-          </div>
-        </div>
+            </b-col>
+          </b-row>
+        </b-container>
       </transition-group>
 
       <transition-group name="flip-list" tag="div">

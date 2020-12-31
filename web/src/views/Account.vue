@@ -1,89 +1,124 @@
 <template>
   <div class="home">
-    <hr>
     <span>{{ info }}</span>
-    <div class="setting">
-      <label>
-        {{ $t("setting.CachedArticle") }}: {{ localpostnum }}
-      </label>
-      <b-button size="sm" style="float: right;margin: 5px" variant="outline-primary" @click="clearCache">
-        {{ $t("setting.clearCache") }}
-      </b-button>
-      <b-button size="sm" style="float: right;margin: 5px" variant="outline-info"
-                @click="showAnalysis();Analysis=!Analysis">
-        {{ Analysis ? $t("setting.hide") : $t("setting.info") }}
-      </b-button>
-    </div>
-    <div v-if="Analysis" class="setting">
-      <span># {{ $t("setting.info") }}</span>
-      <div v-for="i in cacheAnalysis" :key="i">
-        <a style="color: #42b983">{{ i.num }}</a> {{ i.source }}
-      </div>
-    </div>
-    <!--<hr>
-    <div class="setting">
-      <span>{{ $t("setting.autodownload") }}</span>
-      <b-button size="sm" style="float: right;margin: 5px" @click="autodownload=!autodownload" :variant='autodownload?"outline-primary":"outline-danger"'>
-        {{ autodownload ? "ON" : "OFF" }}
-      </b-button>
-    </div>
-    <div v-if="autodownload" class="setting">
-      <span># {{ $t("setting.autodownloadset") }}</span>
-    </div>-->
-    <hr>
-    <div class="setting">
-      <span>{{ $t("setting.postlistnum") }}</span>
-      <b-button size="sm" style="float: right;margin: 5px" @click="savepostnum()" variant="outline-primary">{{
-          $t("setting.save")
-        }}
-      </b-button>
-      <b-form-select style="width: 100px;float: right" v-model="loadpostnum" :options="loadpostnums"></b-form-select>
-    </div>
-    <hr>
-    <div class="setting">
-      <span>{{ $t("setting.password") }}</span>
-      <b-button v-if="newpassword!==''" size="sm" style="float: right;margin: 5px" @click="changePassword"
-                variant="outline-primary">{{
-          $t("setting.save")
-        }}
-      </b-button>
-      <b-button size="sm" style="float: right;margin: 5px" @click="editpassword=!editpassword;newpassword=''"
-                variant="outline-primary">{{
-          editpassword ? $t("feed.cancel") : $t("setting.edit")
-        }}
-      </b-button>
-      <b-button v-if="editpassword" size="sm" style="float: right;margin: 5px" @click="showpassword=!showpassword"
-                variant="outline-primary">{{
-          showpassword ? $t("setting.hidepassword") : $t("setting.showpassword")
-        }}
-      </b-button>
-      <input style="float: right;margin: 5px" v-if="editpassword&&!showpassword" v-model="newpassword" type="password">
-      <input style="float: right;margin: 5px" v-if="editpassword&&showpassword" v-model="newpassword" type="text">
-    </div>
-    <hr>
-    <div class="setting">
-      <span>语言 / Language</span>
-      <b-button size="sm" style="float: right;margin: 5px" @click="changeLg()" variant="outline-primary">{{
-          $i18n.locale == "zh" ? "EN" : "中文"
-        }}
-      </b-button>
-    </div>
-    <hr>
-    <!--<div class="setting">
-      <span>{{ $t("setting.syncsetting") }}</span>
-      <div style="float: right;">
-        <span>{{ $t("setting.lastupdate") }} {{ new Date().format("yyyy-MM-dd") }}</span>
-        <b-button size="sm" style="margin: 5px" variant="outline-info">
-          {{ $t("setting.sync") }}
+    <b-container class="setting">
+      <b-row>
+        <b-col>
+          <label>
+            {{ $t("setting.CachedArticle") }}: {{ localpostnum }}
+          </label>
+        </b-col>
+        <b-col align="end">
+          <b-button size="sm" variant="outline-info"
+                    @click="showAnalysis();Analysis=!Analysis">
+            {{ Analysis ? $t("setting.hide") : $t("setting.info") }}
+          </b-button>
+          <b-button size="sm" variant="outline-primary" @click="clearCache">
+            {{ $t("setting.clearCache") }}
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-row v-if="Analysis">
+        <b-col>
+          <b-container>
+            <b-row>
+              <b-col cols="0">
+                <a style="color: #42b983">#</a>
+              </b-col>
+              <b-col>
+                {{ $t("setting.info") }}
+              </b-col>
+            </b-row>
+          </b-container>
+          <b-container v-for="i in cacheAnalysis" :key="i">
+            <b-row>
+              <b-col cols="0">
+                <a style="color: #42b983">{{ i.num }}</a>
+              </b-col>
+              <b-col>
+                {{ i.source }}
+              </b-col>
+            </b-row>
+          </b-container>
+        </b-col>
+      </b-row>
+
+      <!--<hr>
+      <div class="setting">
+        <span>{{ $t("setting.autodownload") }}</span>
+        <b-button size="sm" style="float: right;margin: 5px" @click="autodownload=!autodownload" :variant='autodownload?"outline-primary":"outline-danger"'>
+          {{ autodownload ? "ON" : "OFF" }}
         </b-button>
       </div>
-    </div>
-    <hr>-->
-    <div class="setting">
-      <b-button size="sm" style="float: right;margin: 5px" variant="outline-danger" @click="logout">
-        {{ $t("setting.exit") }}
-      </b-button>
-    </div>
+      <div v-if="autodownload" class="setting">
+        <span># {{ $t("setting.autodownloadset") }}</span>
+      </div>-->
+      <b-row>
+        <b-col>
+          <span>{{ $t("setting.postlistnum") }}</span>
+        </b-col>
+        <b-col align="end">
+          <b-form-select style="width: 100px" v-model="loadpostnum" :options="loadpostnums"></b-form-select>
+          <b-button size="sm" @click="savepostnum()" variant="outline-primary">{{
+              $t("setting.save")
+            }}
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <span>{{ $t("setting.password") }}</span>
+        </b-col>
+        <b-col align="end">
+          <input style="margin: 5px" v-if="editpassword&&!showpassword" v-model="newpassword"
+                 type="password">
+          <input style="margin: 5px" v-if="editpassword&&showpassword" v-model="newpassword" type="text">
+          <b-button v-if="newpassword!==''" size="sm" @click="changePassword"
+                    variant="outline-primary">{{
+              $t("setting.save")
+            }}
+          </b-button>
+          <b-button v-if="editpassword" size="sm" @click="showpassword=!showpassword"
+                    variant="outline-primary">{{
+              showpassword ? $t("setting.hidepassword") : $t("setting.showpassword")
+            }}
+          </b-button>
+          <b-button size="sm" @click="editpassword=!editpassword;newpassword=''"
+                    variant="outline-primary">{{
+              editpassword ? $t("feed.cancel") : $t("setting.edit")
+            }}
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col>
+          <span>语言 / Language</span>
+        </b-col>
+        <b-col align="end">
+          <b-button size="sm" @click="changeLg()" variant="outline-primary">{{
+              $i18n.locale == "zh" ? "EN" : "中文"
+            }}
+          </b-button>
+        </b-col>
+      </b-row>
+      <!--<div class="setting">
+        <span>{{ $t("setting.syncsetting") }}</span>
+        <div style="float: right;">
+          <span>{{ $t("setting.lastupdate") }} {{ new Date().format("yyyy-MM-dd") }}</span>
+          <b-button size="sm" style="margin: 5px" variant="outline-info">
+            {{ $t("setting.sync") }}
+          </b-button>
+        </div>
+      </div>
+      <hr>-->
+      <b-row>
+        <b-col align="end">
+          <b-button size="sm" variant="outline-danger" @click="logout">
+            {{ $t("setting.exit") }}
+          </b-button>
+        </b-col>
+      </b-row>
+    </b-container>
     <div v-if="showLoading">
       <b-spinner class="loading" variant="success" label="Spinning"></b-spinner>
     </div>

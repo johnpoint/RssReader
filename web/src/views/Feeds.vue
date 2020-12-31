@@ -77,15 +77,12 @@
           <b-col col="11">
             <a style="font-size: large;color: rgba(0, 0, 0, 0.7)">{{ i.title }} </a><span
               style="font-size: small">{{ i.link }} </span>
-          </b-col>
-          <b-col col="1">
-
             <b-icon-exclamation-circle v-if="i.status>0" v-b-tooltip.hover :title='$t("feed.geterror")'
-                                       style="color: red"></b-icon-exclamation-circle>
+                                                                                      style="color: red"></b-icon-exclamation-circle>
             <b-icon-exclamation-circle v-if="i.status===-1" v-b-tooltip.hover :title='$t("feed.getstop")'
                                        style="color: red"></b-icon-exclamation-circle>
           </b-col>
-          <b-col col="1" align="end">
+          <b-col cols="4" align="end">
             <b-icon-check-square-fill
                 style="color: rgb(69,123,48);margin: 5px"
                 v-if="i.unread === 0"
