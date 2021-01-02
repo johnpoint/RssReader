@@ -61,6 +61,6 @@ func getUpdate() {
 		log.Println("=== Update Finish ===")
 		t2 := time.Now()
 		fmt.Println("usage time: ", t2.Sub(t1))
-		time.Sleep(time.Minute * 15)
+		time.Sleep(time.Minute * 60)
 	}
 }
