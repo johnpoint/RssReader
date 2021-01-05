@@ -26,20 +26,22 @@
           <b-skeleton style="text-align: center" type="h1" class="title" width="50%"></b-skeleton>
           <br/>
           <b-skeleton style="a" width="30%"></b-skeleton>
-          <div class="postcontext" style="margin: 15px">
-            <b-skeleton width="85%"></b-skeleton>
-            <b-skeleton width="55%"></b-skeleton>
-            <b-skeleton width="70%"></b-skeleton>
-            <b-skeleton width="85%"></b-skeleton>
-            <b-skeleton width="55%"></b-skeleton>
-            <b-skeleton width="70%"></b-skeleton>
-            <b-skeleton width="55%"></b-skeleton>
-            <b-skeleton width="70%"></b-skeleton>
-            <b-skeleton width="85%"></b-skeleton>
-            <b-skeleton width="55%"></b-skeleton>
-            <b-skeleton width="70%"></b-skeleton>
-            <b-skeleton width="55%"></b-skeleton>
-            <b-skeleton width="70%"></b-skeleton>
+          <div class="postcontext" style="margin: auto;">
+            <b-skeleton width="85%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="55%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="70%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="85%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="55%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="70%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="55%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="70%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="85%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="85%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="55%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="55%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="70%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="55%" style="margin: auto;margin-top: 4px"></b-skeleton>
+            <b-skeleton width="70%" style="margin: auto;margin-top: 4px"></b-skeleton>
           </div>
         </center>
       </b-skeleton-wrapper>
