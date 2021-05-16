@@ -15,7 +15,7 @@ func PostAsRead(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	err = u.Read(pid)
+	err = u.Read([]int64{pid})
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
@@ -28,7 +28,7 @@ func PostAsUnRead(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	err = u.UnRead(pid)
+	err = u.UnRead([]int64{pid})
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}

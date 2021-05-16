@@ -36,13 +36,6 @@ func ResetPassword(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	conf := model.Config{}
-	cc := c.(*model.SysContext)
-	err = conf.Load(cc.Config)
-	if err != nil {
-		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
-	}
-	salt := conf.Salt
 	type resetPassword struct {
 		Password string
 	}
@@ -50,7 +43,7 @@ func ResetPassword(c echo.Context) error {
 	if err := c.Bind(&p); err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
-	data := []byte(u.Mail + salt + p.Password)
+	data := []byte(u.Mail + model.Cfg.Salt + p.Password)
 	has := md5.Sum(data)
 	md5Password := fmt.Sprintf("%x", has)
 	u.Password = md5Password

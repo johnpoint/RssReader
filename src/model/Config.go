@@ -6,6 +6,8 @@ import (
 	"os"
 )
 
+var Cfg *Config
+
 type Config struct {
 	AllowOrigins []string
 	Port         string

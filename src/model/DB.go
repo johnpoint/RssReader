@@ -12,10 +12,10 @@ import (
 
 var Db *gorm.DB
 
-func Init(config string) {
+func InitGorm() {
 	if Db == nil {
 		var err error
-		Db, err = initDatabase(config)
+		Db, err = initDatabase()
 		if err != nil {
 			log.Println(err.Error())
 		} else {
@@ -26,12 +26,8 @@ func Init(config string) {
 	}
 }
 
-func initDatabase(config string) (*gorm.DB, error) {
-	conf := Config{}
-	err := conf.Load(config)
-	if err != nil {
-		return nil, err
-	}
+func initDatabase() (*gorm.DB, error) {
+	conf := Cfg
 	var db *gorm.DB
 	var logInfo logger.Interface
 	if conf.Debug {
@@ -53,6 +49,7 @@ func initDatabase(config string) (*gorm.DB, error) {
 			},
 		)
 	}
+	var err error
 	switch conf.Database.Type {
 	case "mysql":
 		dsn := conf.Database.User + ":" + conf.Database.Password + "@tcp(" + conf.Database.Address + ")/" + conf.Database.DBname + "?charset=utf8mb4&parseTime=True&loc=Local"

@@ -9,27 +9,29 @@ import (
 )
 
 func Run(config string) {
-	model.Init(config)
-	go func() {
-		spider.Spider()
-	}()
-	conf := model.Config{}
-	err := conf.Load(config)
+	model.Cfg = &model.Config{}
+	err := model.Cfg.Load(config)
 	if err != nil {
 		panic("Fatal error! Configuration file failed to load")
 	}
+	model.InitGorm()
+
+	go func() {
+		spider.Spider()
+	}()
+
 	e := echo.New()
-	e.Debug = conf.Debug
+	e.Debug = model.Cfg.Debug
 	e.HideBanner = true
 
 	//echo中间件配置
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: conf.AllowOrigins,
+		AllowOrigins: model.Cfg.AllowOrigins,
 		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE, echo.PATCH},
 	})) //CORS配置
 	jwtConfig := middleware.JWTConfig{
 		Claims:       &model.JwtCustomClaims{},
-		SigningKey:   []byte(conf.Salt),
+		SigningKey:   []byte(model.Cfg.Salt),
 		ErrorHandler: apis.JwtError,
 	} //JsonWebToken 配置
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -70,9 +72,9 @@ func Run(config string) {
 	u.GET("/opml", apis.ExportOPML)         //导出opml
 	u.POST("/opml", apis.ImportOPML)        //导入opml
 
-	if conf.TLS {
-		e.Logger.Fatal(e.StartTLS(":"+conf.Port, conf.CERTPath, conf.KEYPath))
+	if model.Cfg.TLS {
+		e.Logger.Fatal(e.StartTLS(":"+model.Cfg.Port, model.Cfg.CERTPath, model.Cfg.KEYPath))
 	} else {
-		e.Logger.Fatal(e.Start(":" + conf.Port))
+		e.Logger.Fatal(e.Start(":" + model.Cfg.Port))
 	}
 }

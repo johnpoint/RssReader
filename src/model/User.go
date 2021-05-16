@@ -184,9 +184,11 @@ func (u *User) Unsubscribe(sub int64) error {
 	f := Feed{ID: sub}
 	_ = f.Get([]string{"id"})
 	p := f.Post(-1)
+	var postIDs []int64
 	for _, i := range p {
-		_ = u.UnRead(i.ID)
+		postIDs = append(postIDs, i.ID)
 	}
+	_ = u.UnRead(postIDs)
 	f.Num = f.Num - 1
 	if f.Num <= 0 {
 		if err := f.Delete(); err != nil {
@@ -361,17 +363,9 @@ func (u *User) ReadPost() ([]int64, error) {
 	return readList, nil
 }
 
-func (u *User) Read(pid int64) error {
-	if pid == 0 {
+func (u *User) Read(pid []int64) error {
+	if len(pid) == 0 {
 		return errors.New("incomplete parameters")
-	}
-	p := Post{ID: pid}
-	err := p.Get([]string{"id"})
-	if err != nil {
-		return err
-	}
-	if Db == nil {
-		return errors.New("database connection failed")
 	}
 	// defer db.Close()
 	tx := Db.Begin()
@@ -386,7 +380,12 @@ func (u *User) Read(pid int64) error {
 		_ = l.New()
 		return tx.Error
 	}
-	if err := tx.Create(&Read{UID: u.ID, PID: pid}).Error; err != nil {
+	var reads []Read
+	for i := range pid {
+		_p := Read{UID: u.ID, PID: pid[i]}
+		reads = append(reads, _p)
+	}
+	if err := tx.Create(&reads).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
 		tx.Rollback()
@@ -396,14 +395,9 @@ func (u *User) Read(pid int64) error {
 	return nil
 }
 
-func (u *User) UnRead(pid int64) error {
-	if pid == 0 {
+func (u *User) UnRead(pid []int64) error {
+	if len(pid) == 0 {
 		return errors.New("incomplete parameters")
-	}
-	p := Post{ID: pid}
-	err := p.Get([]string{"id"})
-	if err != nil {
-		return err
 	}
 	if Db == nil {
 		return errors.New("database connection failed")
@@ -422,7 +416,7 @@ func (u *User) UnRead(pid int64) error {
 		return tx.Error
 	}
 
-	if err := tx.Where(Read{UID: u.ID, PID: pid}).Delete(Read{}).Error; err != nil {
+	if err := tx.Where("id in ?", pid).Delete(Read{}).Error; err != nil {
 		l := Log{Type: "DB", Level: 1, Message: err.Error()}
 		_ = l.New()
 		tx.Rollback()

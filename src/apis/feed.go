@@ -77,11 +77,13 @@ func UnSubscribeFeed(c echo.Context) error {
 	f := model.Feed{}
 	f.ID = fid
 	p := f.Post(-1)
+	var postIDs []int64
 	for _, i := range p {
-		err := u.UnRead(i.ID)
-		if err != nil {
-			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
-		}
+		postIDs = append(postIDs, i.ID)
+	}
+	err = u.UnRead(postIDs)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	err = u.Unsubscribe(fid)
 	if err != nil {
@@ -103,11 +105,13 @@ func FeedAsRead(c echo.Context) error {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	p := f.Post(-1)
-	for _, i := range p {
-		err := u.Read(i.ID)
-		if err != nil {
-			return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
-		}
+	var postIDs []int64
+	for i := range p {
+		postIDs = append(postIDs, p[i].ID)
+	}
+	err = u.Read(postIDs)
+	if err != nil {
+		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	return c.JSON(http.StatusOK, model.Response{Code: 200, Message: "OK"})
 }

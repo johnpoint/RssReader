@@ -12,19 +12,14 @@ import (
 )
 
 func Login(c echo.Context) error {
-	conf := model.Config{}
-	cc := c.(*model.SysContext)
-	err := conf.Load(cc.Config)
-	if err != nil {
-		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
-	}
+	conf := model.Cfg
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
 	user := u
-	err = u.Get()
+	err := u.Get()
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: "account or password incorrect"})
 	}
@@ -49,12 +44,7 @@ func Login(c echo.Context) error {
 }
 
 func Register(c echo.Context) error {
-	conf := model.Config{}
-	cc := c.(*model.SysContext)
-	err := conf.Load(cc.Config)
-	if err != nil {
-		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
-	}
+	conf := model.Cfg
 	salt := conf.Salt
 	u := model.User{}
 	if err := c.Bind(&u); err != nil {
@@ -67,7 +57,7 @@ func Register(c echo.Context) error {
 	has := md5.Sum(data)
 	md5Password := fmt.Sprintf("%x", has)
 	u.Password = md5Password
-	err = u.New()
+	err := u.New()
 	if err != nil {
 		return c.JSON(http.StatusOK, model.Response{Code: 0, Message: err.Error()})
 	}
