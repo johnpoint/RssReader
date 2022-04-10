@@ -3,3 +3,4 @@ RssReader
 config_local.json
 go.sum
 deploy
+web/node_modules
