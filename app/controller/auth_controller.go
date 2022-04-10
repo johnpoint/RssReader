@@ -4,6 +4,7 @@ import (
 	"RssReader/infra"
 	jwtModel "RssReader/model/jwt"
 	mongoModel "RssReader/model/mongodb"
+	"RssReader/pkg/utils"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +28,7 @@ func Login(c *gin.Context) (interface{}, error) {
 	}
 
 	var user mongoModel.User
-	err = user.FindOne(c, req.Mail, req.Password)
+	err = user.FindOne(c, req.Mail, utils.Sha256(req.Password+req.Mail))
 	if err != nil {
 		//returnErrorMsg(c, infra.LoginError)
 		return nil, jwt.ErrFailedAuthentication
@@ -57,7 +58,7 @@ func Register(c *gin.Context) {
 
 	var user = mongoModel.User{
 		Mail:     req.Mail,
-		Password: req.Password,
+		Password: utils.Sha256(req.Password + req.Mail),
 	}
 	err = user.InsertOne(c)
 	if err != nil {

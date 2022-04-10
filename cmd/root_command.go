@@ -37,5 +37,8 @@ func init() {
 	})
 	rootCmd.PersistentFlags().StringVar(&configPath, "config", "config_local.json", "config file (default is ./config_local.json)")
 
-	rootCmd.AddCommand(httpServerCommand)
+	rootCmd.AddCommand(
+		httpServerCommand,
+		feedSpiderCommand,
+	)
 }

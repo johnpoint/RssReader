@@ -1,7 +1,6 @@
 package mongodb
 
 import (
-	"RssReader/dao/mongoDao"
 	"RssReader/pkg/utils"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,6 +14,7 @@ type User struct {
 	Password  string   `json:"password" bson:"password"`
 	CreatedAt int64    `json:"created_at" bson:"created_at"`
 	SubFeeds  []string `json:"sub_feeds" bson:"sub_feeds"`
+	Read      []string `json:"read" bson:"read"`
 }
 
 func (m *User) CollectionName() string {
@@ -24,7 +24,7 @@ func (m *User) CollectionName() string {
 func (m *User) InsertOne(ctx context.Context) error {
 	m.CreatedAt = time.Now().UnixMilli()
 	m.ID = utils.RandomString()
-	_, err := mongoDao.Client(m.CollectionName()).InsertOne(ctx, m)
+	_, err := DB(m).InsertOne(ctx, m)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (m *User) InsertOne(ctx context.Context) error {
 }
 
 func (m *User) FindFeedByID(ctx context.Context) error {
-	return mongoDao.Client(m.CollectionName()).FindOne(ctx, bson.M{
+	return DB(m).FindOne(ctx, bson.M{
 		"_id": m.ID,
 	}, &options.FindOneOptions{Projection: bson.M{
 		"sub_feeds": 1,
@@ -40,9 +40,40 @@ func (m *User) FindFeedByID(ctx context.Context) error {
 	}}).Decode(m)
 }
 
+func (m *User) FindReadByID(ctx context.Context) error {
+	return DB(m).FindOne(ctx, bson.M{
+		"_id": m.ID,
+	}, &options.FindOneOptions{Projection: bson.M{
+		"read": 1,
+		"_id":  1,
+	}}).Decode(m)
+}
+
 func (m *User) FindOne(ctx context.Context, mail, password string) error {
-	return mongoDao.Client(m.CollectionName()).FindOne(ctx, bson.M{
+	return DB(m).FindOne(ctx, bson.M{
 		"mail":     mail,
 		"password": password,
 	}).Decode(m)
+}
+
+func (m *User) SubscribeFeed(ctx context.Context, feedID string) error {
+	_, err := DB(m).UpdateOne(ctx, bson.M{
+		"_id": m.ID,
+	}, bson.M{
+		"$addToSet": bson.M{
+			"sub_feeds": feedID,
+		},
+	})
+	return err
+}
+
+func (m *User) UnSubscribeFeed(ctx context.Context, feedID string) error {
+	_, err := DB(m).UpdateOne(ctx, bson.M{
+		"_id": m.ID,
+	}, bson.M{
+		"$pull": bson.M{
+			"sub_feeds": feedID,
+		},
+	})
+	return err
 }

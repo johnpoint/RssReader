@@ -6,3 +6,6 @@ environment: local
 mongo_db_config:
   url: mongodb://admin:admin@127.0.0.1:27017/db?authSource=admin
   database: rssreader
+redis_config:
+  addr: 127.0.0.1:6379
+  password: '123456'

@@ -246,10 +246,10 @@ export default {
               let data = response.data.data
               this.search = []
               this.search.push({
-                "id": data.ID,
-                "title": data.Title,
-                "link": data.Url,
-                "subscriber": data.Subscriber
+                "id": data._id,
+                "title": data.title,
+                "link": data.url,
+                "subscriber": data.subscriber
               })
               this.showLoading = false
             } else {
@@ -319,17 +319,17 @@ export default {
                         this.rsslist.forEach(item => {
                           let unread = 0
                           this.postList.forEach(post => {
-                            if (post.Feed === item.ID && this.readPost.indexOf(post.ID) === -1) {
+                            if (post.Feed === item._id && this.readPost.indexOf(post.ID) === -1) {
                               unread++
                             }
                           })
 
                           this.rss.push({
-                            "id": item.ID,
-                            "title": item.Title,
-                            "link": item.Url,
+                            "id": item._id,
+                            "title": item.title,
+                            "link": item.url,
                             "unread": unread,
-                            "status": item.Status
+                            "status": item.status
                           })
                         })
                         this.saveData()
