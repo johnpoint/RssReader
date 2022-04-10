@@ -8,6 +8,16 @@ import (
 	"strconv"
 )
 
+type PostListReq struct {
+	ID          string `json:"_id" bson:"_id"`
+	Title       string `json:"title" bson:"title"`
+	FID         string `json:"fid" bson:"fid"`
+	Url         string `json:"url" bson:"url"`
+	Description string `json:"description" bson:"description"`
+	Published   int64  `json:"published" bson:"published"`
+	FTitle      string `json:"fTitle"`
+}
+
 func PostList(c *gin.Context) {
 	userID := c.GetString("user_id")
 	var user = &mongoModel.User{
@@ -29,7 +39,31 @@ func PostList(c *gin.Context) {
 		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
-	returnSuccessMsg(c, "OK", posts)
+	feeds, err := new(mongoModel.Feed).FindByIDs(c, user.SubFeeds)
+	if err != nil {
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
+		return
+	}
+
+	var feedMap = make(map[string]string)
+	for _, v := range feeds {
+		feedMap[v.ID] = v.Title
+	}
+
+	var postsRes []*PostListReq
+
+	for _, v := range posts {
+		fTitle, _ := feedMap[v.FID]
+		postsRes = append(postsRes, &PostListReq{
+			ID:        v.ID,
+			Title:     v.Title,
+			FID:       v.FID,
+			Url:       v.Url,
+			Published: v.Published,
+			FTitle:    fTitle,
+		})
+	}
+	returnSuccessMsg(c, "OK", postsRes)
 }
 
 func ReadPostList(c *gin.Context) {
@@ -47,4 +81,45 @@ func ReadPostList(c *gin.Context) {
 		return
 	}
 	returnSuccessMsg(c, "OK", user.Read)
+}
+
+func GetPostContent(c *gin.Context) {
+	postID := c.Param("id")
+	var post = mongoModel.Post{
+		ID: postID,
+	}
+	err := post.FindPostByID(c)
+	if err != nil {
+		returnErrorMsg(c, infra.DataBaseError)
+		return
+	}
+	returnSuccessMsg(c, "OK", post)
+}
+
+func PostAsRead(c *gin.Context) {
+	postID := c.Param("id")
+	userID := c.GetString("user_id")
+	var user = mongoModel.User{
+		ID: userID,
+	}
+	err := user.PostAsRead(c, postID)
+	if err != nil {
+		returnErrorMsg(c, infra.DataBaseError)
+		return
+	}
+	returnSuccessMsg(c, "OK", nil)
+}
+
+func PostAsUnRead(c *gin.Context) {
+	postID := c.Param("id")
+	userID := c.GetString("user_id")
+	var user = mongoModel.User{
+		ID: userID,
+	}
+	err := user.PostAsUnRead(c, postID)
+	if err != nil {
+		returnErrorMsg(c, infra.DataBaseError)
+		return
+	}
+	returnSuccessMsg(c, "OK", nil)
 }

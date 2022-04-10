@@ -40,6 +40,26 @@ func (m *User) FindFeedByID(ctx context.Context) error {
 	}}).Decode(m)
 }
 
+func (m *User) FindInfoByID(ctx context.Context) error {
+	return DB(m).FindOne(ctx, bson.M{
+		"_id": m.ID,
+	}, &options.FindOneOptions{Projection: bson.M{
+		"mail": 1,
+		"_id":  1,
+	}}).Decode(m)
+}
+
+func (m *User) UpdatePassword(ctx context.Context, password string) error {
+	_, err := DB(m).UpdateOne(ctx, bson.M{
+		"_id": m.ID,
+	}, bson.M{
+		"$set": bson.M{
+			"password": password,
+		},
+	})
+	return err
+}
+
 func (m *User) FindReadByID(ctx context.Context) error {
 	return DB(m).FindOne(ctx, bson.M{
 		"_id": m.ID,
@@ -56,12 +76,17 @@ func (m *User) FindOne(ctx context.Context, mail, password string) error {
 	}).Decode(m)
 }
 
-func (m *User) SubscribeFeed(ctx context.Context, feedID string) error {
+func (m *User) SubscribeFeeds(ctx context.Context, feedID ...string) error {
+	if len(feedID) == 0 {
+		return nil
+	}
 	_, err := DB(m).UpdateOne(ctx, bson.M{
 		"_id": m.ID,
 	}, bson.M{
 		"$addToSet": bson.M{
-			"sub_feeds": feedID,
+			"sub_feeds": bson.M{
+				"$each": feedID,
+			},
 		},
 	})
 	return err
@@ -73,6 +98,28 @@ func (m *User) UnSubscribeFeed(ctx context.Context, feedID string) error {
 	}, bson.M{
 		"$pull": bson.M{
 			"sub_feeds": feedID,
+		},
+	})
+	return err
+}
+
+func (m *User) PostAsRead(ctx context.Context, postID string) error {
+	_, err := DB(m).UpdateOne(ctx, bson.M{
+		"_id": m.ID,
+	}, bson.M{
+		"$addToSet": bson.M{
+			"read": postID,
+		},
+	})
+	return err
+}
+
+func (m *User) PostAsUnRead(ctx context.Context, postID string) error {
+	_, err := DB(m).UpdateOne(ctx, bson.M{
+		"_id": m.ID,
+	}, bson.M{
+		"$pull": bson.M{
+			"read": postID,
 		},
 	})
 	return err

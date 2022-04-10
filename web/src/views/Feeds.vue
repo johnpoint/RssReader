@@ -319,7 +319,7 @@ export default {
                         this.rsslist.forEach(item => {
                           let unread = 0
                           this.postList.forEach(post => {
-                            if (post.Feed === item._id && this.readPost.indexOf(post.ID) === -1) {
+                            if (post.fid === item._id && this.readPost.indexOf(post._id) === -1) {
                               unread++
                             }
                           })
@@ -391,7 +391,7 @@ export default {
               return
             }
             var pom = document.createElement('a');
-            pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(response.data.message));
+            pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(response.data.data));
             pom.setAttribute('download', "export.xml");
 
             if (document.createEvent) {
@@ -433,6 +433,9 @@ export default {
             (response) => {
               if (response.data.code !== 200) {
                 this.info = response.data.message
+                return
+              }else {
+                this.info = "正在解析OPML，请稍后再查看"
                 return
               }
             },

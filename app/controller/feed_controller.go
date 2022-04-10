@@ -74,7 +74,7 @@ func SubscribeFeed(c *gin.Context) {
 	var user = &mongoModel.User{
 		ID: userID.(string),
 	}
-	err := user.SubscribeFeed(c, feedID)
+	err := user.SubscribeFeeds(c, feedID)
 	if err != nil {
 		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return

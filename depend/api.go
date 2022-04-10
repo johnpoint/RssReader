@@ -113,28 +113,28 @@ func (r *Api) Init(ctx context.Context) error {
 	w.Use(authMiddleware.MiddlewareFunc())
 	f := w.Group("/feed")
 	{
-		f.GET("/list", controller.FeedList)                    //列出已经订阅feed
-		f.POST("/search", controller.SearchFeed)               //搜索feed
-		f.POST("/subscribe/:id", controller.SubscribeFeed)     //订阅feed
-		f.POST("/unsubscribe/:id", controller.UnSubscribeFeed) //退订feed
-		f.POST("/read/:id", controller.Pong)                   //将该feed标为已读
+		f.GET("/list", controller.FeedList)                    // 列出已经订阅feed
+		f.POST("/search", controller.SearchFeed)               // 搜索feed
+		f.POST("/subscribe/:id", controller.SubscribeFeed)     // 订阅feed
+		f.POST("/unsubscribe/:id", controller.UnSubscribeFeed) // 退订feed
+		f.POST("/read/:id", controller.Pong)                   // 将该feed标为已读
 	}
 	p := w.Group("/post")
 	{
-		p.POST("/read/:id", controller.Pong)    //将文章设置为已读
-		p.POST("/unread/:id", controller.Pong)  //将文章设置为未读
-		p.POST("/readafter/", controller.Pong)  //将文章设置为未读
-		p.GET("/content/:id", controller.Pong)  //获取文章内容
-		p.GET("/:num", controller.PostList)     //获取文章列表
-		p.GET("/", controller.Pong)             //获取文章列表
-		p.GET("/read", controller.ReadPostList) //获取已读文章列表
+		p.POST("/read/:id", controller.PostAsRead)       // 将文章设置为已读
+		p.POST("/unread/:id", controller.PostAsUnRead)   // 将文章设置为未读
+		p.POST("/readafter/", controller.PostAsUnRead)   // 稍后再读 TODO
+		p.GET("/content/:id", controller.GetPostContent) // 获取文章内容
+		p.GET("/:num", controller.PostList)              // 获取文章列表
+		//p.GET("/", controller.Pong)                      // 获取文章列表
+		p.GET("/read", controller.ReadPostList) // 获取已读文章列表
 	}
 
 	u := w.Group("/user")
 	{
-		u.POST("/password", controller.Pong) //重设密码
-		u.GET("/opml", controller.Pong)      //导出opml
-		u.POST("/opml", controller.Pong)     //导入opml
+		u.POST("/password", controller.ChangePassword) // 重设密码
+		u.GET("/opml", controller.ExportOPML)          // 导出opml
+		u.POST("/opml", controller.ImportOPML)         // 导入opml
 	}
 
 	go func() {

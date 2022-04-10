@@ -67,3 +67,37 @@ func Register(c *gin.Context) {
 	}
 	returnSuccessMsg(c, "OK", nil)
 }
+
+type ChangePasswordReq struct {
+	Password string `json:"password"`
+}
+
+func ChangePassword(c *gin.Context) {
+	var req ChangePasswordReq
+	err := c.BindJSON(&req)
+	if err != nil {
+		returnErrorMsg(c, infra.ReqParseError)
+		return
+	}
+
+	userID := c.GetString("user_id")
+	if len(req.Password) == 0 {
+		returnErrorMsg(c, infra.ReqParseError)
+		return
+	}
+
+	var user = mongoModel.User{
+		ID: userID,
+	}
+	err = user.FindInfoByID(c)
+	if err != nil {
+		returnErrorMsg(c, infra.DataBaseError)
+		return
+	}
+	err = user.UpdatePassword(c, utils.Sha256(req.Password+user.Mail))
+	if err != nil {
+		returnErrorMsg(c, infra.DataBaseError)
+		return
+	}
+	returnSuccessMsg(c, "OK", nil)
+}

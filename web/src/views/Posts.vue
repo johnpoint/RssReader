@@ -72,10 +72,10 @@
               <a
                   style="font-size: large"
                   @click="
-              toPost(cachePostData[index].ID)
+              toPost(cachePostData[index]._id)
             "
                   class="postlisttitle"
-              >{{ i.Title }}
+              >{{ i.title }}
               </a>
             </b-col>
             <b-col cols="1" align="end">
@@ -146,7 +146,7 @@
     <span
         v-if="((showUnread && !showRead && unreadpost===0) || (!showRead&&!showUnread&&readafter.length===0)) && !showLoading"
         class="empty">{{ $t("post.empty") }}</span>
-    <span v-else class="empty" style="color:rgba(0,0,0,0)">1</span>
+    <span v-else class="empty" style="color:rgba(0,0,0,0)"></span>
   </div>
 </template>
 
@@ -192,7 +192,7 @@ export default {
   methods: {
     removeCache: function (index) {
       // console.log("removeCache")
-      window.localStorage.removeItem("post" + this.cachePostData[index].id);
+      window.localStorage.removeItem("post" + this.cachePostData[index]._id);
       this.updateCache();
     },
     updateCache: function () {
@@ -352,22 +352,22 @@ export default {
                   this.info = response.data.message;
                   return;
                 }
-                this.readPost = JSON.parse(response.data.message);
+                this.readPost = response.data.data;
                 this.post = [];
                 this.unreadpost = 0;
                 postList.forEach((item) => {
                   this.post.push({
-                    ID: item.ID,
-                    Title: item.Title,
-                    Source: item.FeedTitle,
-                    date: new Date(parseInt(item.Time) * 1000).format(
+                    ID: item._id,
+                    Title: item.title,
+                    Source: item.fTitle,
+                    date: new Date(item.published).format(
                         "yyyy-MM-dd hh:mm:ss"
                     ),
-                    link: item.Link,
-                    read: this.readPost.indexOf(item.ID) !== -1,
+                    link: item.url,
+                    read: this.readPost.indexOf(item._id) !== -1,
                     readAfter: false
                   });
-                  this.readPost.indexOf(item.ID) === -1 ? this.unreadpost++ : null;
+                  this.readPost.indexOf(item._id) === -1 ? this.unreadpost++ : null;
                 });
                 this.savePostListCache(JSON.stringify(this.post));
                 this.showLoading = false;
@@ -409,7 +409,7 @@ export default {
                   this.info = response.data.message;
                   return;
                 }
-                let postList = JSON.parse(response.data.message);
+                let postList = response.data.data;
                 this.getReadList(postList);
               },
               (error) => {

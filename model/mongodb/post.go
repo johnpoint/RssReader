@@ -13,7 +13,7 @@ type Post struct {
 	Content     string `json:"content" bson:"content"`
 	Url         string `json:"url" bson:"url"`
 	Description string `json:"description" bson:"description"`
-	Published   string `json:"published" bson:"published"`
+	Published   int64  `json:"published" bson:"published"`
 }
 
 func (m *Post) CollectionName() string {
@@ -30,7 +30,14 @@ func (m *Post) FindPostsByFeed(ctx context.Context, feedIDs []string, limit int6
 		},
 	}, &options.FindOptions{
 		Limit: &limit,
-		Sort:  bson.M{"Published": -1},
+		Sort:  bson.M{"published": -1},
+		Projection: bson.M{
+			"_id":       1,
+			"title":     1,
+			"published": 1,
+			"fid":       1,
+			"url":       1,
+		},
 	})
 	if err != nil {
 		return nil, err
@@ -41,4 +48,15 @@ func (m *Post) FindPostsByFeed(ctx context.Context, feedIDs []string, limit int6
 		return nil, err
 	}
 	return posts, nil
+}
+
+func (m *Post) InsertMany(ctx context.Context, posts []interface{}) error {
+	_, err := DB(m).InsertMany(ctx, posts)
+	return err
+}
+
+func (m *Post) FindPostByID(ctx context.Context) error {
+	return DB(m).FindOne(ctx, bson.M{
+		"_id": m.ID,
+	}).Decode(m)
 }

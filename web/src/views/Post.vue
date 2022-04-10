@@ -127,11 +127,11 @@ export default {
       })
     },
     readAfter: function (data) {
-      // console.log("readAfter")
-      let now = JSON.parse(window.localStorage.getItem("post" + data.ID))
+      console.log(data)
+      let now = JSON.parse(window.localStorage.getItem("post" + data._id))
       now.readafter = true
       now.time = Date.parse(new Date())
-      window.localStorage.setItem("post" + data.ID, JSON.stringify(now))
+      window.localStorage.setItem("post" + data._id, JSON.stringify(now))
       this.showPost = false
       this.updateCache()
     },
@@ -162,9 +162,9 @@ export default {
                   this.info = response.data.message;
                   return;
                 }
-                let newPostCache = JSON.parse(response.data.message)
+                let newPostCache = response.data.data
                 for (let i of this.post) {
-                  if (i.ID === newPostCache.ID) {
+                  if (i.ID === newPostCache._id) {
                     newPostCache.Source = i.Source
                     newPostCache.read = i.read
                     break
@@ -176,6 +176,7 @@ export default {
                     JSON.stringify(newPostCache)
                 );
                 this.showLoading = false;
+                console.log(newPostCache)
                 this.nowshowpost = newPostCache
                 // console.log(newPostCache)
                 this.updateCache();

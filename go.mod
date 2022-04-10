@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/appleboy/gin-jwt/v2 v2.8.0
+	github.com/gilliek/go-opml v1.0.0
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5

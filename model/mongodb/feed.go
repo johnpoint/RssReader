@@ -50,6 +50,27 @@ func (m *Feed) FindByUrl(ctx context.Context, url string) error {
 	}).Decode(m)
 }
 
+func (m *Feed) FindByUrls(ctx context.Context, url ...string) ([]*Feed, error) {
+	if len(url) == 0 {
+		return nil, nil
+	}
+
+	cur, err := DB(m).Find(ctx, bson.M{
+		"url": bson.M{
+			"$in": url,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	var feeds = make([]*Feed, 0)
+	err = cur.All(ctx, &feeds)
+	if err != nil {
+		return nil, err
+	}
+	return feeds, nil
+}
+
 func (m *Feed) InsertOne(ctx context.Context) error {
 	_, err := DB(m).InsertOne(ctx, m)
 	return err
