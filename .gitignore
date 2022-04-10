@@ -1,8 +1,5 @@
-yarn.*
-yarn-error.log
-config.js
-node_modules
-dist
-dev
-.vscode
 .idea
+RssReader
+config_local.json
+go.sum
+deploy
