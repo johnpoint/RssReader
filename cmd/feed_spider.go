@@ -14,7 +14,6 @@ var feedSpiderCommand = &cobra.Command{
 		ctx := context.Background()
 		i := bootstrap.Helper{}
 		i.AddComponent(
-			&depend.Redis{},
 			&depend.MongoDB{},
 			&depend.Spider{},
 		)

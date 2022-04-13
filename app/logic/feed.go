@@ -2,6 +2,7 @@ package logic
 
 import (
 	mongoModel "RssReader/model/mongodb"
+	"RssReader/pkg/log"
 	"RssReader/pkg/utils"
 	"context"
 	"errors"
@@ -40,6 +41,22 @@ func (f *FeedL) GetFeed(ctx context.Context, url string) (*mongoModel.Feed, erro
 	return &feedM, nil
 }
 
+func (f *FeedL) UpdateFeed(ctx context.Context, feedM *mongoModel.Feed) error {
+	if len(feedM.Url) == 0 {
+		return errors.New("url can not be empty")
+	}
+	log.Info("FeedL.UpdateFeed", log.String("u", feedM.Url))
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+	parser := gofeed.NewParser()
+	feed, err := parser.ParseURLWithContext(feedM.Url, ctx)
+	if err != nil {
+		return err
+	}
+	f.UpdatePost(ctx, feed, feedM.UpdateAt, feedM.ID)
+	return err
+}
+
 var parseTimeFmt = []string{
 	time.RFC822, time.RFC822Z, time.RFC850, time.RFC1123,
 	time.RFC1123Z, time.RFC3339, time.RFC3339Nano,
@@ -70,6 +87,14 @@ func (f *FeedL) UpdatePost(ctx context.Context, feed *gofeed.Feed, newerThan int
 		}
 	}
 	err := new(mongoModel.Post).InsertMany(ctx, posts)
+	if err != nil {
+		return
+	}
+
+	var feedM = mongoModel.Feed{
+		ID: feedID,
+	}
+	err = feedM.UpdateUpdateAtByID(ctx, time.Now().UnixMilli())
 	if err != nil {
 		return
 	}
