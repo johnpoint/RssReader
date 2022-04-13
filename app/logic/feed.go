@@ -77,7 +77,7 @@ func (f *FeedL) UpdatePost(ctx context.Context, feed *gofeed.Feed, newerThan int
 		if t.UnixMilli() > newerThan {
 			var p mongoModel.Post
 			p.Url = feed.Items[i].Link
-			p.ID = utils.Sha256(p.Url)
+			p.ID = utils.Md5(p.Url)
 			p.FID = feedID
 			p.Title = feed.Items[i].Title
 			p.Content = feed.Items[i].Content
