@@ -26,6 +26,5 @@ jobs:
       - name: Install dependencies and Build
         run: |
           cd web
-          npm install
-          mv src/config.e.js src/config.js
-          npm run build
+          yarn
+          yarn build
