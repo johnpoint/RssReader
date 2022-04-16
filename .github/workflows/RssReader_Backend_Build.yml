@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'src/**'
+      - '.github/workflows/RssReader_Backend_Build.yml'
 
 jobs:
   build:
