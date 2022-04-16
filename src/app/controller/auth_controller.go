@@ -59,6 +59,8 @@ func Register(c *gin.Context) {
 	var user = mongoModel.User{
 		Mail:     req.Mail,
 		Password: utils.Sha256(req.Password + req.Mail),
+		SubFeeds: []string{},
+		Read:     []string{},
 	}
 	err = user.InsertOne(c)
 	if err != nil {

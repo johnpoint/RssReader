@@ -4,6 +4,7 @@ import (
 	"RssReader/app/logic"
 	"RssReader/infra"
 	mongoModel "RssReader/model/mongodb"
+	"RssReader/pkg/errorhelper"
 	"RssReader/pkg/log"
 	"context"
 	"encoding/xml"
@@ -53,7 +54,7 @@ func ImportOPML(c *gin.Context) {
 	}
 	err = user.SubscribeFeeds(c, needToSub...)
 	if err != nil {
-		returnErrorMsg(c, infra.DataBaseError)
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
 

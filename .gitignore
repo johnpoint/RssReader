@@ -1,6 +1,4 @@
 .idea
-RssReader
-config_local.json
-go.sum
-deploy
+src/RssReader
+src/deploy
 web/node_modules
