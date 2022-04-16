@@ -4,7 +4,6 @@ import (
 	"RssReader/config"
 	"RssReader/pkg/bootstrap"
 	"context"
-	"fmt"
 	"github.com/spf13/viper"
 	"math/rand"
 	"time"
@@ -18,7 +17,6 @@ var _ bootstrap.Component = (*Config)(nil)
 
 func (d *Config) Init(ctx context.Context) error {
 	rand.Seed(time.Now().UnixNano())
-	fmt.Println(d.Path)
 	viper.SetConfigFile(d.Path)
 	viper.SetConfigType("yaml")
 	err := viper.ReadInConfig()
