@@ -9,11 +9,22 @@
 
 <script>
 import topnav from "@/components/topnav";
+import axios from "axios";
+import config from "@/config";
 
 export default {
   components: {
     topnav
   },
+  mounted() {
+    axios.get("/api_address").then(
+        (response) => {
+          this.$store.state.apiAddress = response.data
+          config.apiAddress = response.data
+          console.log("api_address: ", response.data)
+        },
+    )
+  }
 };
 </script>
 
@@ -34,13 +45,15 @@ export default {
 #topnav {
   padding: 30px;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+a {
+  font-weight: bold;
+  color: #2c3e50;
 
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+&
+.router-link-exact-active {
+  color: #42b983;
+}
+
+}
 }
 </style>

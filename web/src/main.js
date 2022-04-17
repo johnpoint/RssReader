@@ -43,7 +43,8 @@ const store = new Vuex.Store({
         config: {
             postnum: null
         },
-        postList: null
+        postList: null,
+        apiAddress: "",
     },
     mutations: {
         setjwt(state, jwt) {
