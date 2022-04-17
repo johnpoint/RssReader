@@ -22,10 +22,14 @@ jobs:
         with:
           go-version: ${{ matrix.go }}
 
-      - name: Build
+      - name: Go Mod Tidy
         run: |
           cd src/
           go mod tidy
+
+      - name: Build
+        run: |
+          cd src/
           go build
 
       - name: Login DockerHub
@@ -38,5 +42,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: src
-          push: false
+          push: true
           tags: johnpoint/rssreader:latest
