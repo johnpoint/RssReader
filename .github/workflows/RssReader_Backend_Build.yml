@@ -28,6 +28,12 @@ jobs:
           go mod tidy
           go build
 
+      - name: Login DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build Docker Image
         uses: docker/build-push-action@v2
         with:
