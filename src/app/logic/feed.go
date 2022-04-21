@@ -4,8 +4,11 @@ import (
 	mongoModel "RssReader/model/mongodb"
 	"RssReader/pkg/log"
 	"RssReader/pkg/utils"
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"github.com/guonaihong/gout"
 	"github.com/mmcdole/gofeed"
 	"time"
 )
@@ -20,8 +23,7 @@ func (f *FeedL) GetFeed(ctx context.Context, url string) (*mongoModel.Feed, erro
 	}
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
-	parser := gofeed.NewParser()
-	feed, err := parser.ParseURLWithContext(url, ctx)
+	feed, err := f.Fetch(ctx, url)
 	if err != nil {
 		return nil, err
 	}
@@ -48,13 +50,37 @@ func (f *FeedL) UpdateFeed(ctx context.Context, feedM *mongoModel.Feed) error {
 	log.Info("FeedL.UpdateFeed", log.String("u", feedM.Url))
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
-	parser := gofeed.NewParser()
-	feed, err := parser.ParseURLWithContext(feedM.Url, ctx)
+	feed, err := f.Fetch(ctx, feedM.Url)
 	if err != nil {
 		return err
 	}
 	f.UpdatePost(ctx, feed, feedM.UpdateAt, feedM.ID)
 	return err
+}
+
+var ignoreCharMap = map[string]struct{}{
+	"U+001B": {},
+	"U+0008": {},
+}
+
+func (f *FeedL) Fetch(ctx context.Context, url string) (*gofeed.Feed, error) {
+	var b string
+	err := gout.GET(url).BindBody(&b).Do()
+	if err != nil {
+		return nil, err
+	}
+	var n bytes.Buffer
+	for _, v := range b {
+		if _, has := ignoreCharMap[fmt.Sprintf("%U", v)]; !has {
+			n.Write([]byte(fmt.Sprintf("%c", v)))
+		}
+	}
+	parser := gofeed.NewParser()
+	feed, err := parser.Parse(&n)
+	if err != nil {
+		return nil, err
+	}
+	return feed, nil
 }
 
 var parseTimeFmt = []string{
