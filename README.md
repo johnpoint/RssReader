@@ -32,3 +32,10 @@ docker run -d \
 ```
 
 ### frontend 前端
+
+```
+docker run --name rssreader-web \
+            -p 80:80  \
+            -e APIADDRESS="your api address" \
+            johnpoint/rssreader-web:latest
+```
