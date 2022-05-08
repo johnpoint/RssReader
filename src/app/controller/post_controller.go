@@ -68,19 +68,15 @@ func PostList(c *gin.Context) {
 
 func ReadPostList(c *gin.Context) {
 	userID, _ := c.Get("user_id")
-	var user = mongoModel.User{
-		ID: userID.(string),
+	var read = &mongoModel.Read{
+		UId: userID.(string),
 	}
-	err := user.FindReadByID(c)
+	readList, err := read.FindReadListByUserId(c)
 	if err != nil {
-		returnErrorMsg(c, infra.DataBaseError)
+		returnErrorMsg(c, errorhelper.WarpErr(infra.DataBaseError, err))
 		return
 	}
-	if len(user.Read) == 0 {
-		returnSuccessMsg(c, "OK", []struct{}{})
-		return
-	}
-	returnSuccessMsg(c, "OK", user.Read)
+	returnSuccessMsg(c, "OK", readList)
 }
 
 func GetPostContent(c *gin.Context) {
@@ -99,10 +95,12 @@ func GetPostContent(c *gin.Context) {
 func PostAsRead(c *gin.Context) {
 	postID := c.Param("id")
 	userID := c.GetString("user_id")
-	var user = mongoModel.User{
-		ID: userID,
+
+	var read = &mongoModel.Read{
+		UId: userID,
+		PId: postID,
 	}
-	err := user.PostAsRead(c, postID)
+	err := read.MarkAsRead(c, []*mongoModel.Read{read})
 	if err != nil {
 		returnErrorMsg(c, infra.DataBaseError)
 		return
@@ -113,10 +111,11 @@ func PostAsRead(c *gin.Context) {
 func PostAsUnRead(c *gin.Context) {
 	postID := c.Param("id")
 	userID := c.GetString("user_id")
-	var user = mongoModel.User{
-		ID: userID,
+	var read = &mongoModel.Read{
+		UId: userID,
+		PId: postID,
 	}
-	err := user.PostAsUnRead(c, postID)
+	err := read.MarkAsUnRead(c, []*mongoModel.Read{read})
 	if err != nil {
 		returnErrorMsg(c, infra.DataBaseError)
 		return

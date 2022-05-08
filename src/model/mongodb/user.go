@@ -14,7 +14,6 @@ type User struct {
 	Password  string   `json:"password" bson:"password"`
 	CreatedAt int64    `json:"created_at" bson:"created_at"`
 	SubFeeds  []string `json:"sub_feeds" bson:"sub_feeds"`
-	Read      []string `json:"read" bson:"read"`
 }
 
 func (m *User) CollectionName() string {
@@ -60,15 +59,6 @@ func (m *User) UpdatePassword(ctx context.Context, password string) error {
 	return err
 }
 
-func (m *User) FindReadByID(ctx context.Context) error {
-	return DB(m).FindOne(ctx, bson.M{
-		"_id": m.ID,
-	}, &options.FindOneOptions{Projection: bson.M{
-		"read": 1,
-		"_id":  1,
-	}}).Decode(m)
-}
-
 func (m *User) FindOne(ctx context.Context, mail, password string) error {
 	return DB(m).FindOne(ctx, bson.M{
 		"mail":     mail,
@@ -98,28 +88,6 @@ func (m *User) UnSubscribeFeed(ctx context.Context, feedID string) error {
 	}, bson.M{
 		"$pull": bson.M{
 			"sub_feeds": feedID,
-		},
-	})
-	return err
-}
-
-func (m *User) PostAsRead(ctx context.Context, postID string) error {
-	_, err := DB(m).UpdateOne(ctx, bson.M{
-		"_id": m.ID,
-	}, bson.M{
-		"$addToSet": bson.M{
-			"read": postID,
-		},
-	})
-	return err
-}
-
-func (m *User) PostAsUnRead(ctx context.Context, postID string) error {
-	_, err := DB(m).UpdateOne(ctx, bson.M{
-		"_id": m.ID,
-	}, bson.M{
-		"$pull": bson.M{
-			"read": postID,
 		},
 	})
 	return err
