@@ -1,7 +1,7 @@
 service_name: RssReader_v2
 http_server_listen: 0.0.0.0:1323
 cors:
-  - http://127.0.0.1:8080
+  - http://127.0.0.1
 environment: local
 mongo_db_config:
   url: mongodb://admin:admin@127.0.0.1:27017/db?authSource=admin

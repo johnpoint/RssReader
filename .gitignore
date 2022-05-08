@@ -2,3 +2,4 @@
 src/RssReader
 src/deploy
 web/node_modules
+web/dist
