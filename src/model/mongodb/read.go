@@ -46,13 +46,23 @@ func (m *Read) FindReadListByUserId(ctx context.Context) ([]string, error) {
 
 func (m *Read) MarkAsRead(ctx context.Context, read []*Read) error {
 	var many []any
+	var userID string
 	for _, v := range read {
+		userID = v.UId
 		v.ID = utils.Sha256(v.UId + v.PId)
 		v.CreateAt = time.Now().UnixMilli()
 		many = append(many, v)
 	}
 
-	_, err := DB(m).InsertMany(ctx, many)
+	res, err := DB(m).InsertMany(ctx, many)
+	if err != nil {
+		return err
+	}
+
+	var user = User{
+		ID: userID,
+	}
+	err = user.AddReadNum(ctx, int64(len(res.InsertedIDs)))
 	if err != nil {
 		return err
 	}
@@ -61,15 +71,25 @@ func (m *Read) MarkAsRead(ctx context.Context, read []*Read) error {
 
 func (m *Read) MarkAsUnRead(ctx context.Context, read []*Read) error {
 	var delId []string
+	var userID string
 	for _, v := range read {
+		userID = v.UId
 		delId = append(delId, utils.Sha256(v.UId+v.PId))
 	}
 
-	_, err := DB(m).DeleteMany(ctx, bson.M{
+	res, err := DB(m).DeleteMany(ctx, bson.M{
 		"_id": bson.M{
 			"$in": delId,
 		},
 	})
+	if err != nil {
+		return err
+	}
+
+	var user = User{
+		ID: userID,
+	}
+	err = user.AddReadNum(ctx, res.DeletedCount)
 	if err != nil {
 		return err
 	}

@@ -20,6 +20,18 @@ func (m *Post) CollectionName() string {
 	return "post"
 }
 
+func (m *Post) AutoRemovePost(ctx context.Context, before int64) error {
+	_, err := DB(m).DeleteMany(ctx, bson.M{
+		"published": bson.M{
+			"$lte": before,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *Post) FindPostsByFeed(ctx context.Context, feedIDs []string, limit int64) ([]*Post, error) {
 	if len(feedIDs) == 0 {
 		return []*Post{}, nil

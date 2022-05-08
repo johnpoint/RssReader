@@ -40,5 +40,6 @@ func init() {
 	rootCmd.AddCommand(
 		httpServerCommand,
 		feedSpiderCommand,
+		cronCommand,
 	)
 }

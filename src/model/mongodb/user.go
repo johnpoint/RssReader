@@ -14,10 +14,25 @@ type User struct {
 	Password  string   `json:"password" bson:"password"`
 	CreatedAt int64    `json:"created_at" bson:"created_at"`
 	SubFeeds  []string `json:"sub_feeds" bson:"sub_feeds"`
+	ReadNum   int64    `json:"read_num" bson:"read_num"`
 }
 
 func (m *User) CollectionName() string {
 	return "user"
+}
+
+func (m *User) AddReadNum(ctx context.Context, num int64) error {
+	_, err := DB(m).UpdateOne(ctx, bson.M{
+		"_id": m.ID,
+	}, bson.M{
+		"$inc": bson.M{
+			"read_num": num,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *User) InsertOne(ctx context.Context) error {
