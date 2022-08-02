@@ -12,7 +12,7 @@ require (
 	github.com/guonaihong/gout v0.3.1
 	github.com/mmcdole/gofeed v1.1.3
 	github.com/robfig/cron/v3 v3.0.0
-	github.com/spf13/cobra v1.4.0
+	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.10.1
 	go.mongodb.org/mongo-driver v1.10.0
 	go.uber.org/zap v1.21.0
