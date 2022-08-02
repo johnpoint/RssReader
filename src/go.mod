@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/guonaihong/gout v0.3.1
 	github.com/mmcdole/gofeed v1.1.3
-	github.com/robfig/cron/v3 v3.0.0
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	go.mongodb.org/mongo-driver v1.10.0
