@@ -9,8 +9,9 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/uuid v1.3.0
-	github.com/guonaihong/gout v0.2.12
+	github.com/guonaihong/gout v0.3.1
 	github.com/mmcdole/gofeed v1.1.3
+	github.com/robfig/cron/v3 v3.0.0
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.10.1
 	go.mongodb.org/mongo-driver v1.8.4
@@ -44,7 +45,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/robfig/cron/v3 v3.0.0 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
